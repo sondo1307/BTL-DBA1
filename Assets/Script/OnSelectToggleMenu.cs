@@ -13,7 +13,10 @@ public class OnSelectToggleMenu : MonoBehaviour
         // Khởi tạo tất cả GameObject là không hoạt động
         foreach (var mo in _mainObject)
         {
-            mo.SetActive(false);
+            if (mo)
+            {
+                mo.SetActive(false);
+            }
         }
     }
 
@@ -26,7 +29,10 @@ public class OnSelectToggleMenu : MonoBehaviour
             {
                 foreach (var mo in _mainObject)
                 {
-                    mo.SetActive(false); // Tắt tất cả GameObject
+                    if (mo)
+                    {
+                        mo.SetActive(false); // Tắt tất cả GameObject
+                    }
                 }
                 _mainObject[index].SetActive(isOn);
             });

@@ -1,0 +1,5 @@
+[
+    { "name": "Nguyễn Văn A", "team": "Đội A", "goals": 5 },
+    { "name": "Trần Văn B",   "team": "Đội B", "goals": 3 },
+    { "name": "Lê Văn C",     "team": "Đội C", "goals": 7 }
+]

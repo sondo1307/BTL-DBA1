@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dabfe93e8e9d1c4db23e44098656344, type: 3}
+  m_Name: ThemePink
+  m_EditorClassIdentifier: 
+  scrollBarSize: 10
+  scrollBarBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  scrollBarNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  scrollBarHighlightedColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}
+  scrollBarPressedColor: {r: 0.78, g: 0.78, b: 0.78, a: 1}
+  scrollBarSelectedColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}
+  scrollBarDisabledColor: {r: 0.78, g: 0.78, b: 0.78, a: 0.5}
+  isBorder: 1
+  borderColor: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
+  columnTheme:
+    columnHeight: 38
+    columnTemplate: {fileID: 8970540604878750623, guid: a0b6c9ec29a95d646b1fa67ad17ef633, type: 3}
+    columnSplitMoverTemplate: {fileID: 2271628978389723827, guid: 596bd69896e1eb847a0d8522e0fbbf97, type: 3}
+  columnItemTheme:
+    columnItemTemplate: {fileID: 8928928338832991159, guid: 2704534446ce81847ac076d32dc10817, type: 3}
+    textFontSize: 14
+    textSpace: 15
+    textAlignment: 3
+    backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    textColor: {r: 0, g: 0, b: 0, a: 1}
+    selectedColor: {r: 0.9921569, g: 0.9294118, b: 0.9686275, a: 1}
+    selectedTextColor: {r: 0.61960787, g: 0, b: 0.38431376, a: 1}
+    isBorder: 1
+    borderColor: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
+  checkBoxTheme:
+    normalIcon: {fileID: 21300000, guid: de123197c14ec3042b549a173dfc46c0, type: 3}
+    checkIcon: {fileID: 21300000, guid: f3d1883bd9f24a44fa8fd3ca27b15604, type: 3}
+    iconSize: 18
+  rowTheme:
+    rowHeight: 38
+    textFontSize: 14
+    controlSpace: 15
+    controlHeight: 30
+    dropdownHeight: 20
+    backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    textColor: {r: 0, g: 0, b: 0, a: 1}
+    alternatingBackgroundColor: {r: 0.98823535, g: 0.98823535, b: 0.98823535, a: 1}
+    alternatingTextColor: {r: 0, g: 0, b: 0, a: 1}
+    enterColor: {r: 0.9921569, g: 0.9294118, b: 0.9686275, a: 1}
+    enterTextColor: {r: 0.7137255, g: 0, b: 0.38431376, a: 1}
+    selectedColor: {r: 0.9607844, g: 0.8980393, b: 0.93725497, a: 1}
+    selectedTextColor: {r: 0.61960787, g: 0, b: 0.38431376, a: 1}
+    isColumnBorder: 0
+    isRowBorder: 1
+    borderColor: {r: 0.9333334, g: 0.9333334, b: 0.9333334, a: 1}
+  pageBarTheme:
+    textFontSize: 14
+    textColor: {r: 0, g: 0, b: 0, a: 1}
+    textWidth: 50
+    isBorder: 1
+    borderColor: {r: 0.854902, g: 0.854902, b: 0.854902, a: 1}
+    backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    arrowBackground: {r: 0.9921569, g: 0.9294118, b: 0.9686275, a: 1}
+    arrowIconColor: {r: 0, g: 0, b: 0, a: 1}
