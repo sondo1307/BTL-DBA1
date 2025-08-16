@@ -118,6 +118,9 @@ namespace Maything.UI.DataGridUI
                                 case "Percentage":
                                     cData.columnType = DataGridColumnData.enumColumnType.Percentage;
                                     break;
+                                case "Int":
+                                    cData.columnType = DataGridColumnData.enumColumnType.Int;
+                                    break;
                                 case "Photo":
                                     cData.columnType = DataGridColumnData.enumColumnType.Photo;
                                     //rowData contains marker and name of resource, e.g. "spriteRes:Images/5Smileys/Smiley0"
@@ -223,47 +226,100 @@ namespace Maything.UI.DataGridUI
 
         }
 
+        // public static string ExportToCSV(DataGridUI dataGridUI)
+        // {
+        //     string csv = "[";
+        //     foreach(DataGridColumnData column in dataGridUI.columnData)
+        //     {
+        //         csv += "|" + column.width.ToString();
+        //         switch(column.columnType)
+        //         {
+        //             case DataGridColumnData.enumColumnType.GridMultipleCheckBox:
+        //                 csv = csv + "|SelectedBox";
+        //                 break;
+        //             case DataGridColumnData.enumColumnType.CheckBox:
+        //                 csv = csv + "|CheckBox";
+        //                 break;
+        //             case DataGridColumnData.enumColumnType.Percentage:
+        //                 csv = csv + "|Percentage";
+        //                 break;
+        //             case DataGridColumnData.enumColumnType.Photo:
+        //                 csv = csv + "|Photo";
+        //                 break;
+        //
+        //         }
+        //         csv += "," + column.name;
+        //     }
+        //     csv += "]" + Environment.NewLine;
+        //
+        //     foreach(DataGridRowData row in dataGridUI.rowData)
+        //     {
+        //         for(int x=0;x<row.rowData.Count;x++) 
+        //         {
+        //             DataGridRowItemData item = row.rowData[x];
+        //
+        //             csv += item.value;
+        //
+        //             if (x<row.rowData.Count-1)
+        //                 csv+= ",";
+        //         }
+        //         csv += Environment.NewLine;
+        //     }
+        //
+        //     return csv;
+        // }
+        
         public static string ExportToCSV(DataGridUI dataGridUI)
         {
             string csv = "[";
-            foreach(DataGridColumnData column in dataGridUI.columnData)
+            for (int i = 0; i < dataGridUI.columnData.Count; i++)
             {
-                csv += "|" + column.width.ToString();
-                switch(column.columnType)
+                DataGridColumnData column = dataGridUI.columnData[i];
+
+                string colType = "Text"; // default type
+                switch (column.columnType)
                 {
                     case DataGridColumnData.enumColumnType.GridMultipleCheckBox:
-                        csv = csv + "|SelectedBox";
+                        colType = "SelectedBox";
                         break;
                     case DataGridColumnData.enumColumnType.CheckBox:
-                        csv = csv + "|CheckBox";
+                        colType = "CheckBox";
                         break;
                     case DataGridColumnData.enumColumnType.Percentage:
-                        csv = csv + "|Percentage";
+                        colType = "Percentage";
+                        break;
+                    case DataGridColumnData.enumColumnType.Int:
+                        colType = "Int";
                         break;
                     case DataGridColumnData.enumColumnType.Photo:
-                        csv = csv + "|Photo";
+                        colType = "Photo";
                         break;
-
                 }
-                csv += "," + column.name;
+
+                // format: name|width|type
+                csv += column.name + "|" + column.width.ToString() + "|" + colType;
+
+                if (i < dataGridUI.columnData.Count - 1)
+                    csv += ",";
             }
             csv += "]" + Environment.NewLine;
 
-            foreach(DataGridRowData row in dataGridUI.rowData)
+            foreach (DataGridRowData row in dataGridUI.rowData)
             {
-                for(int x=0;x<row.rowData.Count;x++) 
+                for (int x = 0; x < row.rowData.Count; x++)
                 {
                     DataGridRowItemData item = row.rowData[x];
 
                     csv += item.value;
 
-                    if (x<row.rowData.Count-1)
-                        csv+= ",";
+                    if (x < row.rowData.Count - 1)
+                        csv += ",";
                 }
                 csv += Environment.NewLine;
             }
 
             return csv;
         }
+
     }
 }

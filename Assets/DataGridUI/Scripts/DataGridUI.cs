@@ -56,6 +56,7 @@ namespace Maything.UI.DataGridUI
         public GameObject rowButtomTemplate;
         public GameObject rowMultilineInputFieldTemplate;
         public GameObject rowPercentageTemplate;
+        public GameObject rowIntTemplate;
 
         [Header("Data View")]
         public RectTransform dataScrollView;
@@ -443,7 +444,7 @@ namespace Maything.UI.DataGridUI
             }
             else
             {
-                //Ö»Ñ¡Ôñ×îºóÒ»¸ö
+                //Ö»Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
                 if (selectedRowUIs.Count > 0)
                 {
                     DataGridRowUI rowUI = selectedRowUIs[selectedRowUIs.Count - 1];
@@ -482,13 +483,13 @@ namespace Maything.UI.DataGridUI
         {
             if (isMultipleSelected)
             {
-                //¶àÑ¡
+                //ï¿½ï¿½Ñ¡
                 bool isFind = false;
                 foreach (DataGridRowUI ui in selectedRowUIs)
                 {
                     if (ui == selectRowUI)
                     {
-                        //È¡ÏûÑ¡Ôñ
+                        //È¡ï¿½ï¿½Ñ¡ï¿½ï¿½
                         isFind = true;
 
                         if (isReverseSelected == false)
@@ -501,12 +502,12 @@ namespace Maything.UI.DataGridUI
 
                 if (isFind == true)
                 {
-                    //ÒÆ³ý
+                    //ï¿½Æ³ï¿½
                     selectedRowUIs.Remove(selectRowUI);
                 }
                 else
                 {
-                    //Ôö¼Ó
+                    //ï¿½ï¿½ï¿½ï¿½
                     selectedRowUIs.Add(selectRowUI);
                     selectRowUI.UpdateSelectState(DagaGridRowContentUI.enumItemState.Select, true);
                 }
@@ -522,7 +523,7 @@ namespace Maything.UI.DataGridUI
             }
             else
             {
-                //µ¥Ñ¡
+                //ï¿½ï¿½Ñ¡
                 bool isFind = false;
                 if (selectedRowUIs.Count > 0)
                 {
@@ -571,7 +572,7 @@ namespace Maything.UI.DataGridUI
 
             if (isColumnResize)
             {
-                //Ò²ÒªÍ¬²½ÒÆ¶¯Mover
+                //Ò²ÒªÍ¬ï¿½ï¿½ï¿½Æ¶ï¿½Mover
                 columnMoverContent.GetComponent<RectTransform>().localPosition = new Vector2(
                     //scrollWidth * (1f - value) - scrollWidth - ownerTransform.rect.width / 2f, 0);
                     scrollWidth * (1f - value) - scrollWidth, 0);
@@ -603,7 +604,7 @@ namespace Maything.UI.DataGridUI
                 }
             }
 
-            //ÖØÐÂ¼ÆËã³ß´ç
+            //ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ß´ï¿½
             dataContent.sizeDelta = new Vector2(columnWidth - ownerTransform.rect.width, 0);
         }
 

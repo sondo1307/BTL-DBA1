@@ -81,7 +81,9 @@ namespace Maything.UI.DataGridUI
                     case DataGridColumnData.enumColumnType.Percentage:
                         go = Instantiate(dataGridUI.rowPercentageTemplate, ownerTransform);
                         break;
-
+                    case DataGridColumnData.enumColumnType.Int:
+                        go = Instantiate(dataGridUI.rowIntTemplate, ownerTransform);
+                        break;
                 }
 
                 RectTransform rect = go.GetComponent<RectTransform>();

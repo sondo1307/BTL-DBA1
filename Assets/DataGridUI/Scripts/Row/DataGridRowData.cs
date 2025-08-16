@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Maything.UI.DataGridUI
@@ -13,6 +14,7 @@ namespace Maything.UI.DataGridUI
         //public List<string> rowData = new List<string>();
         public List<DataGridRowItemData> rowData = new List<DataGridRowItemData>();
 
+        [JsonIgnore]
         [HideInInspector]
         public GameObject objectUI = null;
     }
@@ -23,6 +25,7 @@ namespace Maything.UI.DataGridUI
         public string textData;
         public string key;
         public bool checkData;
+        [JsonIgnore]
         public Sprite photoData;
         public string[] dropdownData;
 

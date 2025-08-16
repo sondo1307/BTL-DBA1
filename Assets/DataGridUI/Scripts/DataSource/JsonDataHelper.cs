@@ -83,6 +83,9 @@ namespace Maything.UI.DataGridUI
                     case "Percentage":
                         cData.columnType = DataGridColumnData.enumColumnType.Percentage;
                         break;
+                    case "Int":
+                        cData.columnType = DataGridColumnData.enumColumnType.Int;
+                        break;
                     case "MultilineInputField":
                         cData.columnType = DataGridColumnData.enumColumnType.MultilineInputField;
                         break;
@@ -209,6 +212,9 @@ namespace Maything.UI.DataGridUI
                     case DataGridColumnData.enumColumnType.Percentage:
                         jColumn.type = "Percentage";
                         break;
+                    case DataGridColumnData.enumColumnType.Int:
+                        jColumn.type = "Int";
+                        break;   
                     case DataGridColumnData.enumColumnType.MultilineInputField:
                         jColumn.type = "MultilineInputField";
                         break;

@@ -1,0 +1,711 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DataGridTheme
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: 1dabfe93e8e9d1c4db23e44098656344, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarSize
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarBackgroundColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarBackgroundColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarBackgroundColor.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarBackgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarNormalColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarNormalColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarNormalColor.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarNormalColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarHighlightedColor.r
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarHighlightedColor.g
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarHighlightedColor.b
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarHighlightedColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarPressedColor.r
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarPressedColor.g
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarPressedColor.b
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarPressedColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarSelectedColor.r
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarSelectedColor.g
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarSelectedColor.b
+    value: 0.96
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarSelectedColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarDisabledColor.r
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarDisabledColor.g
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarDisabledColor.b
+    value: 0.78
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: scrollBarDisabledColor.a
+    value: 0.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: isBorder
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: borderColor.r
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: borderColor.g
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: borderColor.b
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: borderColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnTheme.columnHeight
+    value: 38
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnTheme.columnTemplate
+    value: 
+    objectReference: {fileID: 8970540604878750623, guid: a0b6c9ec29a95d646b1fa67ad17ef633, type: 3}
+  - target: {fileID: 0}
+    propertyPath: columnTheme.columnSplitMoverTemplate
+    value: 
+    objectReference: {fileID: 2271628978389723827, guid: 596bd69896e1eb847a0d8522e0fbbf97, type: 3}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.columnItemTemplate
+    value: 
+    objectReference: {fileID: 8928928338832991159, guid: 2704534446ce81847ac076d32dc10817, type: 3}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textFontSize
+    value: 14
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textSpace
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textAlignment
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.backgroundColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.backgroundColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.backgroundColor.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.backgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedColor.r
+    value: 0.9294118
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedColor.g
+    value: 0.97647065
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedColor.b
+    value: 0.9686275
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedTextColor.r
+    value: 0.0627451
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedTextColor.g
+    value: 0.45882356
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedTextColor.b
+    value: 0.39607847
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.selectedTextColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.isBorder
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.borderColor.r
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.borderColor.g
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.borderColor.b
+    value: 0.90196085
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: columnItemTheme.borderColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.rowHeight
+    value: 38
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.textFontSize
+    value: 14
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.controlSpace
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.controlHeight
+    value: 30
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.dropdownHeight
+    value: 20
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.backgroundColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.backgroundColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.backgroundColor.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.backgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingBackgroundColor.r
+    value: 0.98823535
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingBackgroundColor.g
+    value: 0.98823535
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingBackgroundColor.b
+    value: 0.98823535
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingBackgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingTextColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingTextColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingTextColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.alternatingTextColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterColor.r
+    value: 0.9294118
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterColor.g
+    value: 0.97647065
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterColor.b
+    value: 0.9686275
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterTextColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterTextColor.g
+    value: 0.454902
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterTextColor.b
+    value: 0.39607847
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.enterTextColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedColor.r
+    value: 0.8980393
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedColor.g
+    value: 0.9450981
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedColor.b
+    value: 0.93725497
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedTextColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedTextColor.g
+    value: 0.454902
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedTextColor.b
+    value: 0.39607847
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.selectedTextColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.isColumnBorder
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.isRowBorder
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.borderColor.r
+    value: 0.9333334
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.borderColor.g
+    value: 0.9333334
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.borderColor.b
+    value: 0.9333334
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: rowTheme.borderColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: checkBoxTheme.normalIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: d71b037b11b844541b72e5f7b69b27fa, type: 3}
+  - target: {fileID: 0}
+    propertyPath: checkBoxTheme.checkIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 3ac21fcef22b65a448128b7aa2f00389, type: 3}
+  - target: {fileID: 0}
+    propertyPath: checkBoxTheme.iconSize
+    value: 18
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barHeight
+    value: 20
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barColor.r
+    value: 0.05
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barColor.g
+    value: 0.43
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barColor.b
+    value: 0.74
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barBackgroundColor.r
+    value: 0.9433962
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barBackgroundColor.g
+    value: 0.9433962
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barBackgroundColor.b
+    value: 0.9433962
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.barBackgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.size
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].startRange
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].endRange
+    value: 35
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].barColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].barColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].barColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].barColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[0].textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].startRange
+    value: 35
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].endRange
+    value: 68
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].barColor.r
+    value: 0.050980397
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].barColor.g
+    value: 0.43137258
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].barColor.b
+    value: 0.7411765
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].barColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[1].textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].startRange
+    value: 68
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].endRange
+    value: 100
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].barColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].barColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].barColor.b
+    value: 0.0791831
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].barColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: percentageTheme.rangeColors.Array.data[2].textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textFontSize
+    value: 14
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.textWidth
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.isBorder
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.borderColor.r
+    value: 0.854902
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.borderColor.g
+    value: 0.854902
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.borderColor.b
+    value: 0.854902
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.borderColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.backgroundColor.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.backgroundColor.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.backgroundColor.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.backgroundColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowBackground.r
+    value: 0.9294118
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowBackground.g
+    value: 0.97647065
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowBackground.b
+    value: 0.9686275
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowBackground.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowIconColor.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowIconColor.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowIconColor.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pageBarTheme.arrowIconColor.a
+    value: 1
+    objectReference: {fileID: 0}
+  m_ExcludedProperties: []

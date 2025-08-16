@@ -21,6 +21,7 @@ namespace Maything.UI.DataGridUI
             Button,
             MultilineInputField,
             Percentage,
+            Int,
         }
 
         public string name;
