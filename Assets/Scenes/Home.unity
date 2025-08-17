@@ -4947,7 +4947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6792250252030981927, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Name
-      value: Btn (1)
+      value: AddBtn
       objectReference: {fileID: 0}
     - target: {fileID: 8808071403635963292, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Text
@@ -6630,7 +6630,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1864507445006125603, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ExportToCSV
+      value: _UpdateOneRow
       objectReference: {fileID: 0}
     - target: {fileID: 1864507445006125603, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -6642,7 +6642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6792250252030981927, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Name
-      value: Btn
+      value: UpdateBtn
       objectReference: {fileID: 0}
     - target: {fileID: 8808071403635963292, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Text
@@ -14915,7 +14915,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1864507445006125603, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ExportToCSV
+      value: _DeleteSelectedRow
       objectReference: {fileID: 0}
     - target: {fileID: 1864507445006125603, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -14927,7 +14927,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6792250252030981927, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Name
-      value: Btn (2)
+      value: DeleteBtn
       objectReference: {fileID: 0}
     - target: {fileID: 8808071403635963292, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_Text

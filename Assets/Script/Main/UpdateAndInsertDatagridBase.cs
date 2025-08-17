@@ -28,7 +28,7 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
         _addBtn.onClick.AddListener(AddRow);
     }
 
-    public virtual void Show(UpdateOrInsert updateOrInsert, Action callback)
+    public virtual void Show(UpdateOrInsert updateOrInsert, DataGridRowData rowData, Action callback)
     {
         gameObject.SetActive(true);
         switch (updateOrInsert)
@@ -44,17 +44,18 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
                 _updateBtn.gameObject.SetActive(false);
                 break;
         }
-        
+
+        _dataGridUI.rowData[0] = rowData;
+        _dataGridUI.Start();
         callback?.Invoke();
     }
 
     private void Hide()
     {
         gameObject.SetActive(false);
-        _mainCrud.RefreshData();
-        // _dataGridUI.ClearAllRows();
-        // _dataGridUI.rowData.Add(_freshRowData);
+        _dataGridUI.rowData[0] = _freshRowData;
         _dataGridUI.Start();
+        _mainCrud.RefreshData();
     }
     
     private void InsertRow()
@@ -64,7 +65,7 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
 
     private void UpdateRow()
     {
-        
+        Hide();
     }
     
     private void AddRow()
