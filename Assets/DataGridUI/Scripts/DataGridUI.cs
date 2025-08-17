@@ -143,7 +143,7 @@ namespace Maything.UI.DataGridUI
         public List<DataGridRowUI> selectedRowUIs = new List<DataGridRowUI>();
 
         // Start is called before the first frame update
-        void Start()
+        public void Start()
         {
             Initialization();
             InitializationData();
