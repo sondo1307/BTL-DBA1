@@ -2214,12 +2214,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 1488410689}
-  _addDataGob: {fileID: 2128551058}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!114 &196757365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4967,7 +4982,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.x
@@ -4975,7 +4990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_SizeDelta.x
@@ -5015,11 +5030,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 810.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5543,7 +5558,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &523275388
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5619,12 +5634,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 1717307065}
-  _addDataGob: {fileID: 1646086064}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 1646086064}
+    DataGridUI: {fileID: 1717307065}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!1 &577924572
 GameObject:
   m_ObjectHideFlags: 0
@@ -6662,7 +6692,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.x
@@ -6670,7 +6700,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_SizeDelta.x
@@ -6710,11 +6740,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 610.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7130,12 +7160,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 1483750118}
-  _addDataGob: {fileID: 372668647}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!114 &719543582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8116,12 +8161,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 2122707173}
-  _addDataGob: {fileID: 811077474}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!114 &869428076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8779,9 +8839,9 @@ RectTransform:
   - {fileID: 1019870441}
   m_Father: {fileID: 1265635096}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1115.5918, y: -50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 310.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &909367943
@@ -11952,12 +12012,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 1718097089}
-  _addDataGob: {fileID: 1193425532}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!114 &1303768376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12764,12 +12839,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataGridUI: {fileID: 1316879717}
-  _addDataGob: {fileID: 407555438}
-  _dataGridUpdate: {fileID: 0}
-  _headerColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
-    nh\u1EADp|300|Int]"
-  _headerColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
-    nh\u1EADp|300|InputField]"
+  CauThu:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  DoiBong:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
+  TrongTai:
+    HeaderColumnMain: "[ID|100|Int,T\xEAn|500|Text,S\u1ED1 l\u01B0\u1EE3ng|100|Int,Gi\xE1|250|Int,Ng\xE0y
+      nh\u1EADp|300|Int]"
+    HeaderColumnCRUD: "[ID|100|Int,T\xEAn|500|InputField,S\u1ED1 l\u01B0\u1EE3ng|100|InputField,Gi\xE1|250|InputField,Ng\xE0y
+      nh\u1EADp|300|InputField]"
+    AddDataGob: {fileID: 0}
+    DataGridUI: {fileID: 0}
 --- !u!114 &1349075913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14947,7 +15037,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.x
@@ -14955,7 +15045,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_SizeDelta.x
@@ -14995,11 +15085,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1010.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9103093477479460286, guid: 86091a43a2398d75fbe8077e30001e96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -16361,7 +16451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4552762405697688740, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.596891
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4552762405697688740, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
       propertyPath: m_AnchorMin.y
@@ -16450,6 +16540,10 @@ PrefabInstance:
     - target: {fileID: 4552762405899496689, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
       propertyPath: m_Name
       value: DataGridUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552762405899496689, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4552762405899496691, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
       propertyPath: theme
@@ -19345,9 +19439,9 @@ RectTransform:
   - {fileID: 1226033936}
   m_Father: {fileID: 1265635096}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 761.5718, y: -50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 310.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2104937868
@@ -21195,9 +21289,9 @@ RectTransform:
   - {fileID: 1290893573114558003}
   m_Father: {fileID: 1265635096}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 407.55176, y: -50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 310.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9103093478142369565
