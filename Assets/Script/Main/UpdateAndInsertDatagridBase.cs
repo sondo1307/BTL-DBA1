@@ -37,15 +37,16 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
                 _insertTotalGob.SetActive(false);
                 _addBtn.gameObject.SetActive(false);
                 _updateBtn.gameObject.SetActive(true);
+                _dataGridUI.rowData[0] = rowData;
                 break;
             case UpdateOrInsert.Insert:
                 _insertTotalGob.SetActive(true);
                 _addBtn.gameObject.SetActive(true);
                 _updateBtn.gameObject.SetActive(false);
+                _dataGridUI.rowData[0] = _freshRowData;
                 break;
         }
 
-        _dataGridUI.rowData[0] = rowData;
         _dataGridUI.Start();
         callback?.Invoke();
     }
@@ -53,8 +54,6 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
-        _dataGridUI.rowData[0] = _freshRowData;
-        _dataGridUI.Start();
         _mainCrud.RefreshData();
     }
     

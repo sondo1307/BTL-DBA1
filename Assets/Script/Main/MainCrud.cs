@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
 using UnityEngine;
 
@@ -25,7 +26,13 @@ public class MainCrud : MonoBehaviour
     public void _DeleteSelectedRow()
     {
         // Please Select At least 1 Row
+        if (_dataGridUI.selectedRowUIs.Count == 0)
+        {
+            print("Please select 1");
+            return;
+        }
         
+        _dataGridUI.RemoveSelectedItem();
     }
 
     public void _UpdateOneRow()
@@ -51,9 +58,14 @@ public class MainCrud : MonoBehaviour
         _addDataGob.Show(UpdateOrInsert.Insert, null, null);
     }
 
-    public void RefreshData()
+    [ContextMenu( "Refresh Data" )]
+    public async void RefreshData()
     {
-        _dataGridUI.RowClear();
-        _dataGridUI.Start();
+        _dataGridUI.PageRowClear();
+        await Task.Delay(1000);
+        print(_dataGridUI.dataText);
+        CSVDataHelper.DataFromCSV(_dataGridUI, false, true, true, false, _dataGridUI.dataText);
+
+        // _dataGridUI.Start();
     }
 }
