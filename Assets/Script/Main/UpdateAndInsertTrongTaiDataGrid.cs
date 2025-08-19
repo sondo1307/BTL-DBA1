@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpdateAndInsertTrongTaiDataGrid : MonoBehaviour
+public class UpdateAndInsertTrongTaiDataGrid : UpdateAndInsertDatagridBase
 {
     // Start is called before the first frame update
     void Start()

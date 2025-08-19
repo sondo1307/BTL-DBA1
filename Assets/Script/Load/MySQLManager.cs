@@ -18,7 +18,7 @@ public class MySQLManager : MonoBehaviour
                                       "SslMode=None;" +
                                       "AllowPublicKeyRetrieval=True;";
 
-    private MySqlConnection conn;
+    public MySqlConnection Conn;
 
     private void Awake()
     {
@@ -33,8 +33,8 @@ public class MySQLManager : MonoBehaviour
         // Khởi tạo và mở kết nối một lần
         try
         {
-            conn = new MySqlConnection(connectionString);
-            conn.Open();
+            Conn = new MySqlConnection(connectionString);
+            Conn.Open();
             Debug.Log("✅ Connected to MySQL!");
         }
         catch (Exception ex)
@@ -47,21 +47,26 @@ public class MySQLManager : MonoBehaviour
 
     void OnDestroy()
     {
-        if (conn != null && conn.State == System.Data.ConnectionState.Open)
+        if (Conn != null && Conn.State == System.Data.ConnectionState.Open)
         {
-            conn.Close();
-            conn.Dispose();
+            Conn.Close();
+            Conn.Dispose();
             Debug.Log("✅ Connection closed.");
         }
     }
 
 
+    /// <summary>
+    /// For Test Purpose
+    /// </summary>
+    /// <param name="includeHeader"></param>
+    /// <returns></returns>
     public string ExportPlayersToCSV(bool includeHeader)
     {
         try
         {
             string query = "SELECT * FROM player;";
-            using var cmd = new MySqlCommand(query, conn);
+            using var cmd = new MySqlCommand(query, Conn);
             using var reader = cmd.ExecuteReader();
 
             StringBuilder csv = new StringBuilder();
@@ -100,34 +105,57 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Đọc danh sách users
-    /// </summary>
-    public void ReadUsers()
+    public string ReadTableHeaderAsCsv(string table)
     {
-        const string query = "SELECT * FROM player;";
-        using MySqlCommand cmd = new MySqlCommand(query, conn);
-        using MySqlDataReader reader = cmd.ExecuteReader();
-
-        // Print column names
-        string header = "";
-        for (int i = 0; i < reader.FieldCount; i++)
+        try
         {
-            header += reader.GetName(i) + "\t";
-        }
-
-        Debug.Log("📋 Columns: " + header);
-
-        // Print each row
-        while (reader.Read())
-        {
-            string row = "";
+            string query = $"SELECT * FROM {table};";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+            StringBuilder csv = new StringBuilder();
+            
             for (int i = 0; i < reader.FieldCount; i++)
             {
-                row += reader[i].ToString() + "\t";
+                csv.Append(reader.GetName(i));
+                if (i < reader.FieldCount - 1) csv.Append(",");
+            }
+            return csv.ToString();
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+    
+    public string ReadTableDataAsCsv(string table)
+    {
+        try
+        {
+            string query = $"SELECT * FROM {table};";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            StringBuilder csv = new StringBuilder();
+
+             // Data rows
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string value = reader[i].ToString().Replace(",", "&");
+                    csv.Append(value);
+                    if (i < reader.FieldCount - 1) csv.Append(",");
+                }
+
+                csv.AppendLine();
             }
 
-            Debug.Log(row);
+            return csv.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return string.Empty;
         }
     }
 }

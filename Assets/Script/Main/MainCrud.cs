@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
+[System.Serializable]
 public class MainCrudObjectBase
 {
     public string HeaderColumnMain = "[ID|100|Int,Tên|500|Text,Số lượng|100|Int,Giá|250|Int,Ngày nhập|300|Int]";
     public string HeaderColumnCRUD = "[ID|100|Int,Tên|500|InputField,Số lượng|100|InputField,Giá|250|InputField,Ngày nhập|300|InputField]";
-    public UpdateAndInsertCauthuDataGrid AddDataGob;
+    [SerializeReference]
+    public UpdateAndInsertDatagridBase AddDataGob;
     public DataGridUI DataGridUI;
     
-    public void _UpdateOneRow(DataGridUI dataGridUI)
+    public void UpdateOneRow(DataGridUI dataGridUI)
     {
         switch (dataGridUI.selectedRowUIs.Count)
         {
@@ -32,7 +36,7 @@ public class MainCrudObjectBase
         }
     }
 
-    public void _DeleteSelectedRow(DataGridUI dataGridUI)
+    public void DeleteSelectedRow(DataGridUI dataGridUI)
     {
         // Please Select At least 1 Row
         if (dataGridUI.selectedRowUIs.Count == 0)
@@ -44,7 +48,7 @@ public class MainCrudObjectBase
         dataGridUI.RemoveSelectedItem();
     }
     
-    public void _ShowAddDataGob()
+    public void ShowAddDataGob()
     {
         AddDataGob.Show(UpdateOrInsert.Insert, null, null);
     }
@@ -74,29 +78,41 @@ public class MainCrud : MonoBehaviour
     public MainCrudCauThu CauThu;
     public MainCrudDoiBong DoiBong;
     public MainCrudTrongTai TrongTai;
-    
-    #region CauThu
+    public MainCrudObjectBase CurrentMainCrud;
+    [SerializeField] private Toggle _cauThuToggle;
+    [SerializeField] private Toggle _doiBongToggle;
+    [SerializeField] private Toggle _trongTaiToggle;
 
-    public void ShowMainCauThu()
+    private void Start()
     {
-        CauThu.DataGridUI.gameObject.SetActive(true);
-    }
-    
-    public void UpdateMainCauThu()
-    {
-        CauThu._UpdateOneRow(_dataGridUI);
-    }
-    
-    public void DeleteMainCauThu()
-    {
-        CauThu._DeleteSelectedRow(_dataGridUI);
+        _cauThuToggle.onValueChanged.AddListener((isOn) =>
+        {
+            CurrentMainCrud = CauThu;
+        });
+        _doiBongToggle.onValueChanged.AddListener((isOn) =>
+        {
+            CurrentMainCrud = DoiBong;
+        });
+        _trongTaiToggle.onValueChanged.AddListener((isOn) =>
+        {
+            CurrentMainCrud = TrongTai;
+        });
     }
 
-    public void AddCauThu()
+    public void OnAddBtnClick()
     {
-        CauThu._ShowAddDataGob();
+        CurrentMainCrud.ShowAddDataGob();
     }
-    #endregion
+    
+    public void OnUpdateBtnClick()
+    {
+        CurrentMainCrud.UpdateOneRow(_dataGridUI);
+    }
+    
+    public void OnDeleteBtnClick()
+    {
+        CurrentMainCrud.DeleteSelectedRow(_dataGridUI);
+    }
 
     public void ExportToCSV()
     {
@@ -108,8 +124,8 @@ public class MainCrud : MonoBehaviour
     public async void RefreshData()
     {
         _dataGridUI.PageRowClear();
+        UIManager.Instance.ShowCircle();
         await Task.Delay(1000);
-        print(_dataGridUI.dataText);
         CSVDataHelper.DataFromCSV(_dataGridUI, false, true, true, false, _dataGridUI.dataText);
     }
 }
