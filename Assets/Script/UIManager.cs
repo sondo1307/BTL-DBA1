@@ -4,30 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public static class SonCache
-{
-    public static WaitForSeconds WaitSeconds = new WaitForSeconds(1);
-}
-
-public static class UIHelper
-{
-    public static void ShowCg(this CanvasGroup cg)
-    {
-        cg.alpha = 1;
-        cg.blocksRaycasts = true;
-        cg.interactable = true;
-        cg.gameObject.SetActive(true);
-    }
-    
-    public static void HideCg(this CanvasGroup cg)
-    {
-        cg.alpha = 0;
-        cg.blocksRaycasts = false;
-        cg.interactable = false;
-        cg.gameObject.SetActive(false);
-    }
-}
-
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -43,6 +19,11 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+    public void ShowPermantCircle()
+    {
+        _circleCg.ShowCg();
+    }
+    
     public void ShowCircle()
     {
         _circleCg.ShowCg();
@@ -54,6 +35,11 @@ public class UIManager : MonoBehaviour
             yield return SonCache.WaitSeconds;
             _circleCg.HideCg();
         }
+    }
+    
+    public void HideCircle()
+    {
+        _circleCg.HideCg();
     }
     
     public void ShowToast(string message)
