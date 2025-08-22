@@ -141,6 +141,58 @@ namespace Maything.UI.DataGridUI
             }
 
         }
+        public static bool CSVStringToColumnData(List<DataGridColumnData> columnData, string code)
+        {
+            if (code.Trim() == "") return false;
+            if (code.Substring(0, 1) == "[" && code.Substring(code.Length - 1, 1) == "]")
+            {
+                //Column
+                columnData.Clear();
+                string[] spt = code.Substring(1, code.Length - 2).Split(',');
+                for (int i = 0; i < spt.Length; i++)
+                {
+                    string[] param = spt[i].Split('|');
+                    DataGridColumnData cData = new DataGridColumnData();
+                    cData.name = param[0];
+                    if (param.Length >= 2)
+                    {
+                        cData.width = Convert.ToSingle(param[1]);
+                        if (param.Length == 3)
+                        {
+                            switch (param[2])
+                            {
+                                case "SelectedBox":
+                                    cData.columnType = DataGridColumnData.enumColumnType.GridMultipleCheckBox;
+                                    break;
+                                case "CheckBox":
+                                    cData.columnType = DataGridColumnData.enumColumnType.CheckBox;
+                                    break;
+                                case "Percentage":
+                                    cData.columnType = DataGridColumnData.enumColumnType.Percentage;
+                                    break;
+                                case "Int":
+                                    cData.columnType = DataGridColumnData.enumColumnType.Int;
+                                    break;
+                                case "Photo":
+                                    cData.columnType = DataGridColumnData.enumColumnType.Photo;
+                                    //rowData contains marker and name of resource, e.g. "spriteRes:Images/5Smileys/Smiley0"
+                                    break;
+                            }
+                        }
+                    }
+
+                    columnData.Add(cData);
+                }
+
+                return true;
+            }
+            else
+            {
+                //rowData.Add(CSVStringToRowData(code));
+                return false;
+            }
+
+        }
 
         public static DataGridRowData CSVStringToRowData(string code)
         {

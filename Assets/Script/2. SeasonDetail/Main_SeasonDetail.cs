@@ -6,14 +6,31 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
+[System.Serializable]
+public class TranDauDetailDataGrid
+{
+    public string Header;
+    
+}
+
 public class Main_SeasonDetail : MonoBehaviour
 {
+    public static Main_SeasonDetail Instance;
+    
     [SerializeField] private int _soDoi = 8;
     [SerializeField] private List<string> _teams = new List<string>();
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
     [SerializeField] private TMP_InputField _inputfield;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
 
     public void OnTaoGiaiDauClick()

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -66,5 +68,15 @@ public static class StringUtils
 
         // dùng IndexOf với Ordinal để so sánh chính xác sau normalize
         return s1.IndexOf(s2, StringComparison.Ordinal) >= 0;
+    }
+    
+
+    public static string ConvertHeaderToDataGridHeader(string header)
+    {
+        // Tách theo dấu phẩy
+        var parts = header.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        var output = parts.Select(part => part.Trim()).Select(column => $"{column}|200|Text").ToList();
+
+        return "[" + string.Join(",", output) + "]";
     }
 }

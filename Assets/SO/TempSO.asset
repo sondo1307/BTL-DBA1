@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94d9235086e44a0b8a4d1862cf5c8fd, type: 3}
+  m_Name: TempSO
+  m_EditorClassIdentifier: 
+  CsvHeader: "\"ID, T\xEAn, S\u1ED1 l\u01B0\u1EE3ng, Gi\xE1, Ng\xE0y nh\u1EADp, Gio
+    nhap\""
+  columnData:
+  - name: '"ID'
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  - name: "T\xEAn"
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  - name: "S\u1ED1 l\u01B0\u1EE3ng"
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  - name: "Gi\xE1"
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  - name: "Ng\xE0y nh\u1EADp"
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  - name: Gio nhap"
+    width: 200
+    columnTextAlignment: 3
+    rowTextAlignment: 3
+    columnType: 0
+    dropdownData: []
+    objectUI: {fileID: 0}
+    moverUI: {fileID: 0}
+  Refresh: 0
