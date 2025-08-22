@@ -3,27 +3,67 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Maything.UI.DataGridUI;
 using TMPro;
+using UI.Dates;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class TranDauDetailDataGrid
 {
-    public string Header;
-    
+    public GameObject TranDauDetail;
+    public DataGridUI DataGridUI;
+    public Button SaveButton;
+    public Button CancelButton;
+
+    public void Open(string header)
+    {
+        TranDauDetail.gameObject.SetActive(true);
+        SaveButton.onClick.AddListener(OnSaveBtnClick);
+        CancelButton.onClick.AddListener(OnCancelBtnClick);
+        var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+    }
+
+    private void OnSaveBtnClick()
+    {
+        Debug.Log("Save 111111111");
+        Close();
+    }
+
+    private void OnCancelBtnClick()
+    {
+        Close();
+    }
+
+    private void Close()
+    {
+        TranDauDetail.gameObject.SetActive(false);
+        SaveButton.onClick.RemoveAllListeners();
+        CancelButton.onClick.RemoveAllListeners();
+    }
 }
 
 public class Main_SeasonDetail : MonoBehaviour
 {
-    public static Main_SeasonDetail Instance;
-    
+    public static Main_SeasonDetail Instance { get; set; }
+
     [SerializeField] private int _soDoi = 8;
     [SerializeField] private List<string> _teams = new List<string>();
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
-    [SerializeField] private TMP_InputField _inputfield;
+    [FormerlySerializedAs("_inputfield")] [SerializeField] private TMP_InputField _thanhTimKiem;
+    [Header("DatePicker"), Space(10)]
+    [SerializeField] private DatePicker _datePicker;
+    public DatePicker DatePicker => _datePicker;
+    
+    [Header("TranDauDetailDataGrid"), Space(10)]
+    public TranDauDetailDataGrid TranDauDetailDataGrid;
 
+    public Action<string> EventUpdateTodayDate;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -146,7 +186,9 @@ public class Main_SeasonDetail : MonoBehaviour
     {
         UIManager.Instance.ShowPermantCircle();
         string format = "dd/MM/yyyy";
-        var input = _inputfield.text;
+        var input = _thanhTimKiem.text;
+        
+        // TODO: Sửa code dùng event để invoke 
         if (DateTime.TryParseExact(input, format, null, System.Globalization.DateTimeStyles.None, out DateTime date))
         {
             foreach (var tranDau in _vongDaus.SelectMany(vongDau => vongDau.TranDaus))
@@ -178,12 +220,23 @@ public class Main_SeasonDetail : MonoBehaviour
 
     public async void OnSearchCancelClick()
     {
-        _inputfield.text = "";
+        _thanhTimKiem.text = "";
         foreach (var tranDau in _vongDaus.SelectMany(vongDau => vongDau.TranDaus))
         {
             tranDau.gameObject.SetActive(true);
             await Task.Delay(1);
         }
+    }
+
+    #endregion
+
+    #region DatePicker
+
+    public void OnDatePickerSave()
+    {
+        var a = (_datePicker.SelectedDate.HasValue) ? _datePicker.SelectedDate.Date.ToString(_datePicker.Config.Format.DateFormat) : "";
+        print(a);
+        EventUpdateTodayDate?.Invoke(a);
     }
 
     #endregion

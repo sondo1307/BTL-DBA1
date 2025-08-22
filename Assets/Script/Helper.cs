@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+public static class SonConst
+{
+    public const string DateFormat = "dd/MM/yyyy";
+}
 
 public static class SonCache
 {
