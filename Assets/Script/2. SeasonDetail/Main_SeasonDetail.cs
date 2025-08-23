@@ -11,7 +11,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [System.Serializable]
-public class TranDauDetailDataGrid
+public class TranDauDetailClass
 {
     public GameObject TranDauDetail;
     public DataGridUI DataGridUI;
@@ -23,7 +23,10 @@ public class TranDauDetailDataGrid
         TranDauDetail.gameObject.SetActive(true);
         SaveButton.onClick.AddListener(OnSaveBtnClick);
         CancelButton.onClick.AddListener(OnCancelBtnClick);
-        var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+        if (DataGridUI.columnData.Count == 0)
+        {
+            var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+        }
     }
 
     private void OnSaveBtnClick()
@@ -40,7 +43,39 @@ public class TranDauDetailDataGrid
     private void Close()
     {
         TranDauDetail.gameObject.SetActive(false);
+        DataGridUI.RowClear();
         SaveButton.onClick.RemoveAllListeners();
+        CancelButton.onClick.RemoveAllListeners();
+    }
+}
+
+[Serializable]
+public class VongDauDetailClass
+{
+    public GameObject VongDauDetail;
+    public DataGridUI DataGridUI;
+    public Button CancelButton;
+
+    public void Open(string header)
+    {
+        VongDauDetail.gameObject.SetActive(true);
+        CancelButton.onClick.AddListener(OnCancelBtnClick);
+        if (DataGridUI.columnData.Count == 0)
+        {
+            var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+        }
+
+    }
+
+    private void OnCancelBtnClick()
+    {
+        Close();
+    }
+
+    public void Close()
+    {
+        VongDauDetail.gameObject.SetActive(false);
+        DataGridUI.RowClear();
         CancelButton.onClick.RemoveAllListeners();
     }
 }
@@ -54,16 +89,22 @@ public class Main_SeasonDetail : MonoBehaviour
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
-    [FormerlySerializedAs("_inputfield")] [SerializeField] private TMP_InputField _thanhTimKiem;
-    [Header("DatePicker"), Space(10)]
-    [SerializeField] private DatePicker _datePicker;
+
+    [FormerlySerializedAs("_inputfield")] [SerializeField]
+    private TMP_InputField _thanhTimKiem;
+
+    [Header("DatePicker"), Space(10)] [SerializeField]
+    private DatePicker _datePicker;
+
     public DatePicker DatePicker => _datePicker;
-    
-    [Header("TranDauDetailDataGrid"), Space(10)]
-    public TranDauDetailDataGrid TranDauDetailDataGrid;
+
+    [FormerlySerializedAs("TranDauDetailDataGrid")] [Header("TranDauDetail"), Space(10)]
+    public TranDauDetailClass tranDauDetailClass;
+
+    [Header("VongDauDetail"), Space(10)] public VongDauDetailClass vongDauDetailClass;
 
     public Action<string> EventUpdateTodayDate;
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -187,7 +228,7 @@ public class Main_SeasonDetail : MonoBehaviour
         UIManager.Instance.ShowPermantCircle();
         string format = "dd/MM/yyyy";
         var input = _thanhTimKiem.text;
-        
+
         // TODO: Sửa code dùng event để invoke 
         if (DateTime.TryParseExact(input, format, null, System.Globalization.DateTimeStyles.None, out DateTime date))
         {
@@ -234,7 +275,9 @@ public class Main_SeasonDetail : MonoBehaviour
 
     public void OnDatePickerSave()
     {
-        var a = (_datePicker.SelectedDate.HasValue) ? _datePicker.SelectedDate.Date.ToString(_datePicker.Config.Format.DateFormat) : "";
+        var a = (_datePicker.SelectedDate.HasValue)
+            ? _datePicker.SelectedDate.Date.ToString(_datePicker.Config.Format.DateFormat)
+            : "";
         print(a);
         EventUpdateTodayDate?.Invoke(a);
     }

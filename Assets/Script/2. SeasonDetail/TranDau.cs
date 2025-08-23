@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Maything.UI.DataGridUI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,8 +51,10 @@ public class TranDau : MonoBehaviour
 
     public void OnBtnClick()
     {
-        Main_SeasonDetail.Instance.TranDauDetailDataGrid.Open(
+        Main_SeasonDetail.Instance.tranDauDetailClass.Open(
             StringUtils.ConvertHeaderToDataGridHeader("ID, Tên, Số lượng, Giá, Ngày nhập, Gio nhap"));
+        CSVDataHelper.DataFromCSV(Main_SeasonDetail.Instance.tranDauDetailClass.DataGridUI, false, true, false, false,
+            "1,\"Bút bi\",100,5000,110\n2,\"Vở học sinh\",50,12000,120\n3,\"Thước kẻ\",80,8000,30\n4,\"Bút chì\",120,4000,40\n5,\"Tẩy\",60,3000,50");
     }
 
     private void UpdateDate(string date)
@@ -59,5 +62,12 @@ public class TranDau : MonoBehaviour
         var myDate = DateTime.ParseExact(_ngayThiDau.text, SonConst.DateFormat, CultureInfo.InvariantCulture);
         var today = DateTime.ParseExact(date, SonConst.DateFormat, CultureInfo.InvariantCulture);
         _img.color = myDate.Date < today.Date ? Color.red : Color.white;
+    }
+
+    // Hủy Team hoặc Quá ngày đá mà không đá
+    // 0-0, khong trong tai, khong the do, khong the vang, 
+    private void CancelTranDau()
+    {
+        
     }
 }
