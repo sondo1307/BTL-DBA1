@@ -8,7 +8,7 @@ using static Maything.UI.DataGridUI.DataGridUI;
 
 namespace Maything.UI.DataGridUI
 {
-    public class CSVDataHelper 
+    public class CSVDataHelper
     {
         public static void CSVToDataGridData(DataGridUI dataGridUI, string code)
         {
@@ -19,12 +19,11 @@ namespace Maything.UI.DataGridUI
             if (dataGridUI.dataType == enumDataType.Column ||
                 dataGridUI.dataType == enumDataType.ColumnAndRow)
             {
-                if (CSVStringToColumnData(dataGridUI,spt[0]) == false)
+                if (CSVStringToColumnData(dataGridUI, spt[0]) == false)
                 {
                     if (dataGridUI.dataType == enumDataType.ColumnAndRow)
                         dataGridUI.rowData.Add(CSVStringToRowData(spt[0]));
                 }
-
             }
             else
             {
@@ -42,7 +41,6 @@ namespace Maything.UI.DataGridUI
                     dataGridUI.rowData.Add(CSVStringToRowData(spt[i]));
                 }
             }
-
         }
 
         public static void LoadCSVFile(DataGridUI dataGridUI, string file)
@@ -61,7 +59,6 @@ namespace Maything.UI.DataGridUI
                     if (dataGridUI.dataType == enumDataType.ColumnAndRow)
                         dataGridUI.rowData.Add(CSVStringToRowData(tmp));
                 }
-
             }
             else
             {
@@ -77,7 +74,6 @@ namespace Maything.UI.DataGridUI
                     if (tmp.Trim() == "")
                         continue;
                     dataGridUI.rowData.Add(CSVStringToRowData(tmp));
-
                 }
             }
 
@@ -125,6 +121,9 @@ namespace Maything.UI.DataGridUI
                                     cData.columnType = DataGridColumnData.enumColumnType.Photo;
                                     //rowData contains marker and name of resource, e.g. "spriteRes:Images/5Smileys/Smiley0"
                                     break;
+                                case "InputField":
+                                    cData.columnType = DataGridColumnData.enumColumnType.InputField;
+                                    break;
                             }
                         }
                     }
@@ -139,8 +138,8 @@ namespace Maything.UI.DataGridUI
                 //rowData.Add(CSVStringToRowData(code));
                 return false;
             }
-
         }
+
         public static bool CSVStringToColumnData(List<DataGridColumnData> columnData, string code)
         {
             if (code.Trim() == "") return false;
@@ -177,6 +176,9 @@ namespace Maything.UI.DataGridUI
                                     cData.columnType = DataGridColumnData.enumColumnType.Photo;
                                     //rowData contains marker and name of resource, e.g. "spriteRes:Images/5Smileys/Smiley0"
                                     break;
+                                case "InputField":
+                                    cData.columnType = DataGridColumnData.enumColumnType.InputField;
+                                    break;
                             }
                         }
                     }
@@ -191,7 +193,6 @@ namespace Maything.UI.DataGridUI
                 //rowData.Add(CSVStringToRowData(code));
                 return false;
             }
-
         }
 
         public static DataGridRowData CSVStringToRowData(string code)
@@ -207,12 +208,14 @@ namespace Maything.UI.DataGridUI
                 {
                     itemData.checkData = Convert.ToBoolean(s1);
                 }
+
                 if (s.IndexOf("SpriteResource:") == 0)
                 {
                     //s hold resource name like "images/5Smileys/Smiley0"
                     //(images folder must be located in Asstes/Resources folder
                     itemData.photoData = SpriteHelper.GetResourceSprite(s.Remove(0, "SpriteResource:".Length));
                 }
+
                 if (s.IndexOf("SpriteStreaming:") == 0)
                 {
                     //s hold resource name like "images/5Smileys/Smiley0"
@@ -227,7 +230,8 @@ namespace Maything.UI.DataGridUI
         }
 
 
-        public static void DataFromCSV(DataGridUI dataGridUI, bool isColumn, bool isRow, bool isClearRow, bool isInsertRow, string csvText)
+        public static void DataFromCSV(DataGridUI dataGridUI, bool isColumn, bool isRow, bool isClearRow,
+            bool isInsertRow, string csvText)
         {
             string tmp = csvText.Replace("\r\n", "\n");
             string[] spt = tmp.Split('\n');
@@ -266,16 +270,18 @@ namespace Maything.UI.DataGridUI
 
                     if (isInsertRow)
                     {
-                        dataGridUI.rowData.Insert(selectItem.rowData.rowData[0].rowIndex + i - startIndex + 1, CSVDataHelper.CSVStringToRowData(spt[i]));
+                        dataGridUI.rowData.Insert(selectItem.rowData.rowData[0].rowIndex + i - startIndex + 1,
+                            CSVDataHelper.CSVStringToRowData(spt[i]));
                     }
                     else
+                    {
                         dataGridUI.rowData.Add(CSVDataHelper.CSVStringToRowData(spt[i]));
+                    }
                 }
-
             }
+
             dataGridUI.InitializationPaging();
             dataGridUI.InitializationRow(isClearRow);
-
         }
 
         // public static string ExportToCSV(DataGridUI dataGridUI)
@@ -320,6 +326,40 @@ namespace Maything.UI.DataGridUI
         //
         //     return csv;
         // }
+
+        public static void GetTableHeaderAndSetToDG(DataGridUI dataGridUI, string tableName)
+        {
+            var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
+            var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
+            CSVStringToColumnData(dataGridUI, h1);
+        }
+
+        public static void GetTableHeaderAndConvertToInputFieldAndSetToDG(DataGridUI dataGridUI, string tableName)
+        {
+            var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
+            var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
+            var a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForCrud(h1);
+            Debug.Log(a);
+            CSVStringToColumnData(dataGridUI, a);
+        }
+        
+        public static List<DataGridColumnData> ConvertAllTextToInputField(List<DataGridColumnData> columnData)
+        {
+            var newList = new List<DataGridColumnData>();
+            var col0 = columnData[0];
+            var copy0 = (DataGridColumnData)col0.Clone();
+            newList.Add(copy0);
+            
+            for (var i = 1; i < columnData.Count; i++)
+            {
+                var col = columnData[i];
+                var copy = (DataGridColumnData)col.Clone();
+                copy.columnType = DataGridColumnData.enumColumnType.InputField;
+                newList.Add(copy);
+            }
+
+            return newList;
+        }
         
         public static string ExportToCSV(DataGridUI dataGridUI)
         {
@@ -346,6 +386,9 @@ namespace Maything.UI.DataGridUI
                     case DataGridColumnData.enumColumnType.Photo:
                         colType = "Photo";
                         break;
+                    case DataGridColumnData.enumColumnType.InputField:
+                        colType = "InputField";
+                        break;
                 }
 
                 // format: name|width|type
@@ -354,6 +397,7 @@ namespace Maything.UI.DataGridUI
                 if (i < dataGridUI.columnData.Count - 1)
                     csv += ",";
             }
+
             csv += "]" + Environment.NewLine;
 
             foreach (DataGridRowData row in dataGridUI.rowData)
@@ -367,11 +411,46 @@ namespace Maything.UI.DataGridUI
                     if (x < row.rowData.Count - 1)
                         csv += ",";
                 }
+
                 csv += Environment.NewLine;
             }
 
             return csv;
         }
 
+        public static string ExportRowsToCSV(DataGridUI dataGridUI)
+        {
+            string csv = "";
+
+            foreach (DataGridRowData row in dataGridUI.rowData)
+            {
+                for (int x = 0; x < row.rowData.Count; x++)
+                {
+                    DataGridRowItemData item = row.rowData[x];
+
+                    csv += item.value;
+
+                    if (x < row.rowData.Count - 1)
+                        csv += ",";
+                }
+
+                csv += Environment.NewLine;
+            }
+
+            return csv;
+        }
+        
+        
+
+        public static List<string> ExportColumnsToCSV(DataGridUI dataGridUI)
+        {
+            List<string> csv = new List<string>();
+            foreach (DataGridColumnData column in dataGridUI.columnData)
+            {
+                csv.Add(column.name);
+            }
+
+            return csv;
+        }
     }
 }

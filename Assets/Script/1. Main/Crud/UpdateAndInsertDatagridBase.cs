@@ -7,29 +7,27 @@ using UnityEngine.UI;
 
 public enum UpdateOrInsert
 {
-    Update,   // 0
-    Insert    // 1
+    Update, // 0
+    Insert // 1
 }
 
 public class UpdateAndInsertDatagridBase : MonoBehaviour
 {
     [SerializeField] private GameObject _insertTotalGob;
-    [SerializeField] private Button _insertTotalRowBtn;
     [SerializeField] private Button _updateBtn;
     [SerializeField] private Button _addBtn;
     [SerializeField] private DataGridUI _dataGridUI;
-    [SerializeField] private MainCrud _mainCrud;
     [SerializeField] private DataGridRowData _freshRowData;
-    
+
     private void Start()
     {
-        _insertTotalRowBtn.onClick.AddListener(InsertRow);
         _updateBtn.onClick.AddListener(UpdateRow);
         _addBtn.onClick.AddListener(AddRow);
     }
 
-    public virtual void Show(UpdateOrInsert updateOrInsert, DataGridRowData rowData, Action callback)
+    public virtual void Show(UpdateOrInsert updateOrInsert, string tableName, DataGridRowData rowData, Action callback)
     {
+        CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDG(_dataGridUI, tableName);
         gameObject.SetActive(true);
         switch (updateOrInsert)
         {
@@ -54,19 +52,16 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
-        _mainCrud.RefreshData();
-    }
-    
-    private void InsertRow()
-    {
-        print(123);
+        MainCrud.Instance.RefreshData();
     }
 
     private void UpdateRow()
     {
+        MySQLManager.Instance.UpdateOneRow(MainCrud.Instance.CurrentMainCrud.TableName,
+            CSVDataHelper.ExportRowsToCSV(_dataGridUI));
         Hide();
     }
-    
+
     private void AddRow()
     {
         Hide();

@@ -29,7 +29,8 @@ public class DataGridRowContentIntUI : DagaGridRowContentUI, IPointerEnterHandle
         {
             if (text != null && barImage!=null)
             {
-                percentValue = Convert.ToSingle(rowItemData.textData);
+                // percentValue = Convert.ToSingle(rowItemData.textData);
+                // print(percentValue);
                 text.text = rowItemData.textData;
                 rowItemData.value = rowItemData.textData;
 

@@ -595,6 +595,7 @@ namespace Maything.UI.DataGridUI
 
         public void PageRowClear()
         {
+            if (!isPaging) return;
             foreach (DataGridRowData data in pageRowData)
             {
                 if (data.objectUI != null)

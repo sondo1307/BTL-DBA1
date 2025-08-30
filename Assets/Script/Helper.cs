@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class SonConst
@@ -39,7 +40,7 @@ public static class UIHelper
 public static class StringUtils
 {
     // Hàm bỏ dấu + về lowercase, xử lý thêm chữ 'đ'
-    public static string NormalizeNoDiacritics(string text)
+    private static string NormalizeNoDiacritics(string text)
     {
         if (string.IsNullOrEmpty(text)) return string.Empty;
 
@@ -82,5 +83,15 @@ public static class StringUtils
         var output = parts.Select(part => part.Trim()).Select(column => $"{column}|200|Text").ToList();
 
         return "[" + string.Join(",", output) + "]";
+    }
+
+    public static string ConvertDGHeaderStringToDGHeaderInputFieldForCrud(string headerDG)
+    {
+        int matchIndex = 0;
+        return Regex.Replace(headerDG, "Text", m =>
+        {
+            matchIndex++;
+            return matchIndex == 1 ? m.Value : "InputField";
+        });
     }
 }

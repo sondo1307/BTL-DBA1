@@ -8,7 +8,7 @@ namespace Maything.UI.DataGridUI
 
 
     [Serializable]
-    public class DataGridColumnData
+    public class DataGridColumnData : ICloneable
     {
         public enum enumColumnType
         {
@@ -41,6 +41,11 @@ namespace Maything.UI.DataGridUI
         {
             return name + "[" + columnType.ToString() + "]";
 
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone(); // shallow copy
         }
     }
 }
