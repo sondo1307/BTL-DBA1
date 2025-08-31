@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
 using UnityEngine;
@@ -58,7 +59,7 @@ public class MainCrudObjectBase : MonoBehaviour
             {
                 var rowData = dataGridUI.GetLastSelectItem().rowData;
 
-                AddDataGob.Show(UpdateOrInsert.Update, TableName, rowData, null);
+                AddDataGob.Show(UpdateOrInsert.Update, TableName, rowData);
                 break;
             }
         }
@@ -73,11 +74,26 @@ public class MainCrudObjectBase : MonoBehaviour
             return;
         }
 
+        if (dataGridUI.selectedRowUIs.Count == 1)
+        {
+            MySQLManager.Instance.DeleteOneRow(TableName, dataGridUI.GetLastSelectItem().rowData.cellData[0].value);
+        }
+        else
+        {
+            var selectedRows = dataGridUI.selectedRowUIs;
+            List<int> selectedIds = new List<int>();
+            foreach (var item in selectedRows)
+            {
+                selectedIds.Add(int.Parse(item.rowData.cellData[0].value));
+            }
+            MySQLManager.Instance.DeleteMultipleRows(TableName, selectedIds);
+        }
+        
         dataGridUI.RemoveSelectedItem();
     }
 
     public void ShowAddDataGob()
     {
-        AddDataGob.Show(UpdateOrInsert.Insert, null, null, null);
+        AddDataGob.Show(UpdateOrInsert.Insert, TableName, null);
     }
 }

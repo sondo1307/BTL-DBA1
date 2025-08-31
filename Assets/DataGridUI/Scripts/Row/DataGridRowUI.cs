@@ -47,10 +47,10 @@ namespace Maything.UI.DataGridUI
 
             for (int i = 0; i < dataGridUI.columnData.Count; i++)
             {
-                if (i >= rowData.rowData.Count)
+                if (i >= rowData.cellData.Count)
                     continue;
 
-                rowData.rowData[i].columnIndex = i;
+                rowData.cellData[i].columnIndex = i;
 
                 GameObject go = null;
 
@@ -96,7 +96,7 @@ namespace Maything.UI.DataGridUI
                 {
                     itemUI.dataGridUI = dataGridUI;
                     itemUI.isAlternating = isAlternating;
-                    itemUI.rowItemData = rowData.rowData[i];
+                    itemUI.rowItemData = rowData.cellData[i];
                     itemUI.columnData = dataGridUI.columnData[i];
                     itemUI.rowUI = this;
 
@@ -117,7 +117,7 @@ namespace Maything.UI.DataGridUI
 
             for (int i = 0; i < dataGridUI.columnData.Count; i++)
             {
-                if (i >= rowData.rowData.Count)
+                if (i >= rowData.cellData.Count)
                     continue;
 
                 GameObject go = rowItems[i].gameObject;

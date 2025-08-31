@@ -223,7 +223,7 @@ namespace Maything.UI.DataGridUI
                     itemData.photoData = SpriteHelper.GetStreamingAssetsSprite(s.Remove(0, "SpriteStreaming:".Length));
                 }
 
-                data.rowData.Add(itemData);
+                data.cellData.Add(itemData);
             }
 
             return data;
@@ -270,7 +270,7 @@ namespace Maything.UI.DataGridUI
 
                     if (isInsertRow)
                     {
-                        dataGridUI.rowData.Insert(selectItem.rowData.rowData[0].rowIndex + i - startIndex + 1,
+                        dataGridUI.rowData.Insert(selectItem.rowData.cellData[0].rowIndex + i - startIndex + 1,
                             CSVDataHelper.CSVStringToRowData(spt[i]));
                     }
                     else
@@ -334,7 +334,7 @@ namespace Maything.UI.DataGridUI
             CSVStringToColumnData(dataGridUI, h1);
         }
 
-        public static void GetTableHeaderAndConvertToInputFieldAndSetToDG(DataGridUI dataGridUI, string tableName)
+        public static void GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(DataGridUI dataGridUI, string tableName)
         {
             var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
             var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
@@ -402,13 +402,13 @@ namespace Maything.UI.DataGridUI
 
             foreach (DataGridRowData row in dataGridUI.rowData)
             {
-                for (int x = 0; x < row.rowData.Count; x++)
+                for (int x = 0; x < row.cellData.Count; x++)
                 {
-                    DataGridRowItemData item = row.rowData[x];
+                    DataGridRowItemData item = row.cellData[x];
 
                     csv += item.value;
 
-                    if (x < row.rowData.Count - 1)
+                    if (x < row.cellData.Count - 1)
                         csv += ",";
                 }
 
@@ -424,13 +424,13 @@ namespace Maything.UI.DataGridUI
 
             foreach (DataGridRowData row in dataGridUI.rowData)
             {
-                for (int x = 0; x < row.rowData.Count; x++)
+                for (int x = 0; x < row.cellData.Count; x++)
                 {
-                    DataGridRowItemData item = row.rowData[x];
+                    DataGridRowItemData item = row.cellData[x];
 
                     csv += item.value;
 
-                    if (x < row.rowData.Count - 1)
+                    if (x < row.cellData.Count - 1)
                         csv += ",";
                 }
 

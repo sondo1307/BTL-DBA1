@@ -133,12 +133,12 @@ namespace Maything.UI.DataGridUI
                         iData.photoData = SpriteHelper.GetStreamingAssetsSprite(s);
                     }
 
-                    rData.rowData.Add(iData);
+                    rData.cellData.Add(iData);
                 }
 
-                if (selectItem != null && selectItem.rowData.rowData.Count > 0)
+                if (selectItem != null && selectItem.rowData.cellData.Count > 0)
                 {
-                    dataGridUI.rowData.Insert(selectItem.rowData.rowData[0].rowIndex + i, rData);
+                    dataGridUI.rowData.Insert(selectItem.rowData.cellData[0].rowIndex + i, rData);
                     i++;
                 }
                 else
@@ -230,9 +230,9 @@ namespace Maything.UI.DataGridUI
             foreach (DataGridRowData row in dataGridUI.rowData)
             {
                 JsonRowData jRowData = new JsonRowData();
-                for (int x = 0; x < row.rowData.Count; x++)
+                for (int x = 0; x < row.cellData.Count; x++)
                 {
-                    DataGridRowItemData item = row.rowData[x];
+                    DataGridRowItemData item = row.cellData[x];
 
                     jRowData.data.Add(item.value);
                 }

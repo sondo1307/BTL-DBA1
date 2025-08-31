@@ -19,23 +19,23 @@ namespace Maything.UI.DataGridUI
 
             if (data == null) return;
 
-            for (int i = 0; i < data.rowData.Count; i++)
+            for (int i = 0; i < data.cellData.Count; i++)
             {
                 switch (columnData[i].columnType)
                 {
                     case DataGridColumnData.enumColumnType.GridMultipleCheckBox:
                         break;
                     case DataGridColumnData.enumColumnType.CheckBox:
-                        text.text += data.rowData[i].checkData.ToString() + ",";
+                        text.text += data.cellData[i].checkData.ToString() + ",";
                         break;
                     case DataGridColumnData.enumColumnType.Text:
-                        text.text += data.rowData[i].textData + ",";
+                        text.text += data.cellData[i].textData + ",";
                         break;
                     case DataGridColumnData.enumColumnType.Photo:
-                        image.sprite = data.rowData[i].photoData;
+                        image.sprite = data.cellData[i].photoData;
                         break;
                     default:
-                        text.text += data.rowData[i].textData + ",";
+                        text.text += data.cellData[i].textData + ",";
                         break;
                 }
             }
@@ -47,23 +47,23 @@ namespace Maything.UI.DataGridUI
 
             foreach (DataGridRowData data in dataList)
             {
-                for (int i = 0; i < data.rowData.Count; i++)
+                for (int i = 0; i < data.cellData.Count; i++)
                 {
                     switch (columnData[i].columnType)
                     {
                         case DataGridColumnData.enumColumnType.GridMultipleCheckBox:
                             break;
                         case DataGridColumnData.enumColumnType.CheckBox:
-                            text.text += data.rowData[i].checkData.ToString() + ",";
+                            text.text += data.cellData[i].checkData.ToString() + ",";
                             break;
                         case DataGridColumnData.enumColumnType.Text:
-                            text.text += data.rowData[i].textData + ",";
+                            text.text += data.cellData[i].textData + ",";
                             break;
                         case DataGridColumnData.enumColumnType.Photo:
-                            image.sprite = data.rowData[i].photoData;
+                            image.sprite = data.cellData[i].photoData;
                             break;
                         default:
-                            text.text += data.rowData[i].textData + ",";
+                            text.text += data.cellData[i].textData + ",";
                             break;
                     }
                 }

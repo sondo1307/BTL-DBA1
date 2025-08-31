@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Maything.UI.DataGridUI
 {
@@ -12,7 +13,7 @@ namespace Maything.UI.DataGridUI
     {
         public bool isSelected = false;
         //public List<string> rowData = new List<string>();
-        public List<DataGridRowItemData> rowData = new List<DataGridRowItemData>();
+        [FormerlySerializedAs("rowData")] public List<DataGridRowItemData> cellData = new List<DataGridRowItemData>();
 
         [JsonIgnore]
         [HideInInspector]

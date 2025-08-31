@@ -201,47 +201,154 @@ public class MySQLManager : MonoBehaviour
 
     public void UpdateOneRow(string tableName, string csvLine)
     {
-        var columns = GetTableHeader(tableName);
+        try
+        {
+            var columns = GetTableHeader(tableName);
         
-        // Tách các giá trị từ CSV line
-        string[] values = csvLine.Split(',');
+            // Tách các giá trị từ CSV line
+            string[] values = csvLine.Split(',');
 
-        if (values.Length != columns.Count)
-        {
-            UIManager.Instance.ShowToast("❌ CSV không hợp lệ: số cột không khớp!");
-            return;
+            if (values.Length != columns.Count)
+            {
+                UIManager.Instance.ShowToast("❌ CSV không hợp lệ: số cột không khớp!");
+                return;
+            }
+
+            // Cột đầu tiên là id
+            int id = int.Parse(values[0]);
+
+            // Tạo câu SQL động
+            List<string> setClauses = new List<string>();
+            // i = 1 bo qua column id (column 0)
+            for (int i = 1; i < columns.Count; i++)
+            {
+                setClauses.Add($"{columns[i]}=@{columns[i]}");
+            }
+
+            string sql = $"UPDATE {tableName} SET {string.Join(", ", setClauses)} WHERE {columns[0]}=@id";
+            print(sql);
+
+            using var cmd = new MySqlCommand(sql, Conn);
+            cmd.Parameters.AddWithValue("@id", id);
+
+            // Gán param động
+            for (int i = 1; i < columns.Count; i++)
+            {
+                cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
+            }
+
+            foreach (MySqlParameter param in cmd.Parameters)
+            {
+                print($"{param.ParameterName} = {param.Value}");
+            }
+        
+            int rows = cmd.ExecuteNonQuery();
+            Debug.Log($"✅ Update row id={id}, affected {rows} rows");
         }
-
-        // Cột đầu tiên là id
-        int id = int.Parse(values[0]);
-
-        // Tạo câu SQL động
-        List<string> setClauses = new List<string>();
-        // i = 1 bo qua column id (column 0)
-        for (int i = 1; i < columns.Count; i++)
+        catch (Exception e)
         {
-            setClauses.Add($"{columns[i]}=@{columns[i]}");
+            // Console.WriteLine(e);
+            UIManager.Instance.ShowToast(e.Message);
+            throw;
         }
+    }
 
-        string sql = $"UPDATE {tableName} SET {string.Join(", ", setClauses)} WHERE {columns[0]}=@id";
+    public void InsertOneRow(string tableName, string csvLine)
+    {
+        try
+        {
+            var columns = GetTableHeader(tableName);
+
+            string[] values = csvLine.Split(',');
+
+            if (values.Length != columns.Count)
+            {
+                UIManager.Instance.ShowToast("❌ CSV không hợp lệ: số cột không khớp!");
+                return;
+            }
+
+            // Tạo list tên cột và list placeholder @param
+            List<string> colNames = new List<string>();
+            List<string> paramNames = new List<string>();
+
+            for (int i = 0; i < columns.Count; i++)
+            {
+                colNames.Add(columns[i]);
+                paramNames.Add("@" + columns[i]);
+            }
+
+            string sql = $"INSERT INTO {tableName} ({string.Join(", ", colNames)}) VALUES ({string.Join(", ", paramNames)})";
+            print(sql);
+
+            using var cmd = new MySqlCommand(sql, Conn);
+
+            // Gán param động
+            for (int i = 0; i < columns.Count; i++)
+            {
+                cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
+            }
+
+            foreach (MySqlParameter param in cmd.Parameters)
+            {
+                print($"{param.ParameterName} = {param.Value}");
+            }
+
+            int rows = cmd.ExecuteNonQuery();
+            Debug.Log($"✅ Insert row, affected {rows} rows");
+        }
+        catch (Exception e)
+        {
+            // Console.WriteLine(e);
+            UIManager.Instance.ShowToast(e.Message);
+            throw;
+        }
+    }
+
+    public void DeleteOneRow(string tableName, string idValue)
+    {
+        var columns = GetTableHeader(tableName);
+
+        // Cột đầu tiên là khóa chính ID
+        string sql = $"DELETE FROM {tableName} WHERE {columns[0]}=@id";
         print(sql);
 
         using var cmd = new MySqlCommand(sql, Conn);
-        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@id", idValue);
 
-        // Gán param động
-        for (int i = 1; i < columns.Count; i++)
-        {
-            cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
-        }
-
-        foreach (MySqlParameter param in cmd.Parameters)
-        {
-            print($"{param.ParameterName} = {param.Value}");
-        }
-        
         int rows = cmd.ExecuteNonQuery();
-        Debug.Log($"✅ Update row id={id}, affected {rows} rows");
+        Debug.Log($"🗑️ Delete row id={idValue}, affected {rows} rows");
+    }
+    public void DeleteMultipleRows(string tableName, List<int> ids)
+    {
+        if (ids == null || ids.Count == 0)
+        {
+            Debug.LogWarning("⚠️ Không có ID nào để xóa!");
+            return;
+        }
+
+        var columns = GetTableHeader(tableName);
+        string idColumn = columns[0]; // giả sử cột đầu tiên là ID
+
+        // Tạo parameter cho từng id: @id0, @id1, ...
+        List<string> paramNames = new List<string>();
+        for (int i = 0; i < ids.Count; i++)
+        {
+            paramNames.Add($"@id{i}");
+        }
+
+        string sql = $"DELETE FROM {tableName} WHERE {idColumn} IN ({string.Join(", ", paramNames)})";
+        print(sql);
+
+        using var cmd = new MySqlCommand(sql, Conn);
+
+        // Gán giá trị cho từng param
+        for (int i = 0; i < ids.Count; i++)
+        {
+            cmd.Parameters.AddWithValue($"@id{i}", ids[i]);
+        }
+
+        int rows = cmd.ExecuteNonQuery();
+        Debug.Log($"🗑️ Delete multiple rows, affected {rows} rows");
     }
 
 }

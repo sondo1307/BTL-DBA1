@@ -24,7 +24,7 @@ namespace Maything.UI.DataGridUI
             if (selectItem == null)
                 dataGridUI.rowData.AddRange(rowsData);
             else
-                dataGridUI.rowData.InsertRange(selectItem.rowData.rowData[0].rowIndex + 1, rowsData);
+                dataGridUI.rowData.InsertRange(selectItem.rowData.cellData[0].rowIndex + 1, rowsData);
 
             dataGridUI.InitializationPaging();
             dataGridUI.InitializationRow(isClearRow);

@@ -414,7 +414,7 @@ namespace Maything.UI.DataGridUI
                 {
                     rowUI.dataGridUI = this;
 
-                    foreach(DataGridRowItemData rowData in data.rowData)
+                    foreach(DataGridRowItemData rowData in data.cellData)
                     {
                         rowData.rowIndex = rowIndex;
                     }

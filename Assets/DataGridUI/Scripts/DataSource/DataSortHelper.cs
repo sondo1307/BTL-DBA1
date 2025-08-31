@@ -32,7 +32,7 @@ namespace Maything.UI.DataGridUI
                 return rowData;
 
             // Lấy sample value để đoán kiểu dữ liệu
-            string sampleValue = rowData[0].rowData[orderIndex].value;
+            string sampleValue = rowData[0].cellData[orderIndex].value;
 
             bool isInt = int.TryParse(sampleValue, out _);
             bool isDouble = double.TryParse(sampleValue, out _);
@@ -41,30 +41,30 @@ namespace Maything.UI.DataGridUI
             if (isInt)
             {
                 if (isDescending)
-                    sortList = rowData.OrderByDescending(u => int.TryParse(u.rowData[orderIndex].value, out var num) ? num : int.MinValue).ToList();
+                    sortList = rowData.OrderByDescending(u => int.TryParse(u.cellData[orderIndex].value, out var num) ? num : int.MinValue).ToList();
                 else
-                    sortList = rowData.OrderBy(u => int.TryParse(u.rowData[orderIndex].value, out var num) ? num : int.MaxValue).ToList();
+                    sortList = rowData.OrderBy(u => int.TryParse(u.cellData[orderIndex].value, out var num) ? num : int.MaxValue).ToList();
             }
             else if (isDouble)
             {
                 if (isDescending)
-                    sortList = rowData.OrderByDescending(u => double.TryParse(u.rowData[orderIndex].value, out var num) ? num : double.MinValue).ToList();
+                    sortList = rowData.OrderByDescending(u => double.TryParse(u.cellData[orderIndex].value, out var num) ? num : double.MinValue).ToList();
                 else
-                    sortList = rowData.OrderBy(u => double.TryParse(u.rowData[orderIndex].value, out var num) ? num : double.MaxValue).ToList();
+                    sortList = rowData.OrderBy(u => double.TryParse(u.cellData[orderIndex].value, out var num) ? num : double.MaxValue).ToList();
             }
             else if (isDate)
             {
                 if (isDescending)
-                    sortList = rowData.OrderByDescending(u => DateTime.TryParse(u.rowData[orderIndex].value, out var dt) ? dt : DateTime.MinValue).ToList();
+                    sortList = rowData.OrderByDescending(u => DateTime.TryParse(u.cellData[orderIndex].value, out var dt) ? dt : DateTime.MinValue).ToList();
                 else
-                    sortList = rowData.OrderBy(u => DateTime.TryParse(u.rowData[orderIndex].value, out var dt) ? dt : DateTime.MaxValue).ToList();
+                    sortList = rowData.OrderBy(u => DateTime.TryParse(u.cellData[orderIndex].value, out var dt) ? dt : DateTime.MaxValue).ToList();
             }
             else
             {
                 if (isDescending)
-                    sortList = rowData.OrderByDescending(u => u.rowData[orderIndex].value).ToList();
+                    sortList = rowData.OrderByDescending(u => u.cellData[orderIndex].value).ToList();
                 else
-                    sortList = rowData.OrderBy(u => u.rowData[orderIndex].value).ToList();
+                    sortList = rowData.OrderBy(u => u.cellData[orderIndex].value).ToList();
             }
 
             return sortList;

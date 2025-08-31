@@ -85,36 +85,36 @@ namespace Maything.UI.DataGridUI
             DataGridRowData data = new DataGridRowData();
             DataGridRowItemData item = new DataGridRowItemData();
             item.textData = "";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "Enoch Homenick";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.checkData = true;
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "Nanjing";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "1-914-164-7993";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "lea";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "willard_lind@beertowne.name";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
 
             item = new DataGridRowItemData();
             item.textData = "button1";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             rowsData.Add(data);
 
@@ -122,36 +122,36 @@ namespace Maything.UI.DataGridUI
             data = new DataGridRowData();
             item = new DataGridRowItemData();
             item.textData = "";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "Dr. Virgil Ara Reinger";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.checkData = false;
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "Shanghai";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "320.141.2108 x55557";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "wilburn_langosh";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             item = new DataGridRowItemData();
             item.textData = "hailey@stiedemann.info";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
 
             item = new DataGridRowItemData();
             item.textData = "button2";
-            data.rowData.Add(item);
+            data.cellData.Add(item);
 
             rowsData.Add(data);
 

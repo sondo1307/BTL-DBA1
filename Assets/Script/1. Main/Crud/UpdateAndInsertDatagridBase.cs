@@ -13,7 +13,6 @@ public enum UpdateOrInsert
 
 public class UpdateAndInsertDatagridBase : MonoBehaviour
 {
-    [SerializeField] private GameObject _insertTotalGob;
     [SerializeField] private Button _updateBtn;
     [SerializeField] private Button _addBtn;
     [SerializeField] private DataGridUI _dataGridUI;
@@ -25,32 +24,37 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
         _addBtn.onClick.AddListener(AddRow);
     }
 
-    public virtual void Show(UpdateOrInsert updateOrInsert, string tableName, DataGridRowData rowData, Action callback)
+    public virtual void Show(UpdateOrInsert updateOrInsert, string tableName, DataGridRowData rowData)
     {
-        CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDG(_dataGridUI, tableName);
-        gameObject.SetActive(true);
+        CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(_dataGridUI, tableName);
         switch (updateOrInsert)
         {
             case UpdateOrInsert.Update:
-                _insertTotalGob.SetActive(false);
                 _addBtn.gameObject.SetActive(false);
                 _updateBtn.gameObject.SetActive(true);
                 _dataGridUI.rowData[0] = rowData;
                 break;
             case UpdateOrInsert.Insert:
-                _insertTotalGob.SetActive(true);
                 _addBtn.gameObject.SetActive(true);
                 _updateBtn.gameObject.SetActive(false);
+                var numberOfColumns = _dataGridUI.columnData.Count;
+                for (int i = 0; i < numberOfColumns; i++)
+                {
+                    _freshRowData.cellData.Add(new DataGridRowItemData());
+                }
+
                 _dataGridUI.rowData[0] = _freshRowData;
                 break;
         }
 
-        _dataGridUI.Start();
-        callback?.Invoke();
+        // _dataGridUI.Start();
+        // _dataGridUI.RowClear();
+        gameObject.SetActive(true);
     }
 
     private void Hide()
     {
+        // _dataGridUI.rowData.Clear();
         gameObject.SetActive(false);
         MainCrud.Instance.RefreshData();
     }
@@ -64,6 +68,8 @@ public class UpdateAndInsertDatagridBase : MonoBehaviour
 
     private void AddRow()
     {
+        MySQLManager.Instance.InsertOneRow(MainCrud.Instance.CurrentMainCrud.TableName,
+            CSVDataHelper.ExportRowsToCSV(_dataGridUI));
         Hide();
     }
 }
