@@ -12,10 +12,10 @@ public class MainCrud : MonoBehaviour
 {
     public static MainCrud Instance;
     
-    [FormerlySerializedAs("CauThu")] public MainCrudPlayer player;
-    [FormerlySerializedAs("DoiBong")] public MainCrudTeam team;
-    [FormerlySerializedAs("TrongTai")] public MainCrudReferee referee;
-    [FormerlySerializedAs("Stadium")] public MainCrudStadium stadium;
+    [FormerlySerializedAs("CauThu")] public MainCrudObjectBase player;
+    [FormerlySerializedAs("DoiBong")] public MainCrudObjectBase team;
+    [FormerlySerializedAs("TrongTai")] public MainCrudObjectBase referee;
+    [FormerlySerializedAs("Stadium")] public MainCrudObjectBase stadium;
     [ReadOnly] public MainCrudObjectBase CurrentMainCrud;
 
     [FormerlySerializedAs("_cauThuToggle")] [SerializeField]

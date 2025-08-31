@@ -8,14 +8,17 @@ public class MainCrudObjectBase : MonoBehaviour
 {
     // public string HeaderColumnMain = "[ID|100|Int,Tên|500|Text,Số lượng|100|Int,Giá|250|Int,Ngày nhập|300|Int]";
     // public string HeaderColumnCRUD = "[ID|100|Int,Tên|500|InputField,Số lượng|100|InputField,Giá|250|InputField,Ngày nhập|300|InputField]";
-    [SerializeReference] public UpdateAndInsertDatagridBase AddDataGob;
+    [SerializeField] private InsertMiniDg _insertMiniDg;
+    [SerializeField] private UpdateMiniDg _updateMiniDg;
     public DataGridUI DataGridUI;
     public string TableName;
 
     protected virtual void OnValidate()
     {
         DataGridUI = GetComponentInChildren<DataGridUI>();
-        AddDataGob = GetComponentInChildren<UpdateAndInsertDatagridBase>(true);
+        _insertMiniDg = GetComponentInChildren<InsertMiniDg>(true);
+        _updateMiniDg = GetComponentInChildren<UpdateMiniDg>(true);
+        TableName = gameObject.name;
     }
 
     private void Start()
@@ -29,7 +32,6 @@ public class MainCrudObjectBase : MonoBehaviour
 
     public async void Setup(bool isOn)
     {
-        UIManager.Instance.ShowPermantCircle();
         var h = MySQLManager.Instance.GetTableHeaderAsCsv(TableName);
         var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
         if (DataGridUI.columnData.Count == 0)
@@ -40,8 +42,6 @@ public class MainCrudObjectBase : MonoBehaviour
         // DataGridUI.InitializationColumn();
         var data = MySQLManager.Instance.GetTableDataAsCsv(TableName);
         CSVDataHelper.DataFromCSV(DataGridUI, false, true, true, false, data);
-        await Task.Delay(1000);
-        UIManager.Instance.HideCircle();
     }
 
     public void UpdateOneRow(DataGridUI dataGridUI)
@@ -59,7 +59,7 @@ public class MainCrudObjectBase : MonoBehaviour
             {
                 var rowData = dataGridUI.GetLastSelectItem().rowData;
 
-                AddDataGob.Show(UpdateOrInsert.Update, TableName, rowData);
+                _updateMiniDg.Show(TableName, rowData);
                 break;
             }
         }
@@ -94,6 +94,6 @@ public class MainCrudObjectBase : MonoBehaviour
 
     public void ShowAddDataGob()
     {
-        AddDataGob.Show(UpdateOrInsert.Insert, TableName, null);
+        _insertMiniDg.Show(TableName, null);
     }
 }

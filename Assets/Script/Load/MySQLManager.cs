@@ -170,9 +170,17 @@ public class MySQLManager : MonoBehaviour
                     object rawValue = reader[i];
                     string value;
 
-                    if (rawValue is DateTime dt) // Nếu là DateTime thì format dd/MM/yyyy
+                    if (rawValue is DateTime dt) // Nếu là DateTime thì format yyyy-MM-dd
                     {
                         value = dt.ToString("yyyy-MM-dd");
+                    }
+                    else if (rawValue is bool b) // Nếu là boolean thì chuyển thành 1/0
+                    {
+                        value = b ? "1" : "0";
+                    }
+                    else if (rawValue is sbyte sb) // Một số driver trả tinyint là sbyte
+                    {
+                        value = sb.ToString();
                     }
                     else
                     {
@@ -199,7 +207,8 @@ public class MySQLManager : MonoBehaviour
     }
 
 
-    public void UpdateOneRow(string tableName, string csvLine)
+
+    public void UpdateOneRow(string tableName, string csvLine, Action callback)
     {
         try
         {
@@ -244,6 +253,8 @@ public class MySQLManager : MonoBehaviour
         
             int rows = cmd.ExecuteNonQuery();
             Debug.Log($"✅ Update row id={id}, affected {rows} rows");
+            
+            callback?.Invoke();
         }
         catch (Exception e)
         {
@@ -253,7 +264,7 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public void InsertOneRow(string tableName, string csvLine)
+    public void InsertOneRow(string tableName, string csvLine, Action callback)
     {
         try
         {
@@ -295,6 +306,8 @@ public class MySQLManager : MonoBehaviour
 
             int rows = cmd.ExecuteNonQuery();
             Debug.Log($"✅ Insert row, affected {rows} rows");
+            
+            callback?.Invoke();
         }
         catch (Exception e)
         {

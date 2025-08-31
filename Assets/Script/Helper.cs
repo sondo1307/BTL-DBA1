@@ -85,7 +85,7 @@ public static class StringUtils
         return "[" + string.Join(",", output) + "]";
     }
 
-    public static string ConvertDGHeaderStringToDGHeaderInputFieldForCrud(string headerDG)
+    public static string ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(string headerDG)
     {
         int matchIndex = 0;
         return Regex.Replace(headerDG, "Text", m =>
@@ -93,5 +93,10 @@ public static class StringUtils
             matchIndex++;
             return matchIndex == 1 ? m.Value : "InputField";
         });
+    }
+    
+    public static string ConvertDGHeaderStringToDGHeaderInputFieldForInsert(string headerDG)
+    {
+        return Regex.Replace(headerDG, "Text", m => "InputField");
     }
 }
