@@ -226,7 +226,7 @@ public class Main_SeasonDetail : MonoBehaviour
     public async void OnSearchClick()
     {
         UIManager.Instance.ShowPermantCircle();
-        string format = "dd/MM/yyyy";
+        string format = "yyyy-MM-dd";
         var input = _thanhTimKiem.text;
 
         // TODO: Sửa code dùng event để invoke 

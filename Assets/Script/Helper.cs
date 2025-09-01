@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class SonConst
 {
-    public const string DateFormat = "dd/MM/yyyy";
+    public const string DateFormat = "yyyy-MM-dd";
 }
 
 public static class SonCache

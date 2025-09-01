@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dabfe93e8e9d1c4db23e44098656344, type: 3}
   m_Name: ThemeDefaultLargeFontSize
   m_EditorClassIdentifier: 
-  scrollBarSize: 10
+  scrollBarSize: 25
   scrollBarBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
-  scrollBarNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  scrollBarNormalColor: {r: 1, g: 0, b: 0, a: 1}
   scrollBarHighlightedColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}
   scrollBarPressedColor: {r: 0.78, g: 0.78, b: 0.78, a: 1}
   scrollBarSelectedColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainCrudObjectBase : MonoBehaviour
 {
@@ -13,6 +15,11 @@ public class MainCrudObjectBase : MonoBehaviour
     public DataGridUI DataGridUI;
     public string TableName;
 
+    [Header("Search")] [SerializeField]
+    private TMP_InputField _searchInput;
+    [SerializeField] private Button _searhBtn;
+    
+    
     protected virtual void OnValidate()
     {
         DataGridUI = GetComponentInChildren<DataGridUI>();
@@ -23,6 +30,7 @@ public class MainCrudObjectBase : MonoBehaviour
 
     private void Start()
     {
+        _searhBtn.onClick.AddListener(OnSearchBtnClick);
     }
 
     private void OnEnable()
@@ -30,7 +38,7 @@ public class MainCrudObjectBase : MonoBehaviour
         // Load Data
     }
 
-    public async void Setup(bool isOn)
+    public async void Setup()
     {
         var h = MySQLManager.Instance.GetTableHeaderAsCsv(TableName);
         var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
@@ -41,6 +49,11 @@ public class MainCrudObjectBase : MonoBehaviour
 
         // DataGridUI.InitializationColumn();
         var data = MySQLManager.Instance.GetTableDataAsCsv(TableName);
+        CSVDataHelper.DataFromCSV(DataGridUI, false, true, true, false, data);
+    }
+
+    public void Setup(string data)
+    {
         CSVDataHelper.DataFromCSV(DataGridUI, false, true, true, false, data);
     }
 
@@ -96,4 +109,22 @@ public class MainCrudObjectBase : MonoBehaviour
     {
         _insertMiniDg.Show(TableName, null);
     }
+
+    #region Search
+
+    private void OnSearchBtnClick()
+    {
+        if (!string.IsNullOrEmpty(_searchInput.text))
+        {
+            var a = MySQLManager.Instance.SearchTableAsCsv(TableName, _searchInput.text);
+            Setup(a);
+        }
+        else
+        {
+            var b = MySQLManager.Instance.GetTableDataAsCsv(TableName);
+            Setup(b);
+        }
+    }
+
+    #endregion
 }

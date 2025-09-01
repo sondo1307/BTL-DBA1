@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CanvasGroup _toastCg;
     [SerializeField] private TMP_Text _toastTxt;
 
+    private Coroutine _toastCoroutine;
+
     private void Awake()
     {
         if (Instance == null)
@@ -23,35 +25,36 @@ public class UIManager : MonoBehaviour
     {
         _circleCg.ShowCg();
     }
-    
+
     public void ShowCircle()
     {
         _circleCg.ShowCg();
         StartCoroutine(Delay());
         return;
-        
+
         IEnumerator Delay()
         {
             yield return SonCache.WaitSeconds;
             _circleCg.HideCg();
         }
     }
-    
+
     public void HideCircle()
     {
         _circleCg.HideCg();
     }
-    
-    public void ShowToast(string message)
+
+    public void ShowToast(string message, int seconds = 3)
     {
         _toastCg.ShowCg();
-        StartCoroutine(Delay());
+        if (_toastCoroutine != null) StopCoroutine(_toastCoroutine);
+        _toastCoroutine = StartCoroutine(Delay());
         _toastTxt.text = message;
         return;
-        
+
         IEnumerator Delay()
         {
-            yield return SonCache.WaitSeconds;
+            yield return new WaitForSeconds(seconds);
             _toastCg.HideCg();
         }
     }

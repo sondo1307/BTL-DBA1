@@ -12,22 +12,10 @@ public class MainCrud : MonoBehaviour
 {
     public static MainCrud Instance;
     
-    [FormerlySerializedAs("CauThu")] public MainCrudObjectBase player;
-    [FormerlySerializedAs("DoiBong")] public MainCrudObjectBase team;
-    [FormerlySerializedAs("TrongTai")] public MainCrudObjectBase referee;
-    [FormerlySerializedAs("Stadium")] public MainCrudObjectBase stadium;
     [ReadOnly] public MainCrudObjectBase CurrentMainCrud;
-
-    [FormerlySerializedAs("_cauThuToggle")] [SerializeField]
-    private Toggle _playerToggle;
-
-    [FormerlySerializedAs("_doiBongToggle")] [SerializeField]
-    private Toggle _teamToggle;
-
-    [FormerlySerializedAs("_trongTaiToggle")] [SerializeField]
-    private Toggle _refToggle;
-
-    [SerializeField] private Toggle _stadiumToggle;
+    [SerializeField] private MainCrudObjectBase[] _dgs;
+    
+    [SerializeField] private Toggle[] _toggles;
 
     private void Awake()
     {
@@ -39,34 +27,18 @@ public class MainCrud : MonoBehaviour
 
     private void Start()
     {
-        _playerToggle.onValueChanged.AddListener((isOn) =>
+        for (var i = 0; i < _toggles.Length; i++)
         {
-            SetCurrent(false);
-            CurrentMainCrud = player;
-            CurrentMainCrud.Setup(isOn);
-            SetCurrent(true);
-        });
-        _teamToggle.onValueChanged.AddListener((isOn) =>
-        {
-            SetCurrent(false);
-            CurrentMainCrud = team;
-            CurrentMainCrud.Setup(isOn);
-            SetCurrent(true);
-        });
-        _refToggle.onValueChanged.AddListener((isOn) =>
-        {
-            SetCurrent(false);
-            CurrentMainCrud = referee;
-            CurrentMainCrud.Setup(isOn);
-            SetCurrent(true);
-        });
-        _stadiumToggle.onValueChanged.AddListener((isOn) =>
-        {
-            SetCurrent(false);
-            CurrentMainCrud = stadium;
-            CurrentMainCrud.Setup(isOn);
-            SetCurrent(true);
-        });
+            var i1 = i;
+            var toggle = _toggles[i1];
+            toggle.onValueChanged.AddListener((isOn) =>
+            {
+                SetCurrent(false);
+                CurrentMainCrud = _dgs[i1];
+                CurrentMainCrud.Setup();
+                SetCurrent(true);
+            });
+        }
     }
 
     private void SetCurrent(bool setState)
@@ -95,6 +67,6 @@ public class MainCrud : MonoBehaviour
     [ContextMenu("Refresh Data")]
     public void RefreshData()
     {
-        CurrentMainCrud.Setup(true);
+        CurrentMainCrud.Setup();
     }
 }
