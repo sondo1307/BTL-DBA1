@@ -338,11 +338,8 @@ namespace Maything.UI.DataGridUI
         {
             var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
             var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
-            var a = "";
-            if (mode == UpdateOrInsert.Update)
-                 a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
-            else
-                 a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForInsert(h1);
+            var a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
+            // a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForInsert(h1);
             CSVStringToColumnData(dataGridUI, a);
         }
         

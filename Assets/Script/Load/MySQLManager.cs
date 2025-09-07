@@ -107,6 +107,101 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
+    public List<List<string>> GetAllRowsAsList(string table)
+    {
+        var allRows = new List<List<string>>();
+
+        try
+        {
+            string query = $"SELECT * FROM `{table}`;";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var row = new List<string>();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string value;
+
+                    if (rawValue is DateTime dt)
+                        value = dt.ToString(SonConst.DateFormat);
+                    else if (rawValue is bool b)
+                        value = b ? "1" : "0";
+                    else
+                        value = rawValue?.ToString() ?? "";
+
+                    row.Add(value);
+                }
+
+                allRows.Add(row);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return allRows;
+    }
+
+
+    public string GetTableAsCsv(string table)
+    {
+        try
+        {
+            string query = $"SELECT * FROM `{table}`;";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            var csv = new StringBuilder();
+
+            // Write header
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                csv.Append(reader.GetName(i));
+                if (i < reader.FieldCount - 1) csv.Append(",");
+            }
+
+            csv.AppendLine();
+
+            // Write data rows
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string value;
+
+                    if (rawValue is DateTime dt) // Format datetime
+                        value = dt.ToString(SonConst.DateFormat);
+                    else if (rawValue is bool b) // Format boolean
+                        value = b ? "1" : "0";
+                    else
+                        value = rawValue?.ToString() ?? "";
+
+                    // Escape commas to avoid breaking CSV
+                    value = value.Replace(",", "&");
+
+                    csv.Append(value);
+                    if (i < reader.FieldCount - 1) csv.Append(",");
+                }
+
+                csv.AppendLine();
+            }
+
+            return csv.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return string.Empty;
+        }
+    }
+
+
     public string GetTableHeaderAsCsv(string table)
     {
         try
@@ -282,7 +377,8 @@ public class MySQLManager : MonoBehaviour
             List<string> colNames = new List<string>();
             List<string> paramNames = new List<string>();
 
-            for (int i = 0; i < columns.Count; i++)
+            // Start từ 1 vì id luôn tăng dần auto
+            for (int i = 1; i < columns.Count; i++)
             {
                 colNames.Add(columns[i]);
                 paramNames.Add("@" + columns[i]);
@@ -295,7 +391,7 @@ public class MySQLManager : MonoBehaviour
             using var cmd = new MySqlCommand(sql, Conn);
 
             // Gán param động
-            for (int i = 0; i < columns.Count; i++)
+            for (int i = 1; i < columns.Count; i++)
             {
                 cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
             }
@@ -365,74 +461,74 @@ public class MySQLManager : MonoBehaviour
         int rows = cmd.ExecuteNonQuery();
         Debug.Log($"🗑️ Delete multiple rows, affected {rows} rows");
     }
-    
-public string SearchTableAsCsv(string tableName, string keyword)
-{
-    try
+
+    public string SearchTableAsCsv(string tableName, string keyword)
     {
-        var columns = GetTableHeader(tableName);
-        if (columns == null || columns.Count == 0)
+        try
         {
-            Debug.LogWarning($"⚠️ Không tìm thấy cột nào trong bảng {tableName}");
+            var columns = GetTableHeader(tableName);
+            if (columns == null || columns.Count == 0)
+            {
+                Debug.LogWarning($"⚠️ Không tìm thấy cột nào trong bảng {tableName}");
+                return string.Empty;
+            }
+
+            string sql = $"SELECT * FROM `{tableName}`";
+            using var cmd = new MySqlCommand(sql, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            var csv = new StringBuilder();
+
+            // // Header
+            // for (int i = 0; i < reader.FieldCount; i++)
+            // {
+            //     csv.Append(reader.GetName(i));
+            //     if (i < reader.FieldCount - 1) csv.Append(",");
+            // }
+            // csv.AppendLine();
+
+            // Data
+            while (reader.Read())
+            {
+                // Gom cả row thành 1 string để check ContainsNormalized
+                var rowBuilder = new StringBuilder();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    rowBuilder.Append(reader[i]?.ToString() ?? "");
+                    rowBuilder.Append("|"); // phân cách tạm
+                }
+
+                string rowString = rowBuilder.ToString();
+                if (!StringUtils.ContainsNormalized(rowString, keyword))
+                    continue; // bỏ qua nếu không match
+
+                // Nếu match thì xuất ra CSV
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object raw = reader[i];
+                    string value;
+
+                    if (raw is DateTime dt)
+                        value = dt.ToString(SonConst.DateFormat);
+                    else if (raw is bool b)
+                        value = b ? "1" : "0";
+                    else
+                        value = raw?.ToString() ?? "";
+
+                    value = value.Replace(",", "&"); // tránh phá CSV
+                    csv.Append(value);
+                    if (i < reader.FieldCount - 1) csv.Append(",");
+                }
+
+                csv.AppendLine();
+            }
+
+            return csv.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
             return string.Empty;
         }
-
-        string sql = $"SELECT * FROM `{tableName}`";
-        using var cmd = new MySqlCommand(sql, Conn);
-        using var reader = cmd.ExecuteReader();
-
-        var csv = new StringBuilder();
-
-        // // Header
-        // for (int i = 0; i < reader.FieldCount; i++)
-        // {
-        //     csv.Append(reader.GetName(i));
-        //     if (i < reader.FieldCount - 1) csv.Append(",");
-        // }
-        // csv.AppendLine();
-
-        // Data
-        while (reader.Read())
-        {
-            // Gom cả row thành 1 string để check ContainsNormalized
-            var rowBuilder = new StringBuilder();
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                rowBuilder.Append(reader[i]?.ToString() ?? "");
-                rowBuilder.Append("|"); // phân cách tạm
-            }
-
-            string rowString = rowBuilder.ToString();
-            if (!StringUtils.ContainsNormalized(rowString, keyword))
-                continue; // bỏ qua nếu không match
-
-            // Nếu match thì xuất ra CSV
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                object raw = reader[i];
-                string value;
-
-                if (raw is DateTime dt)
-                    value = dt.ToString(SonConst.DateFormat);
-                else if (raw is bool b)
-                    value = b ? "1" : "0";
-                else
-                    value = raw?.ToString() ?? "";
-
-                value = value.Replace(",", "&"); // tránh phá CSV
-                csv.Append(value);
-                if (i < reader.FieldCount - 1) csv.Append(",");
-            }
-            csv.AppendLine();
-        }
-
-        return csv.ToString();
     }
-    catch (MySqlException ex)
-    {
-        Debug.LogError("❌ MySQL Error: " + ex.Message);
-        return string.Empty;
-    }
-}
-
 }

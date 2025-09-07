@@ -25,16 +25,16 @@ public class VongDau : MonoBehaviour
         CSVDataHelper.DataFromCSV(Main_SeasonDetail.Instance.vongDauDetailClass.DataGridUI, false, true, false, false,
             "1,\"Bút bi\",100,5000,110");
     }
-    
+
     public void SetVongDau(int vongDau)
     {
         _txt.text = "Vòng " + vongDau;
     }
-    
-    public void AddTranDau(string team1, string team2, string ngayDau)
+
+    public void AddTranDau(MatchDb matchDb)
     {
         TranDau tranDau = Instantiate(_tranDauPrefab, transform);
-        tranDau.SetCapDau(team1, team2, ngayDau);
+        tranDau.SetCapDau(matchDb);
         TranDaus.Add(tranDau);
     }
 }

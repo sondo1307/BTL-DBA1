@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
 using TMPro;
@@ -9,23 +11,33 @@ using UI.Dates;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class TranDauDetailClass
 {
     public GameObject TranDauDetail;
-    public DataGridUI DataGridUI;
+    [FormerlySerializedAs("DataGridUI")] public DataGridUI MatchEvent;
+    public DataGridUI Match;
     public Button SaveButton;
     public Button CancelButton;
 
-    public void Open(string header)
+    public void Open()
     {
         TranDauDetail.gameObject.SetActive(true);
         SaveButton.onClick.AddListener(OnSaveBtnClick);
         CancelButton.onClick.AddListener(OnCancelBtnClick);
-        if (DataGridUI.columnData.Count == 0)
+        if (MatchEvent.columnData.Count == 0)
         {
-            var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+            var matchEventsHeader = MySQLManager.Instance.GetTableHeaderAsCsv("match_event");
+            var matchEventData = MySQLManager.Instance.GetTableDataAsCsv("match_event");
+            var a = CSVDataHelper.CSVStringToColumnData(MatchEvent, matchEventsHeader);
+            CSVDataHelper.DataFromCSV(MatchEvent, false, true, true, false, matchEventData);
+
+            var matchHeader = MySQLManager.Instance.GetTableHeaderAsCsv("matchs");
+            var matchData = MySQLManager.Instance.GetTableDataAsCsv("matchs");
+            var b = CSVDataHelper.CSVStringToColumnData(Match, matchHeader);
+            CSVDataHelper.DataFromCSV(Match, false, true, true, false, matchData);
         }
     }
 
@@ -43,7 +55,7 @@ public class TranDauDetailClass
     private void Close()
     {
         TranDauDetail.gameObject.SetActive(false);
-        DataGridUI.RowClear();
+        MatchEvent.RowClear();
         SaveButton.onClick.RemoveAllListeners();
         CancelButton.onClick.RemoveAllListeners();
     }
@@ -64,7 +76,6 @@ public class VongDauDetailClass
         {
             var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
         }
-
     }
 
     private void OnCancelBtnClick()
@@ -80,12 +91,76 @@ public class VongDauDetailClass
     }
 }
 
+[System.Serializable]
+public class MatchDb
+{
+    public int match_id;
+    public int home_team_id;
+    public int away_team_id;
+    public int stadium_id;
+    public string match_date;
+    public string referee_main;
+    public string referee_assist1;
+    public string referee_assist2;
+    public string referee_assist_var;
+    public string away_play_join;
+    public string home_play_join;
+    public int ticket_price;
+    public int tourament_round;
+
+    public MatchDb(int matchID, int homeTeamID, int awayTeamID, int stadiumID, string matchDate, string refereeMain,
+        string refereeAssist1, string refereeAssist2, string refereeAssistVar, string awayPlayJoin, string homePlayJoin,
+        int ticketPrice, int touramentRound)
+    {
+        match_id = matchID;
+        home_team_id = homeTeamID;
+        away_team_id = awayTeamID;
+        stadium_id = stadiumID;
+        match_date = matchDate;
+        referee_main = refereeMain;
+        referee_assist1 = refereeAssist1;
+        referee_assist2 = refereeAssist2;
+        referee_assist_var = refereeAssistVar;
+        away_play_join = awayPlayJoin;
+        home_play_join = homePlayJoin;
+        ticket_price = ticketPrice;
+        tourament_round = touramentRound;
+    }
+}
+
+[System.Serializable]
+public class Team
+{
+    public int team_id;
+    public string team_name;
+    public DateTime team_created;
+    public int country_id;
+    public int stadium_id;
+    public string home_kit;
+    public string away_kit;
+    public string third_kit;
+    public int active;
+
+    public Team(int teamID, string teamName, DateTime teamCreated, int countryID, int stadiumID, string homeKit,
+        string awayKit, string thirdKit, int active)
+    {
+        team_id = teamID;
+        team_name = teamName;
+        team_created = teamCreated;
+        country_id = countryID;
+        stadium_id = stadiumID;
+        home_kit = homeKit;
+        away_kit = awayKit;
+        third_kit = thirdKit;
+        this.active = active;
+    }
+}
+
 public class Main_SeasonDetail : MonoBehaviour
 {
     public static Main_SeasonDetail Instance { get; set; }
 
     [SerializeField] private int _soDoi = 8;
-    [SerializeField] private List<string> _teams = new List<string>();
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
@@ -116,6 +191,8 @@ public class Main_SeasonDetail : MonoBehaviour
 
     public void OnTaoGiaiDauClick()
     {
+        var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
+        _soDoi = rowsTeam.Count;
         if (_soDoi % 2 != 0)
         {
             UIManager.Instance.ShowToast("So doi bong phai chan");
@@ -123,75 +200,75 @@ public class Main_SeasonDetail : MonoBehaviour
         }
 
         StartCoroutine(TaoGiaiDau());
-    }
+        return;
 
-    private IEnumerator TaoGiaiDau()
-    {
-        _teams.Clear();
-        for (int i = 1; i <= _soDoi; i++)
+        IEnumerator TaoGiaiDau()
         {
-            _teams.Add("Đội " + i);
-        }
+            List<List<MatchDb>> rounds = GenerateRoundsAndMatches();
 
-        List<List<(string, string)>> schedule = GenerateSchedule(_teams);
 
-        System.Random rnd = new System.Random();
-        DateTime currentDate = DateTime.Now; // ngày bắt đầu
-
-        // In lịch thi đấu
-        int round = 1;
-        foreach (var matchDay in schedule)
-        {
-            VongDau vongDau = Instantiate(_vongDauPrefab, _content);
-            _vongDaus.Add(vongDau);
-            vongDau.SetVongDau(round);
-
-            // Random ngày bắt đầu của vòng này (tiến dần so với vòng trước)
-            // currentDate = currentDate.AddDays(rnd.Next(4, 7));
-            currentDate = currentDate.AddDays(matchDay.Count);
-
-            DateTime matchDate = currentDate;
-            foreach (var match in matchDay)
+            // In lịch thi đấu
+            int round = 1;
+            foreach (var lMatchesDB in rounds)
             {
-                // Trong cùng vòng, các trận cách nhau 1–2 ngày
-                matchDate = matchDate.AddDays(1);
+                VongDau vongDau = Instantiate(_vongDauPrefab, _content);
 
-                string ngayDau = matchDate.ToString("dd/MM/yyyy");
+                foreach (var match in lMatchesDB)
+                {
+                    vongDau.AddTranDau(match);
+                }
 
-                // Nếu VongDau có hàm AddTranDau nhận thêm ngày thì thêm vào
-                vongDau.AddTranDau(match.Item1, match.Item2, ngayDau);
+                _vongDaus.Add(vongDau);
+                vongDau.SetVongDau(round);
+
+                round++;
                 yield return SonCache.WaitForEndOfFrame;
             }
-
-            round++;
         }
     }
 
-// Tuple (string, string) = (team1, team2)
-    List<List<(string, string)>> GenerateSchedule(List<string> teams)
+    List<List<MatchDb>> GenerateRoundsAndMatches()
     {
-        int n = teams.Count;
-        if (n % 2 != 0) throw new System.ArgumentException("Số đội phải là số chẵn!");
+        var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
 
         // Mảng làm việc: giữ arr[0] cố định, xoay các phần tử 1..n-1
-        var arr = new List<string>(teams);
-        var rounds = new List<List<(string, string)>>();
+        var arr = new List<Team>();
+        var rounds = new List<List<MatchDb>>();
+        var n = rowsTeam.Count;
+
+        foreach (var rowTeamData in rowsTeam)
+        {
+            var a = new Team(int.Parse(rowTeamData[0]), rowTeamData[1],
+                DateTime.ParseExact(rowTeamData[2], SonConst.DateFormat, CultureInfo.InvariantCulture),
+                int.Parse(rowTeamData[3]),
+                int.Parse(rowTeamData[4]),
+                rowTeamData[5], rowTeamData[6], rowTeamData[7], int.Parse(rowTeamData[8]));
+            arr.Add(a);
+        }
+
+        DateTime matchDate = DateTime.Now;
 
         // Lượt đi: n-1 vòng
         for (int r = 0; r < n - 1; r++)
         {
-            var matches = new List<(string, string)>();
+            var matches = new List<MatchDb>();
             for (int i = 0; i < n / 2; i++)
             {
-                string home = arr[i];
-                string away = arr[n - 1 - i];
-                matches.Add((home, away));
+                var home = arr[i];
+                var away = arr[n - 1 - i];
+                var refs = RandomRefForOneGame();
+                var m = new MatchDb(0, home.team_id, away.team_id, 0, matchDate.ToString(SonConst.DateFormat),
+                    refs.Item1, refs.Item2,
+                    refs.Item3, refs.Item4, away.team_name, home.team_name, Random.Range(50000, 100000),
+                    r + 1);
+                matchDate = matchDate.AddDays(1);
+                matches.Add(m);
             }
 
             rounds.Add(matches);
 
             // Xoay vòng: giữ arr[0], dịch phải đoạn [1..n-1]
-            string last = arr[n - 1];
+            Team last = arr[n - 1];
             for (int i = n - 1; i >= 2; i--)
                 arr[i] = arr[i - 1];
             arr[1] = last;
@@ -199,15 +276,69 @@ public class Main_SeasonDetail : MonoBehaviour
 
         // Lượt về: đảo sân của từng cặp theo đúng thứ tự vòng
         int total = rounds.Count;
+//        for (int i = 0; i < total; i++)
+//        {
+//            var ret = new List<MatchDb>();
+//            foreach (var m in rounds[i])
+//            {
+//                ret.Add(m);
+//                matchDate = matchDate.AddDays(1);
+//            }
+//
+//            rounds.Add(ret);
+//        }
         for (int i = 0; i < total; i++)
         {
-            var ret = new List<(string, string)>();
+            var ret = new List<MatchDb>();
             foreach (var m in rounds[i])
-                ret.Add((m.Item2, m.Item1));
+            {
+                var rematch = new MatchDb(
+                    0,
+                    m.away_team_id,   // đảo sân
+                    m.home_team_id,
+                    0,
+                    matchDate.ToString(SonConst.DateFormat),
+                    m.referee_main,
+                    m.referee_assist1,
+                    m.referee_assist2,
+                    m.referee_assist_var,
+                    m.home_play_join,
+                    m.away_play_join,
+                    m.ticket_price,
+                    m.tourament_round + total // tăng số vòng để phân biệt
+                );
+
+                ret.Add(rematch);
+
+                // tăng ngày ngay sau khi gán trận
+                matchDate = matchDate.AddDays(1);
+            }
+
             rounds.Add(ret);
         }
 
         return rounds;
+    }
+
+    (string, string, string, string) RandomRefForOneGame()
+    {
+        var a = GetRefNames();
+        var b = new List<string>();
+        for (int i = 0; i < 4; i++)
+        {
+            int index = UnityEngine.Random.Range(0, a.Count);
+            b.Add(a[index]);
+            a.RemoveAt(index);
+        }
+
+        return (b[0], b[1], b[2], b[3]);
+
+        List<string> GetRefNames()
+        {
+            var allRowsAsList = MySQLManager.Instance.GetAllRowsAsList("referee");
+            var t = allRowsAsList.Select(x => x[1]).ToList();
+            return t;
+        }
     }
 
     public void OnXoaGiaiDauClick()
@@ -226,7 +357,7 @@ public class Main_SeasonDetail : MonoBehaviour
     public async void OnSearchClick()
     {
         UIManager.Instance.ShowPermantCircle();
-        string format = "yyyy-MM-dd";
+        string format = SonConst.DateFormat;
         var input = _thanhTimKiem.text;
 
         // TODO: Sửa code dùng event để invoke 
