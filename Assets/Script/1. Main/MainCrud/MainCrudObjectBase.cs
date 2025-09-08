@@ -38,7 +38,7 @@ public class MainCrudObjectBase : MonoBehaviour
         // Load Data
     }
 
-    public async void Setup()
+    public void Setup()
     {
         var h = MySQLManager.Instance.GetTableHeaderAsCsv(TableName);
         var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);

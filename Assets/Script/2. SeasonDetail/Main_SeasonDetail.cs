@@ -22,23 +22,23 @@ public class TranDauDetailClass
     public Button SaveButton;
     public Button CancelButton;
 
-    public void Open()
+    public void Open(int matchID)
     {
         TranDauDetail.gameObject.SetActive(true);
         SaveButton.onClick.AddListener(OnSaveBtnClick);
         CancelButton.onClick.AddListener(OnCancelBtnClick);
         if (MatchEvent.columnData.Count == 0)
         {
-            var matchEventsHeader = MySQLManager.Instance.GetTableHeaderAsCsv("match_event");
-            var matchEventData = MySQLManager.Instance.GetTableDataAsCsv("match_event");
-            var a = CSVDataHelper.CSVStringToColumnData(MatchEvent, matchEventsHeader);
-            CSVDataHelper.DataFromCSV(MatchEvent, false, true, true, false, matchEventData);
+            CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(MatchEvent, UpdateOrInsert.Update,
+                "match_event");
 
-            var matchHeader = MySQLManager.Instance.GetTableHeaderAsCsv("matchs");
-            var matchData = MySQLManager.Instance.GetTableDataAsCsv("matchs");
-            var b = CSVDataHelper.CSVStringToColumnData(Match, matchHeader);
-            CSVDataHelper.DataFromCSV(Match, false, true, true, false, matchData);
+            CSVDataHelper.GetTableHeaderAndSetToDGColumnData(Match, "matchs");
         }
+
+        var matchEventData = MySQLManager.Instance.GetRowByIndexAsCsv("match_event", "match_id", matchID);
+        CSVDataHelper.DataFromCSV(MatchEvent, false, true, true, false, matchEventData);
+        var matchData = MySQLManager.Instance.GetRowByIndexAsCsv("matchs", "match_id", matchID);
+        CSVDataHelper.DataFromCSV(Match, false, true, true, false, matchData);
     }
 
     private void OnSaveBtnClick()
@@ -99,18 +99,18 @@ public class MatchDb
     public int away_team_id;
     public int stadium_id;
     public string match_date;
-    public string referee_main;
-    public string referee_assist1;
-    public string referee_assist2;
-    public string referee_assist_var;
+    public int referee_main;
+    public int referee_assist1;
+    public int referee_assist2;
+    public int referee_assist_var;
     public string away_play_join;
     public string home_play_join;
     public int ticket_price;
-    public int tourament_round;
+    public int tournament_round;
 
-    public MatchDb(int matchID, int homeTeamID, int awayTeamID, int stadiumID, string matchDate, string refereeMain,
-        string refereeAssist1, string refereeAssist2, string refereeAssistVar, string awayPlayJoin, string homePlayJoin,
-        int ticketPrice, int touramentRound)
+    public MatchDb(int matchID, int homeTeamID, int awayTeamID, int stadiumID, string matchDate, int refereeMain,
+        int refereeAssist1, int refereeAssist2, int refereeAssistVar, string awayPlayJoin, string homePlayJoin,
+        int ticketPrice, int tournamentRound)
     {
         match_id = matchID;
         home_team_id = homeTeamID;
@@ -124,7 +124,13 @@ public class MatchDb
         away_play_join = awayPlayJoin;
         home_play_join = homePlayJoin;
         ticket_price = ticketPrice;
-        tourament_round = touramentRound;
+        tournament_round = tournamentRound;
+    }
+
+    public string ConvertToCsv()
+    {
+        return
+            $"{match_id},{home_team_id},{away_team_id},{stadium_id},{match_date},{referee_main},{referee_assist1},{referee_assist2},{referee_assist_var},{away_play_join},{home_play_join},{ticket_price},{tournament_round}";
     }
 }
 
@@ -159,7 +165,8 @@ public class Team
 public class Main_SeasonDetail : MonoBehaviour
 {
     public static Main_SeasonDetail Instance { get; set; }
-
+    [SerializeField] private Button _taoGiaiDauBtn;
+    [SerializeField] private Button _xoaBtn;
     [SerializeField] private int _soDoi = 8;
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
@@ -188,10 +195,84 @@ public class Main_SeasonDetail : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        if (MySQLManager.Instance.IsTableEmpty(SonConst.MatchTable))
+        {
+            // Tao giai dau
+            _taoGiaiDauBtn.gameObject.SetActive(true);
+        }
+        else
+        {
+            // Load Giai dau
+            _taoGiaiDauBtn.gameObject.SetActive(false);
+            LoadGiaiDau();
+        }
+    }
+
+    private void LoadGiaiDau()
+    {
+        // Lấy toàn bộ dữ liệu trận đấu từ DB
+        var rows = MySQLManager.Instance.GetAllRowsAsList(SonConst.MatchTable);
+        if (rows.Count == 0) return;
+
+        // Parse từng row thành MatchDb
+        List<MatchDb> matches = new List<MatchDb>();
+        for (var i = 0; i < 56; i++)
+        {
+            var row = rows[i];
+            try
+            {
+                var m = new MatchDb(
+                    int.Parse(row[0]), // match_id
+                    int.Parse(row[1]), // home_team_id
+                    int.Parse(row[2]), // away_team_id
+                    int.Parse(row[3]), // stadium_id
+                    row[4], // match_date
+                    int.Parse(row[5]), // referee_main
+                    int.Parse(row[6]), // referee_assist1
+                    int.Parse(row[7]), // referee_assist2
+                    int.Parse(row[8]), // referee_assist_var
+                    row[9], // away_play_join
+                    row[10], // home_play_join
+                    Convert.ToInt32(double.Parse(row[11])), // ticket_price
+                    int.Parse(row[12]) // tournament_round
+                );
+                matches.Add(m);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("❌ Parse match row error: " + e.Message);
+            }
+        }
+
+        StartCoroutine(TaoGiaiDau());
+        return;
+
+        IEnumerator TaoGiaiDau()
+        {
+            // Nhóm theo vòng đấu
+            var grouped = matches.GroupBy(m => m.tournament_round).OrderBy(g => g.Key);
+
+            foreach (var group in grouped)
+            {
+                VongDau vongDau = Instantiate(_vongDauPrefab, _content);
+
+                foreach (var match in group)
+                {
+                    vongDau.AddTranDau(match);
+                }
+
+                _vongDaus.Add(vongDau);
+                vongDau.SetVongDau(group.Key);
+                yield return SonCache.WaitForEndOfFrame;
+            }
+        }
+    }
 
     public void OnTaoGiaiDauClick()
     {
-        var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
+        var rowsTeam = MySQLManager.Instance.GetAllRowsAsList(SonConst.TeamTable);
         _soDoi = rowsTeam.Count;
         if (_soDoi % 2 != 0)
         {
@@ -216,6 +297,7 @@ public class Main_SeasonDetail : MonoBehaviour
                 foreach (var match in lMatchesDB)
                 {
                     vongDau.AddTranDau(match);
+                    MySQLManager.Instance.InsertOneRow(SonConst.MatchTable, match.ConvertToCsv(), null);
                 }
 
                 _vongDaus.Add(vongDau);
@@ -257,7 +339,8 @@ public class Main_SeasonDetail : MonoBehaviour
                 var home = arr[i];
                 var away = arr[n - 1 - i];
                 var refs = RandomRefForOneGame();
-                var m = new MatchDb(0, home.team_id, away.team_id, 0, matchDate.ToString(SonConst.DateFormat),
+                var m = new MatchDb(0, home.team_id, away.team_id, home.stadium_id,
+                    matchDate.ToString(SonConst.DateFormat),
                     refs.Item1, refs.Item2,
                     refs.Item3, refs.Item4, away.team_name, home.team_name, Random.Range(50000, 100000),
                     r + 1);
@@ -294,9 +377,9 @@ public class Main_SeasonDetail : MonoBehaviour
             {
                 var rematch = new MatchDb(
                     0,
-                    m.away_team_id,   // đảo sân
+                    m.away_team_id, // đảo sân
                     m.home_team_id,
-                    0,
+                    m.stadium_id,
                     matchDate.ToString(SonConst.DateFormat),
                     m.referee_main,
                     m.referee_assist1,
@@ -305,7 +388,7 @@ public class Main_SeasonDetail : MonoBehaviour
                     m.home_play_join,
                     m.away_play_join,
                     m.ticket_price,
-                    m.tourament_round + total // tăng số vòng để phân biệt
+                    m.tournament_round + total // tăng số vòng để phân biệt
                 );
 
                 ret.Add(rematch);
@@ -320,10 +403,10 @@ public class Main_SeasonDetail : MonoBehaviour
         return rounds;
     }
 
-    (string, string, string, string) RandomRefForOneGame()
+    (int, int, int, int) RandomRefForOneGame()
     {
         var a = GetRefNames();
-        var b = new List<string>();
+        var b = new List<int>();
         for (int i = 0; i < 4; i++)
         {
             int index = UnityEngine.Random.Range(0, a.Count);
@@ -333,10 +416,10 @@ public class Main_SeasonDetail : MonoBehaviour
 
         return (b[0], b[1], b[2], b[3]);
 
-        List<string> GetRefNames()
+        List<int> GetRefNames()
         {
             var allRowsAsList = MySQLManager.Instance.GetAllRowsAsList("referee");
-            var t = allRowsAsList.Select(x => x[1]).ToList();
+            var t = allRowsAsList.Select(x => int.Parse(x[0])).ToList();
             return t;
         }
     }

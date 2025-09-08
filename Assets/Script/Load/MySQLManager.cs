@@ -57,6 +57,22 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
+    public bool IsTableEmpty(string table)
+    {
+        try
+        {
+            string query = $"SELECT EXISTS(SELECT 1 FROM `{table}` LIMIT 1);";
+            using var cmd = new MySqlCommand(query, Conn);
+            object result = cmd.ExecuteScalar();
+            // if result = 1 → table has rows, if 0 → empty
+            return Convert.ToInt32(result) == 0;
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return true; // assume empty on error
+        }
+    }
 
     /// <summary>
     /// For Test Purpose
@@ -106,6 +122,89 @@ public class MySQLManager : MonoBehaviour
             return string.Empty;
         }
     }
+
+    public string GetRowByIndexAsCsv(string table, string column, object value)
+    {
+        try
+        {
+            string query = $"SELECT * FROM `{table}` WHERE `{column}` = @value LIMIT 1;";
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@value", value);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                var row = new List<string>();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string val;
+
+                    if (rawValue is DateTime dt)
+                        val = dt.ToString("yyyy-MM-dd");
+                    else if (rawValue is bool b)
+                        val = b ? "1" : "0";
+                    else
+                        val = rawValue?.ToString() ?? "";
+
+                    // Escape dấu phẩy để không phá format CSV
+                    val = val.Replace(",", "&");
+
+                    row.Add(val);
+                }
+
+                return string.Join(",", row);
+            }
+            else
+            {
+                return string.Empty; // Không tìm thấy row
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return string.Empty;
+        }
+    }
+
+
+    public List<string> GetRowAsList(string table, int rowIndex)
+    {
+        var row = new List<string>();
+
+        try
+        {
+            string query = $"SELECT * FROM `{table}` LIMIT 1 OFFSET {rowIndex};";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string value;
+
+                    if (rawValue is DateTime dt)
+                        value = dt.ToString("yyyy-MM-dd");
+                    else if (rawValue is bool b)
+                        value = b ? "1" : "0";
+                    else
+                        value = rawValue?.ToString() ?? "";
+
+                    row.Add(value);
+                }
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return row;
+    }
+
 
     public List<List<string>> GetAllRowsAsList(string table)
     {
@@ -225,7 +324,7 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public List<string> GetTableHeader(string table)
+    public List<string> GetTableHeaderAsList(string table)
     {
         var headers = new List<string>();
         try
@@ -245,6 +344,59 @@ public class MySQLManager : MonoBehaviour
         }
 
         return headers;
+    }
+
+    public List<List<string>> GetTableAsListString(string table)
+    {
+        var allRows = new List<List<string>>();
+
+        try
+        {
+            string query = $"SELECT * FROM `{table}`;";
+            using var cmd = new MySqlCommand(query, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var row = new List<string>();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string value;
+
+                    if (rawValue is DateTime dt) // Format date
+                    {
+                        value = dt.ToString(SonConst.DateFormat);
+                    }
+                    else if (rawValue is bool b) // Convert bool → 1/0
+                    {
+                        value = b ? "1" : "0";
+                    }
+                    else if (rawValue is sbyte sb) // tinyint → sbyte
+                    {
+                        value = sb.ToString();
+                    }
+                    else
+                    {
+                        value = rawValue?.ToString() ?? "";
+                    }
+
+                    // Escape dấu phẩy để giống CSV
+                    value = value.Replace(",", "&");
+
+                    row.Add(value);
+                }
+
+                allRows.Add(row);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return allRows;
     }
 
 
@@ -307,7 +459,7 @@ public class MySQLManager : MonoBehaviour
     {
         try
         {
-            var columns = GetTableHeader(tableName);
+            var columns = GetTableHeaderAsList(tableName);
 
             // Tách các giá trị từ CSV line
             string[] values = csvLine.Split(',');
@@ -363,7 +515,7 @@ public class MySQLManager : MonoBehaviour
     {
         try
         {
-            var columns = GetTableHeader(tableName);
+            var columns = GetTableHeaderAsList(tableName);
 
             string[] values = csvLine.Split(',');
 
@@ -416,7 +568,7 @@ public class MySQLManager : MonoBehaviour
 
     public void DeleteOneRow(string tableName, string idValue)
     {
-        var columns = GetTableHeader(tableName);
+        var columns = GetTableHeaderAsList(tableName);
 
         // Cột đầu tiên là khóa chính ID
         string sql = $"DELETE FROM {tableName} WHERE {columns[0]}=@id";
@@ -437,7 +589,7 @@ public class MySQLManager : MonoBehaviour
             return;
         }
 
-        var columns = GetTableHeader(tableName);
+        var columns = GetTableHeaderAsList(tableName);
         string idColumn = columns[0]; // giả sử cột đầu tiên là ID
 
         // Tạo parameter cho từng id: @id0, @id1, ...
@@ -466,7 +618,7 @@ public class MySQLManager : MonoBehaviour
     {
         try
         {
-            var columns = GetTableHeader(tableName);
+            var columns = GetTableHeaderAsList(tableName);
             if (columns == null || columns.Count == 0)
             {
                 Debug.LogWarning($"⚠️ Không tìm thấy cột nào trong bảng {tableName}");

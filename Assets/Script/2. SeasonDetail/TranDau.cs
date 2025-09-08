@@ -51,7 +51,7 @@ public class TranDau : MonoBehaviour
 
     public void OnBtnClick()
     {
-        Main_SeasonDetail.Instance.tranDauDetailClass.Open();
+        Main_SeasonDetail.Instance.tranDauDetailClass.Open(_matchDb.match_id);
         // CSVDataHelper.DataFromCSV(Main_SeasonDetail.Instance.tranDauDetailClass.MatchEvent, false, true, false, false,
         // "1,\"Bút bi\",100,5000,110\n2,\"Vở học sinh\",50,12000,120\n3,\"Thước kẻ\",80,8000,30\n4,\"Bút chì\",120,4000,40\n5,\"Tẩy\",60,3000,50");
     }

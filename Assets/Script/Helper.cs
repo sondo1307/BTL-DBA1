@@ -9,6 +9,14 @@ using UnityEngine;
 public static class SonConst
 {
     public const string DateFormat = "yyyy-MM-dd";
+    public const string MatchTable = "matchs";
+    public const string TeamTable = "team";
+    public const string StadiumTable = "stadium";
+    public const string CountryTable = "country";
+    public const string MatchEventTable = "match_event";
+    public const string PlayerTable = "player";
+    public const string PlayerTeamTable = "player_squad_number";
+    public const string RefTable = "referee";
 }
 
 public static class SonCache
@@ -39,6 +47,29 @@ public static class UIHelper
 
 public static class StringUtils
 {
+    // Convert a single row (List<string>) to CSV line
+    public static string ListToCsv(List<string> row)
+    {
+        if (row == null || row.Count == 0) return string.Empty;
+
+        return string.Join(",", row.Select(v =>
+        {
+            // Escape commas and quotes
+            if (v.Contains(",") || v.Contains("\""))
+                return $"\"{v.Replace("\"", "\"\"")}\"";
+            return v;
+        }));
+    }
+
+    // Convert multiple rows (List<List<string>>) to CSV string
+    public static string ListOfListToCsv(List<List<string>> rows)
+    {
+        if (rows == null || rows.Count == 0) return string.Empty;
+
+        var csvLines = rows.Select(ListToCsv);
+        return string.Join("\n", csvLines);
+    }
+    
     // Hàm bỏ dấu + về lowercase, xử lý thêm chữ 'đ'
     private static string NormalizeNoDiacritics(string text)
     {

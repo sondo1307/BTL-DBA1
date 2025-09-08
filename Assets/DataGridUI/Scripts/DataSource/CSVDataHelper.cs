@@ -343,6 +343,14 @@ namespace Maything.UI.DataGridUI
             CSVStringToColumnData(dataGridUI, a);
         }
         
+        public static void GetTableHeaderAndSetToDGColumnData(DataGridUI dataGridUI, string tableName)
+        {
+            var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
+            var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
+            // a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForInsert(h1);
+            CSVStringToColumnData(dataGridUI, h1);
+        }
+        
         public static List<DataGridColumnData> ConvertAllTextToInputField(List<DataGridColumnData> columnData)
         {
             var newList = new List<DataGridColumnData>();
