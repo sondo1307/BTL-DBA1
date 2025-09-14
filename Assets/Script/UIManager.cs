@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     [SerializeField] private CanvasGroup _circleCg;
     [SerializeField] private CanvasGroup _toastCg;
-    [SerializeField] private TMP_Text _toastTxt;
+    [SerializeField] private Text _toastTxt;
 
     private Coroutine _toastCoroutine;
 

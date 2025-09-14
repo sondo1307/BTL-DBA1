@@ -51,6 +51,11 @@ public class MainCrud : MonoBehaviour
 
     public void OnAddBtnClick()
     {
+        // if (MySQLManager.Instance.IsTableEmpty(SonConst.MatchTable) == false)
+        // {
+        //     UIManager.Instance.ShowToast("Không thể thêm dữ liệu khi giải đấu đang diễn ra");
+        //     return;
+        // }
         CurrentMainCrud.ShowAddDataGob();
     }
 
@@ -61,6 +66,11 @@ public class MainCrud : MonoBehaviour
 
     public void OnDeleteBtnClick()
     {
+        // if (MySQLManager.Instance.IsTableEmpty(SonConst.MatchTable) == false)
+        // {
+        //     UIManager.Instance.ShowToast("Không thể xóa dữ liệu khi giải đấu đang diễn ra");
+        //     return;
+        // }
         CurrentMainCrud.DeleteSelectedRow(CurrentMainCrud.DataGridUI);
     }
 

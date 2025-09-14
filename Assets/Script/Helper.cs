@@ -9,14 +9,14 @@ using UnityEngine;
 public static class SonConst
 {
     public const string DateFormat = "yyyy-MM-dd";
-    public const string MatchTable = "matchs";
+    public const string MatchTable = "matches";
     public const string TeamTable = "team";
     public const string StadiumTable = "stadium";
     public const string CountryTable = "country";
     public const string MatchEventTable = "match_event";
-    public const string PlayerTable = "player";
     public const string PlayerTeamTable = "player_squad_number";
-    public const string RefTable = "referee";
+    public const string HumanTable = "human";
+    public const string HumanRoleTable = "human_role";
 }
 
 public static class SonCache
@@ -34,7 +34,7 @@ public static class UIHelper
         cg.interactable = true;
         cg.gameObject.SetActive(true);
     }
-    
+
     public static void HideCg(this CanvasGroup cg)
     {
         cg.alpha = 0;
@@ -47,20 +47,6 @@ public static class UIHelper
 
 public static class StringUtils
 {
-    // Convert a single row (List<string>) to CSV line
-    public static string ListToCsv(List<string> row)
-    {
-        if (row == null || row.Count == 0) return string.Empty;
-
-        return string.Join(",", row.Select(v =>
-        {
-            // Escape commas and quotes
-            if (v.Contains(",") || v.Contains("\""))
-                return $"\"{v.Replace("\"", "\"\"")}\"";
-            return v;
-        }));
-    }
-
     // Convert multiple rows (List<List<string>>) to CSV string
     public static string ListOfListToCsv(List<List<string>> rows)
     {
@@ -68,8 +54,22 @@ public static class StringUtils
 
         var csvLines = rows.Select(ListToCsv);
         return string.Join("\n", csvLines);
+
+        // Convert a single row (List<string>) to CSV line
+        string ListToCsv(List<string> row)
+        {
+            if (row == null || row.Count == 0) return string.Empty;
+
+            return string.Join(",", row.Select(v =>
+            {
+                // Escape commas and quotes
+                if (v.Contains(",") || v.Contains("\""))
+                    return $"\"{v.Replace("\"", "\"\"")}\"";
+                return v;
+            }));
+        }
     }
-    
+
     // Hàm bỏ dấu + về lowercase, xử lý thêm chữ 'đ'
     private static string NormalizeNoDiacritics(string text)
     {
@@ -105,7 +105,6 @@ public static class StringUtils
         // dùng IndexOf với Ordinal để so sánh chính xác sau normalize
         return s1.IndexOf(s2, StringComparison.Ordinal) >= 0;
     }
-    
 
     public static string ConvertHeaderToDataGridHeader(string header)
     {
@@ -125,7 +124,7 @@ public static class StringUtils
             return matchIndex == 1 ? m.Value : "InputField";
         });
     }
-    
+
     public static string ConvertDGHeaderStringToDGHeaderInputFieldForInsert(string headerDG)
     {
         return Regex.Replace(headerDG, "Text", m => "InputField");

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using static Maything.UI.DataGridUI.DataGridUI;
@@ -334,7 +335,8 @@ namespace Maything.UI.DataGridUI
             CSVStringToColumnData(dataGridUI, h1);
         }
 
-        public static void GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(DataGridUI dataGridUI, UpdateOrInsert mode, string tableName)
+        public static void GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(DataGridUI dataGridUI,
+            UpdateOrInsert mode, string tableName)
         {
             var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
             var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
@@ -342,7 +344,7 @@ namespace Maything.UI.DataGridUI
             // a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForInsert(h1);
             CSVStringToColumnData(dataGridUI, a);
         }
-        
+
         public static void GetTableHeaderAndSetToDGColumnData(DataGridUI dataGridUI, string tableName)
         {
             var h = MySQLManager.Instance.GetTableHeaderAsCsv(tableName);
@@ -350,14 +352,14 @@ namespace Maything.UI.DataGridUI
             // a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForInsert(h1);
             CSVStringToColumnData(dataGridUI, h1);
         }
-        
+
         public static List<DataGridColumnData> ConvertAllTextToInputField(List<DataGridColumnData> columnData)
         {
             var newList = new List<DataGridColumnData>();
             var col0 = columnData[0];
             var copy0 = (DataGridColumnData)col0.Clone();
             newList.Add(copy0);
-            
+
             for (var i = 1; i < columnData.Count; i++)
             {
                 var col = columnData[i];
@@ -368,7 +370,7 @@ namespace Maything.UI.DataGridUI
 
             return newList;
         }
-        
+
         public static string ExportToCSV(DataGridUI dataGridUI)
         {
             string csv = "[";
@@ -447,8 +449,6 @@ namespace Maything.UI.DataGridUI
 
             return csv;
         }
-        
-        
 
         public static List<string> ExportColumnsToCSV(DataGridUI dataGridUI)
         {
@@ -459,6 +459,30 @@ namespace Maything.UI.DataGridUI
             }
 
             return csv;
+        }
+
+        public static string AddNewColumnToCsv(string csv, string newColumnName, List<string> data)
+        {
+            if (string.IsNullOrWhiteSpace(csv))
+                throw new ArgumentException("CSV cannot be empty");
+
+            var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+            if (lines.Count < 2)
+                throw new ArgumentException("CSV must have at least one header and one row");
+
+            if (data == null || data.Count != lines.Count - 1)
+                throw new ArgumentException("Data count must match number of rows");
+
+            // thêm header mới vào dòng đầu
+            lines[0] += "," + newColumnName;
+
+            // thêm data vào từng dòng dữ liệu
+            for (int i = 1; i < lines.Count; i++)
+            {
+                lines[i] += "," + data[i - 1];
+            }
+
+            return string.Join(Environment.NewLine, lines);
         }
     }
 }

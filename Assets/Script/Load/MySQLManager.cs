@@ -13,10 +13,10 @@ public class MySQLManager : MonoBehaviour
     // Connection string Railway hoặc MySQL Workbench
     // 👉 Railway: thay Server, Port, User, Password, Database theo config của Railway
     // 👉 Workbench local: thường là Server=localhost;Port=3306;User=root;Password=;Database=test;
-    private string connectionString = "Server=turntable.proxy.rlwy.net;Port=24456;" +
+    private string connectionString = "Server=metro.proxy.rlwy.net;Port=18250;" +
                                       "Database=railway;" +
                                       "User=root;" +
-                                      "Password=sUKWlixYrZDiqovdNpWetWOxCZQfXraj;" +
+                                      "Password=MxzpoKnKIutJSeZaEdjKSjcsQGsvtdmB;" +
                                       "SslMode=None;" +
                                       "AllowPublicKeyRetrieval=True;";
 
@@ -74,6 +74,28 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
+    public int CountValueCondition(string tableName, string columnName, object inputValue)
+    {
+        try
+        {
+            string query = $"SELECT COUNT(*) FROM `{tableName}` WHERE `{columnName}` = @value;";
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@value", inputValue);
+
+            object result = cmd.ExecuteScalar();
+            int count = Convert.ToInt32(result);
+
+            Debug.Log($"✅ CountValueCondition: table={tableName}, column={columnName}, value={inputValue}, count={count}");
+            return count;
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ MySQL Error in CountValueCondition: {ex.Message}");
+            return -1; // báo lỗi
+        }
+    }
+
+
     /// <summary>
     /// For Test Purpose
     /// </summary>
@@ -123,7 +145,37 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public string GetRowByIndexAsCsv(string table, string column, object value)
+    public string GetCellDataByRowId(string table, string targetColumn, string idColumn, object idValue)
+    {
+        try
+        {
+            string query = $"SELECT `{targetColumn}` FROM `{table}` WHERE `{idColumn}` = @id LIMIT 1;";
+
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@id", idValue);
+
+            object result = cmd.ExecuteScalar();
+
+            if (result == null || result == DBNull.Value)
+                return string.Empty;
+
+            if (result is DateTime dt)
+                return dt.ToString("yyyy-MM-dd");
+            if (result is bool b)
+                return b ? "1" : "0";
+
+            return result.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ MySQL Error: {ex.Message}");
+            return string.Empty;
+        }
+    }
+
+    
+    // Choose value in 1 column in 1 table to get row data
+    public string GetRowByColumnValueAsCsv(string table, string column, object value)
     {
         try
         {
@@ -142,7 +194,7 @@ public class MySQLManager : MonoBehaviour
                     string val;
 
                     if (rawValue is DateTime dt)
-                        val = dt.ToString("yyyy-MM-dd");
+                        val = dt.ToString(SonConst.DateFormat);
                     else if (rawValue is bool b)
                         val = b ? "1" : "0";
                     else
@@ -187,7 +239,7 @@ public class MySQLManager : MonoBehaviour
                     string value;
 
                     if (rawValue is DateTime dt)
-                        value = dt.ToString("yyyy-MM-dd");
+                        value = dt.ToString(SonConst.DateFormat);
                     else if (rawValue is bool b)
                         value = b ? "1" : "0";
                     else
@@ -681,6 +733,26 @@ public class MySQLManager : MonoBehaviour
         {
             Debug.LogError("❌ MySQL Error: " + ex.Message);
             return string.Empty;
+        }
+    }
+    
+    public bool ClearTable(string tableName, bool useTruncate = false)
+    {
+        try
+        {
+            string query = useTruncate
+                ? $"TRUNCATE TABLE {tableName};"
+                : $"DELETE FROM {tableName};";
+    
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.ExecuteNonQuery();
+            Debug.Log($"✅ Cleared table {tableName} (method: {(useTruncate ? "TRUNCATE" : "DELETE")})");
+            return true;
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ Error clearing table {tableName}: " + ex.Message);
+            return false;
         }
     }
 }
