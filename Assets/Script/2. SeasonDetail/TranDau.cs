@@ -51,6 +51,7 @@ public class TranDau : MonoBehaviour
                           Team2ID + "." + Team2;
         _tiSo.text = "0" + "\n" + "0";
         _ngayThiDau.text = this.prematchDB.match_date;
+        // MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), null);
     }
 
     private string GetTeamName(int teamID)

@@ -23,7 +23,8 @@ public class TranDauDetailClass : MonoBehaviour
             var toggle = _toggles[i1];
             toggle.onValueChanged.AddListener((isOn) =>
             {
-                _dgs[i1].Open(_matchID);
+                // _dgs[i1].Open(_matchID);
+                _dgs[i1].gameObject.SetActive(isOn);
             });
         }
     }

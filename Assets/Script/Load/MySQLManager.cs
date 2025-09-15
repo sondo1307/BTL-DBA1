@@ -2,9 +2,11 @@ using UnityEngine;
 using MySql.Data.MySqlClient; // cần DLL MySql.Data.dll
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Sirenix.OdinInspector;
 
 public class MySQLManager : MonoBehaviour
 {
@@ -18,7 +20,7 @@ public class MySQLManager : MonoBehaviour
                                       "User=root;" +
                                       "Password=MxzpoKnKIutJSeZaEdjKSjcsQGsvtdmB;" +
                                       "SslMode=None;" +
-                                      "AllowPublicKeyRetrieval=True;";
+                                      "AllowPublicKeyRetrieval=True;CharSet=utf8mb4;";
 
     public MySqlConnection Conn;
 
@@ -43,8 +45,12 @@ public class MySQLManager : MonoBehaviour
         {
             Debug.LogError("❌ MySQL Connection Error: " + ex.Message);
         }
+    }
 
-        // print(ExportPlayersToCSV(true));
+    [Button]
+    private void Test()
+    {
+        print(ValidateTeamInSession1());
     }
 
     void OnDestroy()
@@ -755,4 +761,105 @@ public class MySQLManager : MonoBehaviour
             return false;
         }
     }
+
+    public string ExecuteQueryAsCsv(string sql)
+    {
+        try
+        {
+            using var cmd = new MySqlCommand(sql, Conn);
+            using var reader = cmd.ExecuteReader();
+
+            StringBuilder csv = new StringBuilder();
+
+            // Header
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                csv.Append(reader.GetName(i));
+                if (i < reader.FieldCount - 1) csv.Append(",");
+            }
+            csv.AppendLine();
+
+            // Data rows
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string value;
+
+                    if (rawValue is DateTime dt)
+                        value = dt.ToString(SonConst.DateFormat);
+                    else if (rawValue is bool b)
+                        value = b ? "1" : "0";
+                    else if (rawValue is sbyte sb)
+                        value = sb.ToString();
+                    else
+                        value = rawValue?.ToString() ?? "";
+
+                    // Escape dấu phẩy
+                    value = value.Replace(",", "&");
+
+                    csv.Append(value);
+                    if (i < reader.FieldCount - 1) csv.Append(",");
+                }
+                csv.AppendLine();
+            }
+
+            return csv.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ SQL Error: " + ex.Message);
+            return string.Empty;
+        }
+    }
+
+    public void CallProcedure(string procedureName)
+    {
+        using var cmd = new MySqlCommand(procedureName, Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.ExecuteNonQuery();
+    }
+
+    public bool ValidateTeamInSession()
+    {
+        using var cmd = new MySqlCommand("validate_test", Conn);
+        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+        // OUT param (BOOLEAN trong MySQL = TINYINT(1))
+        var outParam = new MySqlParameter("p_result", MySqlDbType.Int32)
+        {
+            Direction = System.Data.ParameterDirection.Output
+        };
+        cmd.Parameters.Add(outParam);
+
+        cmd.ExecuteNonQuery();
+
+        // Lấy giá trị OUT param (1 = true, 0 = false)
+        return Convert.ToInt32(outParam.Value) == 1;
+    }
+
+public bool ValidateTeamInSession1()
+{
+// validate_team_in_seesion
+    using var cmd = new MySqlCommand("validate_team_in_seesion", Conn);
+    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+    // OUT param (BOOLEAN trong MySQL thực chất = tinyint(1))
+    var outParam = new MySqlParameter("p_result", MySqlDbType.Int32)
+    {
+        Direction = System.Data.ParameterDirection.Output
+    };
+    cmd.Parameters.Add(outParam);
+
+    // Đảm bảo connection đã set charset hợp lệ
+    using (var setCmd = new MySqlCommand("SET NAMES utf8mb4;", Conn))
+    {
+        setCmd.ExecuteNonQuery();
+    }
+
+    cmd.ExecuteNonQuery();
+
+    return Convert.ToInt32(outParam.Value) == 1;
+}
 }

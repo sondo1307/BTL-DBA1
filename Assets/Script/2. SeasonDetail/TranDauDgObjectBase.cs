@@ -14,6 +14,7 @@ public class TranDauDgObjectBase : MonoBehaviour
     {
         _dg = GetComponentInChildren<DataGridUI>();
         _name = gameObject.name;
+        _saveBtn = GetComponentInChildren<Button>();
     }
 
     private void Start()

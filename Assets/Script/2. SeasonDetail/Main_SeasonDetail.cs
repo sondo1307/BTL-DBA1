@@ -57,10 +57,10 @@ public class Team
     public string home_kit;
     public string away_kit;
     public string third_kit;
-    public int active;
+    public int isActived;
 
     public Team(int teamID, string teamName, DateTime teamCreated, int countryID, int stadiumID, string homeKit,
-        string awayKit, string thirdKit, int active)
+        string awayKit, string thirdKit, int isActived)
     {
         team_id = teamID;
         team_name = teamName;
@@ -70,7 +70,7 @@ public class Team
         home_kit = homeKit;
         away_kit = awayKit;
         third_kit = thirdKit;
-        this.active = active;
+        this.isActived = isActived;
     }
 }
 
@@ -106,7 +106,7 @@ public class Main_SeasonDetail : MonoBehaviour
 
     private void Start()
     {
-        if (MySQLManager.Instance.IsTableEmpty(SonConst.MatchTable))
+        if (MySQLManager.Instance.IsTableEmpty(SonConst.PrematchTable))
         {
             // Tao giai dau
             _taoGiaiDauBtn.gameObject.SetActive(true);
@@ -122,7 +122,7 @@ public class Main_SeasonDetail : MonoBehaviour
     public void LoadGiaiDau()
     {
         // Lấy toàn bộ dữ liệu trận đấu từ DB
-        var rows = MySQLManager.Instance.GetAllRowsAsList(SonConst.MatchTable);
+        var rows = MySQLManager.Instance.GetAllRowsAsList(SonConst.PrematchTable);
         if (rows.Count == 0) return;
 
         // Parse từng row thành MatchDb
@@ -269,11 +269,9 @@ public class Main_SeasonDetail : MonoBehaviour
     /// <returns></returns>
     public void OnTaoGiaiDauClick()
     {
-        var rowsTeam = MySQLManager.Instance.GetAllRowsAsList(SonConst.TeamTable);
-        var count = rowsTeam.Count(rowTeamData => rowTeamData[^1] == "1");
-        if (count % 2 != 0 || count <= 0)
+        if (!MySQLManager.Instance.ValidateTeamInSession1())
         {
-            UIManager.Instance.ShowToast("Số đội bóng phải chẵn và lớn hơn hoặc bằng 6");
+            UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
             return;
         }
 
@@ -282,6 +280,7 @@ public class Main_SeasonDetail : MonoBehaviour
 
         IEnumerator TaoGiaiDau()
         {
+            UIManager.Instance.ShowPermantCircle();
             List<List<PrematchDB>> rounds = GenerateRoundsAndMatches();
 
 
@@ -303,10 +302,11 @@ public class Main_SeasonDetail : MonoBehaviour
                 round++;
                 yield return SonCache.WaitForEndOfFrame;
             }
+            UIManager.Instance.HideCircle();
         }
     }
 
-    public int RandomTicketPrice()
+    private int RandomTicketPrice()
     {
         return UnityEngine.Random.Range(0, 11) * 10000 + 100000;
     }

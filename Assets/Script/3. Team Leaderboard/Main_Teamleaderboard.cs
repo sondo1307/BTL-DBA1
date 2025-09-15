@@ -59,6 +59,53 @@ LEFT JOIN in_match ev
 GROUP BY t.team_id, t.team_name
 ORDER BY diem DESC, hieu_so DESC, tong_ban_thang DESC;
 */
+
+/*
+SELECT 
+    t.team_id,
+    t.team_name,
+
+    -- tổng số trận thắng
+    SUM(
+        (m.home_team_id = t.team_id AND m.home_score > m.away_score) OR
+        (m.away_team_id = t.team_id AND m.away_score > m.home_score)
+    ) AS total_wins,
+
+    -- tổng số trận thua
+    SUM(
+        (m.home_team_id = t.team_id AND m.home_score < m.away_score) OR
+        (m.away_team_id = t.team_id AND m.away_score < m.home_score)
+    ) AS total_losses,
+
+    -- tổng số bàn thắng
+    SUM(
+        CASE 
+            WHEN m.home_team_id = t.team_id THEN m.home_score
+            WHEN m.away_team_id = t.team_id THEN m.away_score
+            ELSE 0
+        END
+    ) AS total_goals,
+
+    -- số trận thắng sân khách
+    SUM(
+        (m.away_team_id = t.team_id AND m.away_score > m.home_score)
+    ) AS away_wins,
+
+    -- tổng số thẻ đỏ
+    SUM(CASE WHEN c.card_type = 'red' THEN 1 ELSE 0 END) AS total_red_cards,
+
+    -- tổng số thẻ vàng
+    SUM(CASE WHEN c.card_type = 'yellow' THEN 1 ELSE 0 END) AS total_yellow_cards
+
+FROM team t
+LEFT JOIN matchs m 
+    ON t.team_id IN (m.home_team_id, m.away_team_id)
+LEFT JOIN card c 
+    ON c.team_id = t.team_id AND c.match_id = m.match_id
+GROUP BY t.team_id, t.team_name
+ORDER BY total_wins DESC;
+*/
+
 public class Main_Teamleaderboard : MonoBehaviour
 {
     // Start is called before the first frame update

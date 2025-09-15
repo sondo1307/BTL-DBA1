@@ -9,14 +9,17 @@ using UnityEngine;
 public static class SonConst
 {
     public const string DateFormat = "yyyy-MM-dd";
-    public const string MatchTable = "matches";
+    public const string PlayerTable = "player";
     public const string TeamTable = "team";
+    public const string TeamPlayerTable = "team_player";
+    public const string RefereeTable = "referee";
     public const string StadiumTable = "stadium";
     public const string CountryTable = "country";
-    public const string MatchEventTable = "match_event";
-    public const string PlayerTeamTable = "player_squad_number";
-    public const string HumanTable = "human";
-    public const string HumanRoleTable = "human_role";
+    public const string PrematchTable = "pre_match";
+    public const string InMatchTable = "in_match";
+    public const string PostMatchTable = "post_match";
+    public const string MatchPlayerLineupTable = "match_player_lineup";
+    public const string MatchRefereeLineupTable = "match_referee_lineup";
 }
 
 public static class SonCache
