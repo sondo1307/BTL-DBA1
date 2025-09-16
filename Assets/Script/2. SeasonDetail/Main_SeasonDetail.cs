@@ -69,6 +69,7 @@ public class InmatchDB
         return $"{event_id},{match_id},{minute},{event_type},{team_player_id}";
     }
 }
+
 [System.Serializable]
 public class PostmatchDB
 {
@@ -92,6 +93,7 @@ public class PostmatchDB
         return $"{match_id},{home_score},{away_score},{attendance},{total_time}";
     }
 }
+
 [System.Serializable]
 public class MatchPlayerLineupDB
 {
@@ -111,6 +113,7 @@ public class MatchPlayerLineupDB
         return $"{match_id},{team_player_id},{is_starting}";
     }
 }
+
 [System.Serializable]
 public class MatchRefereeLineupDB
 {
@@ -120,7 +123,8 @@ public class MatchRefereeLineupDB
     public int referee_assist_2_id;
     public int referee_var_id;
 
-    public MatchRefereeLineupDB(int matchID, int refereeMainID, int refereeAssist1ID, int refereeAssist2ID, int refereeVarID)
+    public MatchRefereeLineupDB(int matchID, int refereeMainID, int refereeAssist1ID, int refereeAssist2ID,
+        int refereeVarID)
     {
         match_id = matchID;
         referee_main_id = refereeMainID;
@@ -297,11 +301,13 @@ public class Main_SeasonDetail : MonoBehaviour
                     matchDate.ToString(SonConst.DateFormat)
                     , RandomTicketPrice(),
                     r + 1, true);
-                matchDate = matchDate.AddDays(1);
+                // matchDate = matchDate.AddDays(1);
                 matches.Add(m);
             }
 
             rounds.Add(matches);
+            
+            matchDate = matchDate.AddDays(1);
 
             // Xoay vòng: giữ arr[0], dịch phải đoạn [1..n-1]
             Team last = arr[n - 1];
@@ -342,9 +348,9 @@ public class Main_SeasonDetail : MonoBehaviour
                 ret.Add(rematch);
 
                 // tăng ngày ngay sau khi gán trận
-                matchDate = matchDate.AddDays(1);
+                // matchDate = matchDate.AddDays(1);
             }
-
+            matchDate = matchDate.AddDays(1);
             rounds.Add(ret);
         }
 
@@ -390,6 +396,7 @@ public class Main_SeasonDetail : MonoBehaviour
                 round++;
                 yield return SonCache.WaitForEndOfFrame;
             }
+
             UIManager.Instance.HideCircle();
         }
     }
