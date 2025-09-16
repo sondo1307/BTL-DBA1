@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class TranDau : MonoBehaviour
 {
@@ -21,8 +22,12 @@ public class TranDau : MonoBehaviour
 
     private Image _img;
 
-    [FormerlySerializedAs("_matchDb")] [SerializeField]
-    private PrematchDB prematchDB;
+    [SerializeField] private PrematchDB prematchDB;
+    [SerializeField] private InmatchDB _inmatchDB;
+    [SerializeField] private PostmatchDB _postmatchDB;
+    [SerializeField] private MatchRefereeLineupDB _matchRefereeLineupDB;
+    [SerializeField] private MatchPlayerLineupDB _matchPlayerLineupDB;
+
 
     private void Awake()
     {
@@ -52,6 +57,44 @@ public class TranDau : MonoBehaviour
         _tiSo.text = "0" + "\n" + "0";
         _ngayThiDau.text = this.prematchDB.match_date;
         // MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), null);
+
+        RandomRefereeLineup();
+        RandomPlayerLineup();
+        RandomInMatch();
+        RandomPostMatch();
+    }
+
+
+    // pre - in - post - ref - player
+    private void RandomRefereeLineup()
+    {
+        var listRef = MySQLManager.Instance.GetValuesByColumn(SonConst.RefereeTable, "referee_id");
+        var a = new MatchRefereeLineupDB(prematchDB.match_id, GetOneRef(), GetOneRef(), GetOneRef(), GetOneRef());
+        var b = a.ConvertToCsv();
+        print(b);
+        // Main_SeasonDetail.Instance.tranDauDetailClass.Dgs[^2].
+        return;
+
+        int GetOneRef()
+        {
+            var index = UnityEngine.Random.Range(0, listRef.Count);
+            var refID = int.Parse(listRef[index]);
+            listRef.RemoveAt(index);
+            return refID;
+        }
+    }
+
+    private void RandomPlayerLineup()
+    {
+    }
+
+    private void RandomInMatch()
+    {
+        // var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), 0,);
+    }
+
+    private void RandomPostMatch()
+    {
     }
 
     private string GetTeamName(int teamID)
@@ -59,16 +102,9 @@ public class TranDau : MonoBehaviour
         return MySQLManager.Instance.GetCellDataByRowId(SonConst.TeamTable, "team_name", "team_id", teamID);
     }
 
-    public void SetTiSo(int team1, int team2)
-    {
-        _tiSo.text = team1 + " - " + team2;
-    }
-
-    public void OnBtnClick()
+    private void OnBtnClick()
     {
         Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id);
-        // CSVDataHelper.DataFromCSV(Main_SeasonDetail.Instance.tranDauDetailClass.MatchEvent, false, true, false, false,
-        // "1,\"Bút bi\",100,5000,110\n2,\"Vở học sinh\",50,12000,120\n3,\"Thước kẻ\",80,8000,30\n4,\"Bút chì\",120,4000,40\n5,\"Tẩy\",60,3000,50");
     }
 
     private void UpdateDate(string date)

@@ -91,7 +91,8 @@ public class MySQLManager : MonoBehaviour
             object result = cmd.ExecuteScalar();
             int count = Convert.ToInt32(result);
 
-            Debug.Log($"✅ CountValueCondition: table={tableName}, column={columnName}, value={inputValue}, count={count}");
+            Debug.Log(
+                $"✅ CountValueCondition: table={tableName}, column={columnName}, value={inputValue}, count={count}");
             return count;
         }
         catch (MySqlException ex)
@@ -179,7 +180,7 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    
+
     // Choose value in 1 column in 1 table to get row data
     public string GetRowByColumnValueAsCsv(string table, string column, object value)
     {
@@ -304,7 +305,27 @@ public class MySQLManager : MonoBehaviour
         return allRows;
     }
 
+    public List<string> GetValuesByColumn(string table, string column)
+    {
+        var values = new List<string>();
+        string query = $"SELECT {column} FROM {table}";
 
+        using (var conn = new MySqlConnection(connectionString))
+        using (var cmd = new MySqlCommand(query, conn))
+        {
+            conn.Open();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    values.Add(reader[column].ToString());
+                }
+            }
+        }
+
+        return values;
+    }
+    
     public string GetTableAsCsv(string table)
     {
         try
@@ -357,8 +378,7 @@ public class MySQLManager : MonoBehaviour
             return string.Empty;
         }
     }
-
-
+    
     public string GetTableHeaderAsCsv(string table)
     {
         try
@@ -456,8 +476,7 @@ public class MySQLManager : MonoBehaviour
 
         return allRows;
     }
-
-
+    
     public string GetTableDataAsCsv(string table)
     {
         try
@@ -741,7 +760,7 @@ public class MySQLManager : MonoBehaviour
             return string.Empty;
         }
     }
-    
+
     public bool ClearTable(string tableName, bool useTruncate = false)
     {
         try
@@ -749,7 +768,7 @@ public class MySQLManager : MonoBehaviour
             string query = useTruncate
                 ? $"TRUNCATE TABLE {tableName};"
                 : $"DELETE FROM {tableName};";
-    
+
             using var cmd = new MySqlCommand(query, Conn);
             cmd.ExecuteNonQuery();
             Debug.Log($"✅ Cleared table {tableName} (method: {(useTruncate ? "TRUNCATE" : "DELETE")})");
@@ -777,6 +796,7 @@ public class MySQLManager : MonoBehaviour
                 csv.Append(reader.GetName(i));
                 if (i < reader.FieldCount - 1) csv.Append(",");
             }
+
             csv.AppendLine();
 
             // Data rows
@@ -802,6 +822,7 @@ public class MySQLManager : MonoBehaviour
                     csv.Append(value);
                     if (i < reader.FieldCount - 1) csv.Append(",");
                 }
+
                 csv.AppendLine();
             }
 
@@ -814,52 +835,27 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public void CallProcedure(string procedureName)
+    public bool ValidateTeamInSession1()
     {
-        using var cmd = new MySqlCommand(procedureName, Conn);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.ExecuteNonQuery();
-    }
-
-    public bool ValidateTeamInSession()
-    {
-        using var cmd = new MySqlCommand("validate_test", Conn);
+// validate_team_in_seesion
+        using var cmd = new MySqlCommand("validate_team_in_seesion", Conn);
         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-        // OUT param (BOOLEAN trong MySQL = TINYINT(1))
+        // OUT param (BOOLEAN trong MySQL thực chất = tinyint(1))
         var outParam = new MySqlParameter("p_result", MySqlDbType.Int32)
         {
             Direction = System.Data.ParameterDirection.Output
         };
         cmd.Parameters.Add(outParam);
 
+        // Đảm bảo connection đã set charset hợp lệ
+        using (var setCmd = new MySqlCommand("SET NAMES utf8mb4;", Conn))
+        {
+            setCmd.ExecuteNonQuery();
+        }
+
         cmd.ExecuteNonQuery();
 
-        // Lấy giá trị OUT param (1 = true, 0 = false)
         return Convert.ToInt32(outParam.Value) == 1;
     }
-
-public bool ValidateTeamInSession1()
-{
-// validate_team_in_seesion
-    using var cmd = new MySqlCommand("validate_team_in_seesion", Conn);
-    cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-    // OUT param (BOOLEAN trong MySQL thực chất = tinyint(1))
-    var outParam = new MySqlParameter("p_result", MySqlDbType.Int32)
-    {
-        Direction = System.Data.ParameterDirection.Output
-    };
-    cmd.Parameters.Add(outParam);
-
-    // Đảm bảo connection đã set charset hợp lệ
-    using (var setCmd = new MySqlCommand("SET NAMES utf8mb4;", Conn))
-    {
-        setCmd.ExecuteNonQuery();
-    }
-
-    cmd.ExecuteNonQuery();
-
-    return Convert.ToInt32(outParam.Value) == 1;
-}
 }

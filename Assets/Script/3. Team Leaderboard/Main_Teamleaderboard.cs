@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 // Điểm, Hiệu số, tổng số bàn thắng ghi được, số trận thắng sân khách, tổng số thẻ đỏ, tổng số thẻ vàng.
@@ -108,15 +110,17 @@ ORDER BY total_wins DESC;
 
 public class Main_Teamleaderboard : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private int _winPoint = 3;
+    [SerializeField] private InputField _winInput;
+    [SerializeField] private int _drawPoint = 1;
+    [SerializeField] private InputField _drawInput;
+    [SerializeField] private int _losePoint = 0;
+    [SerializeField] private InputField _loseInput;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        _winInput.text = _winPoint.ToString();
+        _drawInput.text = _drawPoint.ToString();
+        _loseInput.text = _losePoint.ToString();
     }
 }

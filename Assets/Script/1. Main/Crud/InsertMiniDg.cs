@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Maything.UI.DataGridUI;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InsertMiniDg : UpdateAndInsertMiniBase
 {
     [SerializeField] private Button _addBtn;
-    [SerializeField] private DataGridRowData _freshRowData;
+    [SerializeField][ReadOnly] private DataGridRowData _freshRowData;
 
     protected override void Start()
     {

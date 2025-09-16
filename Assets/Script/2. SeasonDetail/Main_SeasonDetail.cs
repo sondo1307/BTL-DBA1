@@ -47,6 +47,96 @@ public class PrematchDB
 }
 
 [System.Serializable]
+public class InmatchDB
+{
+    public int event_id;
+    public int match_id;
+    public int minute;
+    public int event_type;
+    public int team_player_id;
+
+    public InmatchDB(int eventID, int matchID, int minute, int eventType, int teamPlayerID)
+    {
+        event_id = eventID;
+        match_id = matchID;
+        minute = minute;
+        event_type = eventType;
+        team_player_id = teamPlayerID;
+    }
+
+    public string ConvertToCsv()
+    {
+        return $"{event_id},{match_id},{minute},{event_type},{team_player_id}";
+    }
+}
+[System.Serializable]
+public class PostmatchDB
+{
+    public int match_id;
+    public int home_score;
+    public int away_score;
+    public int attendance;
+    public int total_time;
+
+    public PostmatchDB(int matchID, int homeScore, int awayScore, int attendance, int totalTime)
+    {
+        match_id = matchID;
+        home_score = homeScore;
+        away_score = awayScore;
+        attendance = attendance;
+        total_time = totalTime;
+    }
+
+    public string ConvertToCsv()
+    {
+        return $"{match_id},{home_score},{away_score},{attendance},{total_time}";
+    }
+}
+[System.Serializable]
+public class MatchPlayerLineupDB
+{
+    public int match_id;
+    public int team_player_id;
+    public bool is_starting;
+
+    public MatchPlayerLineupDB(int matchID, int teamPlayerID, bool isStarting)
+    {
+        match_id = matchID;
+        team_player_id = teamPlayerID;
+        is_starting = isStarting;
+    }
+
+    public string ConvertToCsv()
+    {
+        return $"{match_id},{team_player_id},{is_starting}";
+    }
+}
+[System.Serializable]
+public class MatchRefereeLineupDB
+{
+    public int match_id;
+    public int referee_main_id;
+    public int referee_assist_1_id;
+    public int referee_assist_2_id;
+    public int referee_var_id;
+
+    public MatchRefereeLineupDB(int matchID, int refereeMainID, int refereeAssist1ID, int refereeAssist2ID, int refereeVarID)
+    {
+        match_id = matchID;
+        referee_main_id = refereeMainID;
+        referee_assist_1_id = refereeAssist1ID;
+        referee_assist_2_id = refereeAssist2ID;
+        referee_var_id = refereeVarID;
+    }
+
+    public string ConvertToCsv()
+    {
+        return $"{match_id},{referee_main_id},{referee_assist_1_id},{referee_assist_2_id},{referee_var_id}";
+    }
+}
+
+
+[System.Serializable]
 public class Team
 {
     public int team_id;
@@ -203,7 +293,6 @@ public class Main_SeasonDetail : MonoBehaviour
             {
                 var home = arr[i];
                 var away = arr[n - 1 - i];
-                var refs = RandomRefForOneGame();
                 var m = new PrematchDB(0, home.team_id, away.team_id, home.stadium_id,
                     matchDate.ToString(SonConst.DateFormat)
                     , RandomTicketPrice(),
@@ -293,7 +382,6 @@ public class Main_SeasonDetail : MonoBehaviour
                 foreach (var match in lMatchesDB)
                 {
                     vongDau.AddTranDau(match);
-                    // MySQLManager.Instance.InsertOneRow(SonConst.MatchTable, match.ConvertToCsv(), null);
                 }
 
                 _vongDaus.Add(vongDau);
@@ -309,27 +397,6 @@ public class Main_SeasonDetail : MonoBehaviour
     private int RandomTicketPrice()
     {
         return UnityEngine.Random.Range(0, 11) * 10000 + 100000;
-    }
-
-    (int, int, int, int) RandomRefForOneGame()
-    {
-        var a = GetRefNames();
-        var b = new List<int>();
-        for (int i = 0; i < 4; i++)
-        {
-            int index = UnityEngine.Random.Range(0, a.Count);
-            b.Add(a[index]);
-            a.RemoveAt(index);
-        }
-
-        return (b[0], b[1], b[2], b[3]);
-
-        List<int> GetRefNames()
-        {
-            var allRowsAsList = MySQLManager.Instance.GetAllRowsAsList("referee");
-            var t = allRowsAsList.Select(x => int.Parse(x[0])).ToList();
-            return t;
-        }
     }
 
     public void OnXoaGiaiDauClick()

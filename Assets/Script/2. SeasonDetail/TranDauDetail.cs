@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class TranDauDetailClass : MonoBehaviour
 {
     public GameObject TranDauDetail;
-    [SerializeField] private TranDauDgObjectBase[] _dgs;
+    [SerializeField] private EachTranDauDgObjectBase[] _dgs;
+    public EachTranDauDgObjectBase[] Dgs => _dgs;
     [SerializeField] private Toggle[] _toggles;
     [SerializeField][ReadOnly] private int _matchID;
     [SerializeField] private Button _closeBtn;
@@ -23,7 +24,7 @@ public class TranDauDetailClass : MonoBehaviour
             var toggle = _toggles[i1];
             toggle.onValueChanged.AddListener((isOn) =>
             {
-                // _dgs[i1].Open(_matchID);
+                _dgs[i1].Open(_matchID);
                 _dgs[i1].gameObject.SetActive(isOn);
             });
         }

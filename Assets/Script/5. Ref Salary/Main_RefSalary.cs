@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
 SELECT 
@@ -39,15 +41,17 @@ ORDER BY total_matches DESC;
 
 public class Main_RefSalary : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private int _mainRefSalary = 30000000;
+    [SerializeField] private int _lineRefSalary = 20000000;
+    [SerializeField] private int _tableRefSalary = 10000000;
+    [SerializeField] private InputField _mainRefInput;
+    [SerializeField] private InputField _lineRefInput;
+    [SerializeField] private InputField _tableRefInput;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        _mainRefInput.text = _mainRefSalary.ToString();
+        _lineRefInput.text = _lineRefSalary.ToString();
+        _tableRefInput.text = _tableRefSalary.ToString();
     }
 }
