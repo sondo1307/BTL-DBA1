@@ -23,6 +23,8 @@ public class MySQLManager : MonoBehaviour
                                       "AllowPublicKeyRetrieval=True;CharSet=utf8mb4;";
 
     public MySqlConnection Conn;
+    [SerializeField] private decimal _aa;
+    
 
     private void Awake()
     {
@@ -50,7 +52,7 @@ public class MySQLManager : MonoBehaviour
     [Button]
     private void Test()
     {
-        print(ValidateTeamInSession1());
+        ClearTable(SonConst.PrematchTable, false);
     }
 
     void OnDestroy()
@@ -167,7 +169,7 @@ public class MySQLManager : MonoBehaviour
                 return string.Empty;
 
             if (result is DateTime dt)
-                return dt.ToString("yyyy-MM-dd");
+                return dt.ToString(SonConst.DateFormat);
             if (result is bool b)
                 return b ? "1" : "0";
 
@@ -181,7 +183,13 @@ public class MySQLManager : MonoBehaviour
     }
 
 
-    // Choose value in 1 column in 1 table to get row data
+    /// <summary>
+    /// Choose value in 1 column in 1 table to get row data
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="column"></param>
+    /// <param name="value"></param>
+    /// <returns>string = csv</returns>
     public string GetRowByColumnValueAsCsv(string table, string column, object value)
     {
         try
@@ -227,6 +235,54 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Choose value in 1 column in 1 table to get row data
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="column"></param>
+    /// <param name="value"></param>
+    /// <returns>List of row values (as strings)</returns>
+    public List<string> GetRowByColumnValueAsList(string table, string column, object value)
+    {
+        try
+        {
+            string query = $"SELECT * FROM `{table}` WHERE `{column}` = @value LIMIT 1;";
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@value", value);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                var row = new List<string>();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader[i];
+                    string val;
+
+                    if (rawValue is DateTime dt)
+                        val = dt.ToString(SonConst.DateFormat);
+                    else if (rawValue is bool b)
+                        val = b ? "1" : "0";
+                    else
+                        val = rawValue?.ToString() ?? "";
+
+                    row.Add(val);
+                }
+
+                return row;
+            }
+            else
+            {
+                return new List<string>(); // Không tìm thấy row
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return new List<string>();
+        }
+    }
 
     public List<string> GetRowAsList(string table, int rowIndex)
     {
@@ -264,6 +320,51 @@ public class MySQLManager : MonoBehaviour
         return row;
     }
 
+    /// <summary>
+    /// Lấy danh sách giá trị của 1 cột khi 1 cột khác có giá trị bằng tham số truyền vào
+    /// </summary>
+    /// <param name="tableName">Tên bảng</param>
+    /// <param name="columnFind">Cột cần lấy giá trị</param>
+    /// <param name="columnSoSanh">Cột dùng để so sánh</param>
+    /// <param name="giaTriSoSanh">Giá trị cần so sánh</param>
+    /// <returns>List<string> chứa các giá trị của columnFind</returns>
+    public List<string> GetValuesByCondition(
+        string tableName,
+        string columnFind,
+        string columnSoSanh,
+        object giaTriSoSanh)
+    {
+        var values = new List<string>();
+
+        try
+        {
+            string query = $"SELECT `{columnFind}` FROM `{tableName}` WHERE `{columnSoSanh}` = @value;";
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@value", giaTriSoSanh);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                object rawValue = reader[columnFind];
+                string val;
+
+                if (rawValue is DateTime dt)
+                    val = dt.ToString(SonConst.DateFormat); // format ngày
+                else if (rawValue is bool b)
+                    val = b ? "1" : "0"; // boolean thành 1/0
+                else
+                    val = rawValue?.ToString() ?? "";
+
+                values.Add(val);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return values;
+    }
 
     public List<List<string>> GetAllRowsAsList(string table)
     {
@@ -325,7 +426,7 @@ public class MySQLManager : MonoBehaviour
 
         return values;
     }
-    
+
     public string GetTableAsCsv(string table)
     {
         try
@@ -378,7 +479,7 @@ public class MySQLManager : MonoBehaviour
             return string.Empty;
         }
     }
-    
+
     public string GetTableHeaderAsCsv(string table)
     {
         try
@@ -476,7 +577,7 @@ public class MySQLManager : MonoBehaviour
 
         return allRows;
     }
-    
+
     public string GetTableDataAsCsv(string table)
     {
         try
@@ -570,11 +671,6 @@ public class MySQLManager : MonoBehaviour
                 cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
             }
 
-            foreach (MySqlParameter param in cmd.Parameters)
-            {
-                print($"{param.ParameterName} = {param.Value}");
-            }
-
             int rows = cmd.ExecuteNonQuery();
             Debug.Log($"✅ Update row id={id}, affected {rows} rows");
 
@@ -588,7 +684,7 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public void InsertOneRow(string tableName, string csvLine, Action callback)
+    public void InsertOneRow(string tableName, string csvLine, bool ignoreFirstColumn, Action callback)
     {
         try
         {
@@ -607,7 +703,7 @@ public class MySQLManager : MonoBehaviour
             List<string> paramNames = new List<string>();
 
             // Start từ 1 vì id luôn tăng dần auto
-            for (int i = 1; i < columns.Count; i++)
+            for (int i = ignoreFirstColumn ? 1 : 0; i < columns.Count; i++)
             {
                 colNames.Add(columns[i]);
                 paramNames.Add("@" + columns[i]);
@@ -615,20 +711,19 @@ public class MySQLManager : MonoBehaviour
 
             string sql =
                 $"INSERT INTO {tableName} ({string.Join(", ", colNames)}) VALUES ({string.Join(", ", paramNames)})";
-            print(sql);
 
             using var cmd = new MySqlCommand(sql, Conn);
 
             // Gán param động
-            for (int i = 1; i < columns.Count; i++)
+            for (int i = ignoreFirstColumn ? 1 : 0; i < columns.Count; i++)
             {
                 cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
             }
 
-            foreach (MySqlParameter param in cmd.Parameters)
-            {
-                print($"{param.ParameterName} = {param.Value}");
-            }
+            // foreach (MySqlParameter param in cmd.Parameters)
+            // {
+                // print($"{param.ParameterName} = {param.Value}");
+            // }
 
             int rows = cmd.ExecuteNonQuery();
             Debug.Log($"✅ Insert row, affected {rows} rows");
@@ -649,7 +744,6 @@ public class MySQLManager : MonoBehaviour
 
         // Cột đầu tiên là khóa chính ID
         string sql = $"DELETE FROM {tableName} WHERE {columns[0]}=@id";
-        print(sql);
 
         using var cmd = new MySqlCommand(sql, Conn);
         cmd.Parameters.AddWithValue("@id", idValue);
@@ -677,7 +771,6 @@ public class MySQLManager : MonoBehaviour
         }
 
         string sql = $"DELETE FROM {tableName} WHERE {idColumn} IN ({string.Join(", ", paramNames)})";
-        print(sql);
 
         using var cmd = new MySqlCommand(sql, Conn);
 

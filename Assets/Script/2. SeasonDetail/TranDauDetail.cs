@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 public class TranDauDetailClass : MonoBehaviour
 {
-    public GameObject TranDauDetail;
     [SerializeField] private EachTranDauDgObjectBase[] _dgs;
     public EachTranDauDgObjectBase[] Dgs => _dgs;
     [SerializeField] private Toggle[] _toggles;
     [SerializeField][ReadOnly] private int _matchID;
     [SerializeField] private Button _closeBtn;
-    
+    private bool _allowEdit;
+    public bool AllowEdit => _allowEdit;
     
     private void Start()
     {
@@ -30,10 +30,11 @@ public class TranDauDetailClass : MonoBehaviour
         }
     }
 
-    public void Open(int matchID)
+    public void Open(int matchID, bool allowEdit)
     {
         _matchID = matchID;
         gameObject.SetActive(true);
+        _allowEdit = allowEdit;
     }
 
     public void Close()

@@ -24,10 +24,10 @@ public class PrematchDB
     public string match_date;
     public int ticket_price;
     public int tournament_round;
-    public bool is_active;
+    [FormerlySerializedAs("is_active")] public bool is_actived;
 
     public PrematchDB(int matchID, int homeTeamID, int awayTeamID, int stadiumID, string matchDate,
-        int ticketPrice, int tournamentRound, bool isActive)
+        int ticketPrice, int tournamentRound, bool isActived)
     {
         match_id = matchID;
         home_team_id = homeTeamID;
@@ -36,14 +36,21 @@ public class PrematchDB
         match_date = matchDate;
         ticket_price = ticketPrice;
         tournament_round = tournamentRound;
-        is_active = isActive;
+        is_actived = isActived;
     }
 
     public string ConvertToCsv()
     {
         return
-            $"{match_id},{home_team_id},{away_team_id},{stadium_id},{match_date},,{ticket_price},{tournament_round}";
+            $"{match_id},{home_team_id},{away_team_id},{stadium_id},{match_date},{ticket_price},{tournament_round},{(is_actived ? "1" : "0")}";
     }
+}
+
+public enum EventTypeInMatch
+{
+    Goal = 0,
+    YellowCard = 1,
+    RedCard = 2,
 }
 
 [System.Serializable]
@@ -110,7 +117,7 @@ public class MatchPlayerLineupDB
 
     public string ConvertToCsv()
     {
-        return $"{match_id},{team_player_id},{is_starting}";
+        return $"{match_id},{team_player_id},{(is_starting ? "1" : "0")}";
     }
 }
 
@@ -151,7 +158,7 @@ public class Team
     public string home_kit;
     public string away_kit;
     public string third_kit;
-    public int isActived;
+    [FormerlySerializedAs("isActived")] public int is_actived;
 
     public Team(int teamID, string teamName, DateTime teamCreated, int countryID, int stadiumID, string homeKit,
         string awayKit, string thirdKit, int isActived)
@@ -164,7 +171,7 @@ public class Team
         home_kit = homeKit;
         away_kit = awayKit;
         third_kit = thirdKit;
-        this.isActived = isActived;
+        this.is_actived = isActived;
     }
 }
 
@@ -232,9 +239,9 @@ public class Main_SeasonDetail : MonoBehaviour
                     int.Parse(row[2]), // away_team_id
                     int.Parse(row[3]), // stadium_id
                     row[4], // match_date
-                    Convert.ToInt32(double.Parse(row[11])), // ticket_price
-                    int.Parse(row[12]), // tournament_round
-                    bool.Parse(row[13]) // is_active
+                    Convert.ToInt32(double.Parse(row[5])), // ticket_price
+                    int.Parse(row[6]), // tournament_round
+                    Convert.ToBoolean(int.Parse(row[7])) // is_active
                 );
                 matches.Add(m);
             }
@@ -249,6 +256,8 @@ public class Main_SeasonDetail : MonoBehaviour
 
         IEnumerator TaoGiaiDau()
         {
+            UIManager.Instance.ShowPermantCircle();
+            
             // Nhóm theo vòng đấu
             var grouped = matches.GroupBy(m => m.tournament_round).OrderBy(g => g.Key);
 
@@ -265,12 +274,15 @@ public class Main_SeasonDetail : MonoBehaviour
                 vongDau.SetVongDau(group.Key);
                 yield return SonCache.WaitForEndOfFrame;
             }
+            
+            UIManager.Instance.HideCircle();
         }
     }
 
     List<List<PrematchDB>> GenerateRoundsAndMatches()
     {
         var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
+        int matchIdCount = 0;
 
         // Mảng làm việc: giữ arr[0] cố định, xoay các phần tử 1..n-1
         var arr = new List<Team>();
@@ -297,16 +309,17 @@ public class Main_SeasonDetail : MonoBehaviour
             {
                 var home = arr[i];
                 var away = arr[n - 1 - i];
-                var m = new PrematchDB(0, home.team_id, away.team_id, home.stadium_id,
+                var m = new PrematchDB(matchIdCount, home.team_id, away.team_id, home.stadium_id,
                     matchDate.ToString(SonConst.DateFormat)
                     , RandomTicketPrice(),
                     r + 1, true);
                 // matchDate = matchDate.AddDays(1);
+                matchIdCount++;
                 matches.Add(m);
             }
 
             rounds.Add(matches);
-            
+
             matchDate = matchDate.AddDays(1);
 
             // Xoay vòng: giữ arr[0], dịch phải đoạn [1..n-1]
@@ -318,38 +331,29 @@ public class Main_SeasonDetail : MonoBehaviour
 
         // Lượt về: đảo sân của từng cặp theo đúng thứ tự vòng
         int total = rounds.Count;
-//        for (int i = 0; i < total; i++)
-//        {
-//            var ret = new List<MatchDb>();
-//            foreach (var m in rounds[i])
-//            {
-//                ret.Add(m);
-//                matchDate = matchDate.AddDays(1);
-//            }
-//
-//            rounds.Add(ret);
-//        }
         for (int i = 0; i < total; i++)
         {
             var ret = new List<PrematchDB>();
             foreach (var m in rounds[i])
             {
                 var rematch = new PrematchDB(
-                    0,
+                    matchIdCount,
                     m.away_team_id, // đảo sân
                     m.home_team_id,
                     m.stadium_id,
                     matchDate.ToString(SonConst.DateFormat),
                     m.ticket_price,
                     m.tournament_round + total, // tăng số vòng để phân biệt
-                    m.is_active
+                    m.is_actived
                 );
 
                 ret.Add(rematch);
+                matchIdCount++;
 
                 // tăng ngày ngay sau khi gán trận
                 // matchDate = matchDate.AddDays(1);
             }
+
             matchDate = matchDate.AddDays(1);
             rounds.Add(ret);
         }
@@ -370,6 +374,7 @@ public class Main_SeasonDetail : MonoBehaviour
             return;
         }
 
+        _taoGiaiDauBtn.gameObject.SetActive(false);
         StartCoroutine(TaoGiaiDau());
         return;
 
@@ -388,6 +393,7 @@ public class Main_SeasonDetail : MonoBehaviour
                 foreach (var match in lMatchesDB)
                 {
                     vongDau.AddTranDau(match);
+                    MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, match.ConvertToCsv(), false, null);
                 }
 
                 _vongDaus.Add(vongDau);
@@ -415,6 +421,7 @@ public class Main_SeasonDetail : MonoBehaviour
         }
 
         _vongDaus.Clear();
+        MySQLManager.Instance.ClearTable(SonConst.PrematchTable);
     }
 
     #region Search

@@ -39,11 +39,11 @@ public class OnSelectToggleMenu : MonoBehaviour
             });
         }
         
-        string csv = "id,name,age\n1,John,25\n2,Mary,30\n3,Tom,28";
-        List<string> scores = new List<string> { "80", "90", "85" };
+        // string csv = "id,name,age\n1,John,25\n2,Mary,30\n3,Tom,28";
+        // List<string> scores = new List<string> { "80", "90", "85" };
 
-        string newCsv = CSVDataHelper.AddNewColumnToCsv(csv, "score", scores);
+        // string newCsv = CSVDataHelper.AddNewColumnToCsv(csv, "score", scores);
 
-        Debug.Log(newCsv);
+        // Debug.Log(newCsv);
     }
 }

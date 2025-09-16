@@ -7097,7 +7097,7 @@ GameObject:
   - component: {fileID: 1160658730212377846}
   - component: {fileID: 7996970141060158015}
   - component: {fileID: 8285758159154410488}
-  - component: {fileID: 7096886166233860100}
+  - component: {fileID: 210483287662772998}
   m_Layer: 5
   m_Name: insert
   m_TagString: Untagged
@@ -7165,7 +7165,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7096886166233860100
+--- !u!114 &210483287662772998
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7174,7 +7174,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1619592881086156865}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afd3391b2606de84abe3fc3c0daa21cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 65324927461d44bebf44cb8bc2d708b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _closeBtn: {fileID: 53539413590006793}
@@ -7182,11 +7182,15 @@ MonoBehaviour:
   _closeEvent:
     m_PersistentCalls:
       m_Calls: []
+  _openEvent:
+    m_PersistentCalls:
+      m_Calls: []
   _addBtn: {fileID: 468408367675084613}
   _freshRowData:
     isSelected: 0
     cellData: []
     objectUI: {fileID: 0}
+  _tranDauDetail: {fileID: 5749231038691227852}
 --- !u!1 &1622100631748989985
 GameObject:
   m_ObjectHideFlags: 0
@@ -8788,7 +8792,7 @@ GameObject:
   - component: {fileID: 259878960590470268}
   - component: {fileID: 1603245518532619931}
   - component: {fileID: 6496740873811405826}
-  - component: {fileID: 2695210082780743179}
+  - component: {fileID: 2256037861568724663}
   m_Layer: 5
   m_Name: update
   m_TagString: Untagged
@@ -8856,7 +8860,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2695210082780743179
+--- !u!114 &2256037861568724663
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8865,7 +8869,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2271065465499494036}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 197304db0721e4a15a66e37f13435339, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d93f001db6c4e02a73513d96b8c0489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _closeBtn: {fileID: 1756325386361335255}
@@ -8873,7 +8877,11 @@ MonoBehaviour:
   _closeEvent:
     m_PersistentCalls:
       m_Calls: []
+  _openEvent:
+    m_PersistentCalls:
+      m_Calls: []
   _updateBtn: {fileID: 8604735659188991610}
+  _tranDauDetail: {fileID: 5749231038691227852}
 --- !u!1 &2277905743947547653
 GameObject:
   m_ObjectHideFlags: 0
@@ -18400,7 +18408,7 @@ MonoBehaviour:
   m_Content: {fileID: 5397837514307348849}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -22714,7 +22722,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d80c68073984e11a2b598ca84e58c05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TranDauDetail: {fileID: 0}
   _dgs:
   - {fileID: 6733809562202073996}
   - {fileID: 0}
@@ -29996,8 +30003,8 @@ MonoBehaviour:
   _updateBtn: {fileID: 5143246975586932302}
   _insertBtn: {fileID: 6713264482376412279}
   _deleteBtn: {fileID: 5003089154019497629}
-  _insertMiniDg: {fileID: 7096886166233860100}
-  _updateMiniDg: {fileID: 2695210082780743179}
+  _insertMiniDg: {fileID: 210483287662772998}
+  _updateMiniDg: {fileID: 2256037861568724663}
 --- !u!1001 &2260826019138192742
 PrefabInstance:
   m_ObjectHideFlags: 0

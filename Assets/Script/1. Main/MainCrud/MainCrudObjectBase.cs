@@ -52,7 +52,7 @@ public class MainCrudObjectBase : MonoBehaviour
         CSVDataHelper.DataFromCSV(DataGridUI, false, true, true, false, data);
     }
 
-    public void Setup(string data)
+    private void Setup(string data)
     {
         CSVDataHelper.DataFromCSV(DataGridUI, false, true, true, false, data);
     }

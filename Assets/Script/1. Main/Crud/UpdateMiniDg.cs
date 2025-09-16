@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UpdateMiniDg : UpdateAndInsertMiniBase
 {
-    [SerializeField] private Button _updateBtn;
+    [SerializeField] protected Button _updateBtn;
 
     protected override void Start()
     {

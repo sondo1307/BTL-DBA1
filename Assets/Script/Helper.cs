@@ -72,6 +72,37 @@ public static class StringUtils
             }));
         }
     }
+    
+    /// <summary>
+    /// Convert a list of strings into a single CSV row.
+    /// </summary>
+    /// <param name="values">List of string values</param>
+    /// <returns>CSV string</returns>
+    public static string ConvertListToCsv(List<string> values)
+    {
+        if (values == null || values.Count == 0)
+            return string.Empty;
+
+        var safeValues = new List<string>();
+
+        foreach (var v in values)
+        {
+            string val = v ?? "";
+
+            // Escape quotes by doubling them
+            if (val.Contains("\""))
+                val = val.Replace("\"", "\"\"");
+
+            // If contains comma, quote, or newline -> wrap with quotes
+            if (val.Contains(",") || val.Contains("\"") || val.Contains("\n"))
+                val = $"\"{val}\"";
+
+            safeValues.Add(val);
+        }
+
+        return string.Join(",", safeValues);
+    }
+
 
     // Hàm bỏ dấu + về lowercase, xử lý thêm chữ 'đ'
     private static string NormalizeNoDiacritics(string text)

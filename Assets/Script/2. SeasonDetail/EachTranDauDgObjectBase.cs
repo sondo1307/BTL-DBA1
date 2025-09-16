@@ -15,8 +15,8 @@ public class EachTranDauDgObjectBase : MonoBehaviour
     [SerializeField] private Button _updateBtn;
     [SerializeField] private Button _insertBtn;
     [SerializeField] private Button _deleteBtn;
-    [SerializeField] private InsertMiniDg _insertMiniDg;
-    [SerializeField] private UpdateMiniDg _updateMiniDg;
+    [SerializeField] private InsertMiniDg2 _insertMiniDg;
+    [SerializeField] private UpdateMiniDg2 _updateMiniDg;
 
 
     private void OnValidate()

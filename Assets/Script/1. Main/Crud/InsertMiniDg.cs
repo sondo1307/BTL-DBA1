@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class InsertMiniDg : UpdateAndInsertMiniBase
 {
-    [SerializeField] private Button _addBtn;
-    [SerializeField][ReadOnly] private DataGridRowData _freshRowData;
+    [SerializeField] protected Button _addBtn;
+    [SerializeField] [ReadOnly] protected DataGridRowData _freshRowData;
 
     protected override void Start()
     {
@@ -21,8 +21,10 @@ public class InsertMiniDg : UpdateAndInsertMiniBase
         base.Show(tableName, rowData);
         if (_dataGridUI.columnData.Count == 0)
         {
-            CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(_dataGridUI, UpdateOrInsert.Insert, tableName);
+            CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(_dataGridUI, UpdateOrInsert.Insert,
+                tableName);
         }
+
         var numberOfColumns = _dataGridUI.columnData.Count;
         for (int i = 0; i < numberOfColumns; i++)
         {
@@ -30,14 +32,14 @@ public class InsertMiniDg : UpdateAndInsertMiniBase
         }
 
         _dataGridUI.rowData[0] = _freshRowData;
-        
+
         InitDg();
     }
 
     private void AddRow()
     {
         MySQLManager.Instance.InsertOneRow(MainCrud.Instance.CurrentMainCrud.TableName,
-            CSVDataHelper.ExportRowsToCSV(_dataGridUI), Hide);
+            CSVDataHelper.ExportRowsToCSV(_dataGridUI), true, Hide);
     }
 
     protected override void Hide()
