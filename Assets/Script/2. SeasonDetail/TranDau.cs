@@ -45,7 +45,7 @@ public class TranDau : MonoBehaviour
         Main_SeasonDetail.Instance.EventUpdateTodayDate -= UpdateDate;
     }
 
-    public void SetCapDau(PrematchDB prematchDB)
+    public void SetCapDau(PrematchDB prematchDB, bool insertData)
     {
         this.prematchDB = prematchDB;
         Team1 = GetTeamName(this.prematchDB.home_team_id);
@@ -56,15 +56,16 @@ public class TranDau : MonoBehaviour
                           Team2ID + "." + Team2;
         _tiSo.text = "0" + "\n" + "0";
         _ngayThiDau.text = this.prematchDB.match_date;
-        // Khong Insert o day vi Load dung cung func nay nhung k insert.
-        // MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), false, null);
-        // StartCoroutine(Delay());
+        if (insertData)
+        {
+            MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), false, null);
+            StartCoroutine(Delay());
+        }
+
         return;
 
         IEnumerator Delay()
         {
-            RandomRefereeLineup();
-            yield return SonCache.WaitSeconds;
             RandomPlayerLineup();
             yield return SonCache.WaitSeconds;
             RandomInMatch();
@@ -73,28 +74,18 @@ public class TranDau : MonoBehaviour
         }
     }
 
-    private void RandomRefereeLineup()
-    {
-        var listRef = MySQLManager.Instance.GetValuesByColumn(SonConst.RefereeTable, "referee_id");
-        var a = new MatchRefereeLineupDB(prematchDB.match_id, GetOneRef(), GetOneRef(), GetOneRef(), GetOneRef());
-        var b = a.ConvertToCsv();
-        MySQLManager.Instance.InsertOneRow(SonConst.MatchRefereeLineupTable, b, false, null);
-        return;
-
-        int GetOneRef()
-        {
-            var index = UnityEngine.Random.Range(0, listRef.Count);
-            var refID = int.Parse(listRef[index]);
-            listRef.RemoveAt(index);
-            return refID;
-        }
-    }
 
     private void RandomPlayerLineup()
     {
         var homePlayers =
             MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "player_id",
                 "team_id", prematchDB.home_team_id);
+        // foreach (var i in homePlayers)
+        // {
+        //     print(i);
+        // }
+        print(StringUtils.ConvertListToCsv(homePlayers));
+
         _listPlayerInMatch.AddRange(homePlayers);
         //Home team
         for (var i = 0; i < 11; i++)
@@ -115,6 +106,12 @@ public class TranDau : MonoBehaviour
         var awayPlayers =
             MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "player_id",
                 "team_id", prematchDB.away_team_id);
+        // foreach (var i in awayPlayers)
+        // {
+        //     print(i);
+        // }
+        print(StringUtils.ConvertListToCsv(awayPlayers));
+
         _listPlayerInMatch.AddRange(awayPlayers);
         for (var i = 0; i < 11; i++)
         {
@@ -161,7 +158,8 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.Goal,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, false, null);
+            print(b);
+            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
 
         var randomYellow = UnityEngine.Random.Range(0, 3);
@@ -170,7 +168,8 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.YellowCard,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, false, null);
+            print(b);
+            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
 
         var randomRed = UnityEngine.Random.Range(0, 3);
@@ -179,15 +178,17 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.RedCard,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, false, null);
+            print(b);
+            MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
     }
 
     private void RandomPostMatch()
     {
-        _postmatchDB = new PostmatchDB(prematchDB.match_id, 3, 3, Random.Range(10, 90), Random.Range(91, 110));
-        var b = _postmatchDB.ConvertToCsv();
-        MySQLManager.Instance.InsertOneRow(SonConst.PostMatchTable, b, false, null);
+        // _postmatchDB = new PostmatchDB(prematchDB.match_id, 3, 3, Random.Range(10, 90), Random.Range(91, 110));
+        // var b = _postmatchDB.ConvertToCsv();
+        // MySQLManager.Instance.InsertOneRow(SonConst.PostMatchTable, b, false, null);
+        MySQLManager.Instance.CallSumaryPostMatch(prematchDB.match_id);
     }
 
     private string GetTeamName(int teamID)
@@ -197,7 +198,7 @@ public class TranDau : MonoBehaviour
 
     private void OnBtnClick()
     {
-        Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id, true);
+        Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id, (_img.color == Color.yellow));
     }
 
     private void UpdateDate(string date)
@@ -206,24 +207,27 @@ public class TranDau : MonoBehaviour
         var today = DateTime.ParseExact(date, SonConst.DateFormat, CultureInfo.InvariantCulture);
         // _img.color = myDate.Date < today.Date ? Color.red : Color.white;
         // done
-        if (true)
+        if (prematchDB != null)
         {
-            
+            _img.color = Color.green;
         }
-        // not done and date < today
-        else if (true)
+        else
         {
-            
-        }
-        // not done and date > today
-        else if (true)
-        {
-            
-        }
-        // not done and date = today
-        else if (true)
-        {
-            
+            // not done and date < today
+            if (myDate < today)
+            {
+                _img.color = Color.red;
+            }
+            // not done and date > today
+            else if (myDate > today)
+            {
+                _img.color = Color.white;
+            }
+            // not done and date = today
+            else if (myDate == today)
+            {
+                _img.color = Color.yellow;
+            }
         }
     }
 

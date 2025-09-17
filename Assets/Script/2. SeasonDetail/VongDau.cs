@@ -31,10 +31,10 @@ public class VongDau : MonoBehaviour
         _txt.text = "Vòng " + vongDau;
     }
 
-    public void AddTranDau(PrematchDB prematchDB)
+    public void AddTranDau(PrematchDB prematchDB, bool insertData)
     {
         TranDau tranDau = Instantiate(_tranDauPrefab, transform);
-        tranDau.SetCapDau(prematchDB);
+        tranDau.SetCapDau(prematchDB, insertData);
         TranDaus.Add(tranDau);
     }
 }

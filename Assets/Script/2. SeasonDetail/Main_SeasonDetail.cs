@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Maything.UI.DataGridUI;
+using Sirenix.OdinInspector;
 using TMPro;
 using UI.Dates;
 using UnityEngine;
@@ -66,7 +67,7 @@ public class InmatchDB
     {
         event_id = eventID;
         match_id = matchID;
-        minute = minute;
+        this.minute = minute;
         event_type = eventType;
         team_player_id = teamPlayerID;
     }
@@ -257,7 +258,7 @@ public class Main_SeasonDetail : MonoBehaviour
         IEnumerator TaoGiaiDau()
         {
             UIManager.Instance.ShowPermantCircle();
-            
+
             // Nhóm theo vòng đấu
             var grouped = matches.GroupBy(m => m.tournament_round).OrderBy(g => g.Key);
 
@@ -267,14 +268,14 @@ public class Main_SeasonDetail : MonoBehaviour
 
                 foreach (var match in group)
                 {
-                    vongDau.AddTranDau(match);
+                    vongDau.AddTranDau(match, false);
                 }
 
                 _vongDaus.Add(vongDau);
                 vongDau.SetVongDau(group.Key);
                 yield return SonCache.WaitForEndOfFrame;
             }
-            
+
             UIManager.Instance.HideCircle();
         }
     }
@@ -282,6 +283,11 @@ public class Main_SeasonDetail : MonoBehaviour
     List<List<PrematchDB>> GenerateRoundsAndMatches()
     {
         var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
+        var a1 = rowsTeam[0];
+        var b1 = rowsTeam[1];
+        rowsTeam.Clear();
+        rowsTeam.Add(a1);
+        rowsTeam.Add(b1);
         int matchIdCount = 0;
 
         // Mảng làm việc: giữ arr[0] cố định, xoay các phần tử 1..n-1
@@ -366,6 +372,7 @@ public class Main_SeasonDetail : MonoBehaviour
     /// SEPERATOR
     /// </summary>
     /// <returns></returns>
+    [Button]
     public void OnTaoGiaiDauClick()
     {
         if (!MySQLManager.Instance.ValidateTeamInSession1())
@@ -383,17 +390,31 @@ public class Main_SeasonDetail : MonoBehaviour
             UIManager.Instance.ShowPermantCircle();
             List<List<PrematchDB>> rounds = GenerateRoundsAndMatches();
 
+            var testCount = 0;
 
             // In lịch thi đấu
             int round = 1;
-            foreach (var lMatchesDB in rounds)
+            for (var i = 0; i < rounds.Count; i++)
             {
+                var listRef = RandomRefereeLineup();
+                var lMatchesDB = rounds[i];
                 VongDau vongDau = Instantiate(_vongDauPrefab, _content);
 
                 foreach (var match in lMatchesDB)
                 {
-                    vongDau.AddTranDau(match);
-                    MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, match.ConvertToCsv(), false, null);
+                    vongDau.AddTranDau(match, true);
+                    {
+                        // MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, match.ConvertToCsv(), false, null);
+
+                        var listFourRef = GetFourRef();
+                        var a = new MatchRefereeLineupDB(match.match_id, listFourRef[0], listFourRef[1], listFourRef[2],
+                            listFourRef[3]);
+                        var b = a.ConvertToCsv();
+                        print(b);
+                        MySQLManager.Instance.InsertOneRow(SonConst.MatchRefereeLineupTable, b, false, null);
+                    }
+
+                    testCount++;
                 }
 
                 _vongDaus.Add(vongDau);
@@ -401,10 +422,38 @@ public class Main_SeasonDetail : MonoBehaviour
 
                 round++;
                 yield return SonCache.WaitForEndOfFrame;
+                continue;
+
+                List<int> GetFourRef()
+                {
+                    var tempRef = new List<int>();
+                    for (var i = 0; i < 4; i++)
+                    {
+                        var index = UnityEngine.Random.Range(0, listRef.Count);
+                        var refID = int.Parse(listRef[index]);
+                        listRef.RemoveAt(index);
+                        tempRef.Add(refID);
+                    }
+
+                    return tempRef;
+                }
             }
 
             UIManager.Instance.HideCircle();
         }
+    }
+
+    private List<string> RandomRefereeLineup()
+    {
+        var a = MySQLManager.Instance.GetValuesByColumn(SonConst.RefereeTable, "referee_id");
+        var b = new List<string>();
+        for (var i = 0; i < 16; i++)
+        {
+            var s = a[i];
+            b.Add(s);
+        }
+
+        return b;
     }
 
     private int RandomTicketPrice()

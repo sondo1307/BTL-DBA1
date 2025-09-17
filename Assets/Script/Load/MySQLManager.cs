@@ -24,7 +24,7 @@ public class MySQLManager : MonoBehaviour
 
     public MySqlConnection Conn;
     [SerializeField] private decimal _aa;
-    
+
 
     private void Awake()
     {
@@ -722,11 +722,10 @@ public class MySQLManager : MonoBehaviour
 
             // foreach (MySqlParameter param in cmd.Parameters)
             // {
-                // print($"{param.ParameterName} = {param.Value}");
+            // print($"{param.ParameterName} = {param.Value}");
             // }
 
             int rows = cmd.ExecuteNonQuery();
-            Debug.Log($"✅ Insert row, affected {rows} rows");
 
             callback?.Invoke();
         }
@@ -950,5 +949,38 @@ public class MySQLManager : MonoBehaviour
         cmd.ExecuteNonQuery();
 
         return Convert.ToInt32(outParam.Value) == 1;
+    }
+
+    /// <summary>
+    /// Gọi procedure sumary_post_match trong MySQL
+    /// </summary>
+    /// <param name="matchId">Giá trị match_id truyền vào</param>
+    /// <returns>Giá trị p_result trả về</returns>
+    public int CallSumaryPostMatch(int matchId)
+    {
+        try
+        {
+            using var cmd = new MySqlCommand("sumary_post_match", Conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            // Tham số IN
+            cmd.Parameters.AddWithValue("@match_id", matchId);
+
+            // Tham số OUT
+            var resultParam = new MySqlParameter("@p_result", MySqlDbType.Int32);
+            resultParam.Direction = System.Data.ParameterDirection.Output;
+            cmd.Parameters.Add(resultParam);
+
+            // Thực thi
+            cmd.ExecuteNonQuery();
+
+            // Lấy kết quả OUT
+            return Convert.ToInt32(resultParam.Value);
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return -1;
+        }
     }
 }
