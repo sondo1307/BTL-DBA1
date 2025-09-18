@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 namespace Maything.UI.DataGridUI
 {
-
     public class DataGridUI : MonoBehaviour
     {
         public enum enumDataSource
@@ -26,8 +25,7 @@ namespace Maything.UI.DataGridUI
             Row,
         }
 
-        [Header("Config")]
-        public DataGridTheme theme;
+        [Header("Config")] public DataGridTheme theme;
         public bool isColumnResize = false;
         public bool isColumnSort = false;
 
@@ -35,19 +33,25 @@ namespace Maything.UI.DataGridUI
         public bool isMultipleSelected = false;
         public RectTransform border;
 
-        [Header("Paging")]
-        public bool isPaging = false;
+        [Header("Paging")] public bool isPaging = false;
         public int pageSize = 15;
 
         int pageIndex = 0;
         int pageCount = 0;
-        [HideInInspector]
-        public int PageCount { get { return pageCount; } }
-        [HideInInspector]
-        public int CurrentPage { get { return pageIndex; } }
 
-        [Header("Template")]
-        public GameObject rowTemplate;
+        [HideInInspector]
+        public int PageCount
+        {
+            get { return pageCount; }
+        }
+
+        [HideInInspector]
+        public int CurrentPage
+        {
+            get { return pageIndex; }
+        }
+
+        [Header("Template")] public GameObject rowTemplate;
         public GameObject rowTextItemTemplate;
         public GameObject rowCheckBoxTemplate;
         public GameObject rowPhotoTemplate;
@@ -58,36 +62,31 @@ namespace Maything.UI.DataGridUI
         public GameObject rowPercentageTemplate;
         public GameObject rowIntTemplate;
 
-        [Header("Data View")]
-        public RectTransform dataScrollView;
+        [Header("Data View")] public RectTransform dataScrollView;
         public RectTransform dataContent;
 
-        [Header("Data Source")]
-        public enumDataSource dataSource = enumDataSource.DataEntry;
+        [Header("Data Source")] public enumDataSource dataSource = enumDataSource.DataEntry;
         public enumDataType dataType = enumDataType.ColumnAndRow;
 
         public string streamingFile = "";
-        [Multiline(5)]
-        public string dataText = "";
+        [Multiline(5)] public string dataText = "";
 
-        [Header("Column")]
-        public RectTransform titleColumn;
+        [Header("Column")] public RectTransform titleColumn;
         public DataGridColumnUI columnUI;
         public RectTransform columnContent;
         public RectTransform columnMoverContent;
         public List<DataGridColumnData> columnData = new List<DataGridColumnData>();
 
-        [Header("Row")]
-        public List<DataGridRowData> rowData = new List<DataGridRowData>();
+        [Header("Row")] public List<DataGridRowData> rowData = new List<DataGridRowData>();
         List<DataGridRowData> pageRowData = new List<DataGridRowData>();
 
         [Serializable]
         public class DataGridEvent : UnityEvent<List<DataGridColumnData>, DataGridRowData>
         {
-
         }
-        [SerializeField]
-        private DataGridEvent m_OnRowClick = new DataGridEvent();
+
+        [SerializeField] private DataGridEvent m_OnRowClick = new DataGridEvent();
+
         public DataGridEvent onRowClick
         {
             get { return m_OnRowClick; }
@@ -97,10 +96,10 @@ namespace Maything.UI.DataGridUI
         [Serializable]
         public class DataGridMultipleEvent : UnityEvent<List<DataGridColumnData>, List<DataGridRowData>>
         {
-
         }
-        [SerializeField]
-        private DataGridMultipleEvent m_OnRowsClick = new DataGridMultipleEvent();
+
+        [SerializeField] private DataGridMultipleEvent m_OnRowsClick = new DataGridMultipleEvent();
+
         public DataGridMultipleEvent onRowsClick
         {
             get { return m_OnRowsClick; }
@@ -108,14 +107,13 @@ namespace Maything.UI.DataGridUI
         }
 
 
-
         [Serializable]
-        public class DataGridButtonClickEvent :UnityEvent<DataGridRowItemData>
+        public class DataGridButtonClickEvent : UnityEvent<DataGridRowItemData>
         {
-
         }
-        [SerializeField]
-        private DataGridButtonClickEvent m_OnRowButtonClick = new DataGridButtonClickEvent();
+
+        [SerializeField] private DataGridButtonClickEvent m_OnRowButtonClick = new DataGridButtonClickEvent();
+
         public DataGridButtonClickEvent onRowButtonClick
         {
             get { return m_OnRowButtonClick; }
@@ -123,24 +121,22 @@ namespace Maything.UI.DataGridUI
         }
 
         [Serializable]
-        public class DataGridContentChangedEvent : UnityEvent<string,DataGridRowItemData>
+        public class DataGridContentChangedEvent : UnityEvent<string, DataGridRowItemData>
         {
-
         }
-        [SerializeField]
-        private DataGridContentChangedEvent m_OnRowContentChange = new DataGridContentChangedEvent();
+
+        [SerializeField] private DataGridContentChangedEvent m_OnRowContentChange = new DataGridContentChangedEvent();
+
         public DataGridContentChangedEvent onRowContentChange
         {
             get { return m_OnRowContentChange; }
             set { m_OnRowContentChange = value; }
         }
 
-        [HideInInspector]
-        public float columnWidth = 0;
+        [HideInInspector] public float columnWidth = 0;
         RectTransform ownerTransform;
 
-        [HideInInspector]
-        public List<DataGridRowUI> selectedRowUIs = new List<DataGridRowUI>();
+        [HideInInspector] public List<DataGridRowUI> selectedRowUIs = new List<DataGridRowUI>();
 
         // Start is called before the first frame update
         private void Start()
@@ -150,15 +146,16 @@ namespace Maything.UI.DataGridUI
             InitializationPaging();
             InitializationColumn();
             InitializationRow(true);
+            print("open0");
         }
 
         // Update is called once per frame
         void Update()
         {
-
         }
 
         #region Initialization
+
         void Initialization()
         {
             if (border != null)
@@ -196,15 +193,18 @@ namespace Maything.UI.DataGridUI
                     UpdateScrollBarTheme(rect.verticalScrollbar);
 
 
-                    rect.horizontalScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(0, theme.scrollBarSize);
-                    rect.verticalScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(theme.scrollBarSize, 0);
+                    rect.horizontalScrollbar.GetComponent<RectTransform>().sizeDelta =
+                        new Vector2(0, theme.scrollBarSize);
+                    rect.verticalScrollbar.GetComponent<RectTransform>().sizeDelta =
+                        new Vector2(theme.scrollBarSize, 0);
                 }
-
             }
         }
+
         #endregion
 
         #region InitializationData
+
         void InitializationData()
         {
             switch (dataSource)
@@ -212,10 +212,10 @@ namespace Maything.UI.DataGridUI
                 case enumDataSource.DataEntry:
                     break;
                 case enumDataSource.FromCSVText:
-                    CSVDataHelper.CSVToDataGridData(this,dataText);
+                    CSVDataHelper.CSVToDataGridData(this, dataText);
                     break;
                 case enumDataSource.FromJsonText:
-                    JsonDataHelper.JsonToDataGridData(this,dataText);
+                    JsonDataHelper.JsonToDataGridData(this, dataText);
                     break;
                 case enumDataSource.StreamingAssets:
                     InitializationFile();
@@ -231,10 +231,10 @@ namespace Maything.UI.DataGridUI
             switch (Path.GetExtension(dataFile).ToLower())
             {
                 case ".csv":
-                    CSVDataHelper.LoadCSVFile(this,dataFile);
+                    CSVDataHelper.LoadCSVFile(this, dataFile);
                     break;
                 case ".json":
-                    JsonDataHelper.LoadJsonFile(this,dataFile);
+                    JsonDataHelper.LoadJsonFile(this, dataFile);
                     break;
             }
         }
@@ -242,6 +242,7 @@ namespace Maything.UI.DataGridUI
         #endregion
 
         #region InitializationPaging
+
         public void InitializationPaging()
         {
             pageIndex = 0;
@@ -277,9 +278,11 @@ namespace Maything.UI.DataGridUI
                 pageRowData.Add(rowData[i]);
             }
         }
+
         #endregion
 
         #region UpdateScrollBarTheme
+
         void UpdateScrollBarTheme(Scrollbar scrollbar)
         {
             ColorBlock colorBlock = scrollbar.colors;
@@ -298,9 +301,11 @@ namespace Maything.UI.DataGridUI
                 img.color = theme.scrollBarBackgroundColor;
             }
         }
+
         #endregion
 
         #region InitializationColumn
+
         public void InitializationColumn()
         {
             ownerTransform = GetComponent<RectTransform>();
@@ -343,10 +348,12 @@ namespace Maything.UI.DataGridUI
                 dataContent.sizeDelta = new Vector2(columnWidth - ownerTransform.rect.width, 200);
             }
         }
+
         #endregion
 
 
         #region InitializationRow
+
         public void InitializationRow(bool isRemoveExistData)
         {
             int rowIndex = 0;
@@ -401,6 +408,7 @@ namespace Maything.UI.DataGridUI
                 {
                     go = data.objectUI;
                 }
+
                 RectTransform rect = go.GetComponent<RectTransform>();
                 //rect.sizeDelta = new Vector2(columnWidth, theme.rowTheme.rowHeight);
                 rect.sizeDelta = new Vector2(columnWidth, rHeight);
@@ -414,10 +422,11 @@ namespace Maything.UI.DataGridUI
                 {
                     rowUI.dataGridUI = this;
 
-                    foreach(DataGridRowItemData rowData in data.cellData)
+                    foreach (DataGridRowItemData rowData in data.cellData)
                     {
                         rowData.rowIndex = rowIndex;
                     }
+
                     rowUI.rowData = data;
 
                     rowUI.isAlternating = (alternating % 2 == 0);
@@ -455,7 +464,6 @@ namespace Maything.UI.DataGridUI
                     selectedRowUIs.Add(rowUI);
                 }
             }
-
         }
 
         public void ResizeRows()
@@ -476,10 +484,12 @@ namespace Maything.UI.DataGridUI
                 }
             }
         }
+
         #endregion
 
         #region RowClick
-        public void WhenRowClick(DataGridRowUI selectRowUI,bool isReverseSelected)
+
+        public void WhenRowClick(DataGridRowUI selectRowUI, bool isReverseSelected)
         {
             if (isMultipleSelected)
             {
@@ -519,7 +529,6 @@ namespace Maything.UI.DataGridUI
                 }
 
                 onRowsClick.Invoke(columnData, data);
-
             }
             else
             {
@@ -540,6 +549,7 @@ namespace Maything.UI.DataGridUI
                         ui.UpdateSelectState(DagaGridRowContentUI.enumItemState.Normal, false);
                     }
                 }
+
                 selectedRowUIs.Clear();
 
                 if (isFind == false)
@@ -552,10 +562,9 @@ namespace Maything.UI.DataGridUI
                 {
                     onRowClick.Invoke(columnData, null);
                 }
-
             }
-
         }
+
         #endregion
 
         public void horizontalScrollbarChange(float value)
@@ -563,11 +572,11 @@ namespace Maything.UI.DataGridUI
             float scrollWidth = columnWidth - ownerTransform.rect.width;
             if (columnUI != null)
             {
-
                 //columnContent.localPosition = new Vector2(scrollWidth  - scrollWidth * value  , theme.columnTheme.columnHeight /2f *-1 );
                 //columnContent.localPosition = new Vector2(scrollWidth * (1f-value), theme.columnTheme.columnHeight / 2f * -1);
                 //columnContent.localPosition = new Vector2((columnWidth - ownerTransform.rect.width) * (1f - value)  , theme.columnTheme.columnHeight / 2f * -1);
-                columnUI.GetComponent<RectTransform>().localPosition = new Vector2(scrollWidth * (1f - value) - scrollWidth - ownerTransform.rect.width / 2f, 0);
+                columnUI.GetComponent<RectTransform>().localPosition =
+                    new Vector2(scrollWidth * (1f - value) - scrollWidth - ownerTransform.rect.width / 2f, 0);
             }
 
             if (isColumnResize)
@@ -576,7 +585,6 @@ namespace Maything.UI.DataGridUI
                 columnMoverContent.GetComponent<RectTransform>().localPosition = new Vector2(
                     //scrollWidth * (1f - value) - scrollWidth - ownerTransform.rect.width / 2f, 0);
                     scrollWidth * (1f - value) - scrollWidth, 0);
-
             }
         }
 
@@ -621,7 +629,6 @@ namespace Maything.UI.DataGridUI
             }
 
             rowData.Clear();
-
         }
 
         public void ColumnClear()
@@ -680,8 +687,8 @@ namespace Maything.UI.DataGridUI
         public int GetCurrentLastIndex()
         {
             return pageIndex * pageSize + pageRowData.Count;
-
         }
+
         #endregion
 
         public DataGridRowUI GetLastSelectItem()
@@ -702,16 +709,16 @@ namespace Maything.UI.DataGridUI
         {
             if (selectedRowUIs.Count == 0) return;
 
-            foreach(DataGridRowUI row in selectedRowUIs)
+            foreach (DataGridRowUI row in selectedRowUIs)
             {
-                if (row.rowData.objectUI!=null)
+                if (row.rowData.objectUI != null)
                     Destroy(row.rowData.objectUI);
 
                 rowData.Remove(row.rowData);
             }
+
             selectedRowUIs.Clear();
             InitializationRow(true);
-
         }
 
         public void ResizeColumn()
@@ -720,12 +727,12 @@ namespace Maything.UI.DataGridUI
             ResizeRows();
         }
 
-        public void SetCellData(int row,int column,string value)
+        public void SetCellData(int row, int column, string value)
         {
             if (column >= columnData.Count) return;
             if (row >= rowData.Count) return;
 
-            DataGridRowUI rowUI = rowData[row].objectUI.GetComponent<DataGridRowUI>(); 
+            DataGridRowUI rowUI = rowData[row].objectUI.GetComponent<DataGridRowUI>();
             if (rowUI != null)
             {
                 if (column >= rowUI.rowItems.Count) return;
@@ -736,9 +743,9 @@ namespace Maything.UI.DataGridUI
 
         public void SortByColumn(DataGridColumnData column, bool isDescending)
         {
-            for (int i=0;i<columnData.Count;i++)
+            for (int i = 0; i < columnData.Count; i++)
             {
-                if (columnData[i]==column)
+                if (columnData[i] == column)
                 {
                     SortByColumn(i, isDescending);
                 }

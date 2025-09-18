@@ -2,6 +2,7 @@ using System;
 using Maything.UI.DataGridUI;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class TranDauDetailClass : MonoBehaviour
@@ -9,10 +10,15 @@ public class TranDauDetailClass : MonoBehaviour
     [SerializeField] private EachTranDauDgObjectBase[] _dgs;
     public EachTranDauDgObjectBase[] Dgs => _dgs;
     [SerializeField] private Toggle[] _toggles;
-    [SerializeField][ReadOnly] private int _matchID;
     [SerializeField] private Button _closeBtn;
-    private bool _allowEdit;
+    
+    [Header("Update")]
+    [FormerlySerializedAs("_matchID")] [SerializeField][ReadOnly] private int _currentOpenMatchID;
+    private int _tournamentRound;
+    [SerializeField][ReadOnly] private bool _allowEdit;
     public bool AllowEdit => _allowEdit;
+    
+    public Action<int> EventUpdateMatchID;
     
     private void Start()
     {
@@ -24,22 +30,23 @@ public class TranDauDetailClass : MonoBehaviour
             var toggle = _toggles[i1];
             toggle.onValueChanged.AddListener((isOn) =>
             {
-                _dgs[i1].Open(_matchID);
+                _dgs[i1].Open(_currentOpenMatchID);
                 _dgs[i1].gameObject.SetActive(isOn);
             });
         }
     }
 
-    public void Open(int matchID, bool allowEdit)
+    public void Open(int matchID, int tournamentRound, bool allowEdit)
     {
-        _matchID = matchID;
+        _currentOpenMatchID = matchID;
         gameObject.SetActive(true);
         _allowEdit = allowEdit;
+        _tournamentRound = tournamentRound;
     }
 
-    public void Close()
+    private void Close()
     {
         gameObject.SetActive(false);
-        Main_SeasonDetail.Instance.LoadGiaiDau();
+        EventUpdateMatchID?.Invoke(_currentOpenMatchID);
     }
 }

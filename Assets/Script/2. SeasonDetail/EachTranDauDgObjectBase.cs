@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
 using Maything.UI.DataGridUI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class EachTranDauDgObjectBase : MonoBehaviour
 {
-    [SerializeField] private DataGridUI _dg;
+    [SerializeField] protected DataGridUI _dg;
 
     [FormerlySerializedAs("_name")] [SerializeField]
-    private string _tableName;
+    protected string _tableName;
 
-    [SerializeField] private Button _updateBtn;
-    [SerializeField] private Button _insertBtn;
-    [SerializeField] private Button _deleteBtn;
-    [SerializeField] private InsertMiniDg2 _insertMiniDg;
-    [SerializeField] private UpdateMiniDg2 _updateMiniDg;
+    [SerializeField] protected Button _updateBtn;
+    [SerializeField] protected Button _insertBtn;
+    [SerializeField] protected Button _deleteBtn;
+    [SerializeField] protected InsertMiniDg2 _insertMiniDg;
+    [SerializeField] protected UpdateMiniDg2 _updateMiniDg;
 
 
     private void OnValidate()
@@ -25,26 +26,34 @@ public class EachTranDauDgObjectBase : MonoBehaviour
         _tableName = gameObject.name;
     }
 
+    private void OnDisable()
+    {
+        gameObject.SetActive(false);
+    }
+
     private void Start()
     {
         _updateBtn.onClick.AddListener(OnUpdateBtnClick);
         _insertBtn.onClick.AddListener(OnInsertBtnClick);
         _deleteBtn.onClick.AddListener(OnDeleteBtnClick);
+        var headerGob = transform.Find("header");
+        headerGob.GetComponent<TMP_Text>().text = _tableName;
     }
 
-    public void Open(int matchID)
+    public virtual void Open(int matchID)
     {
+        print("open1");
         if (_dg.columnData.Count == 0)
         {
             CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(_dg, UpdateOrInsert.Update,
                 _tableName);
         }
 
-        var data = MySQLManager.Instance.GetTableDataAsCsv(_tableName);
+        var data = MySQLManager.Instance.GetRowsByColumnValueAsCsv(_tableName, "match_id", matchID.ToString());
         CSVDataHelper.DataFromCSV(_dg, false, true, true, false, data);
 
-        // var matchEventData = MySQLManager.Instance.GetRowByColumnValueAsCsv(_name, "", matchID);
-        // CSVDataHelper.DataFromCSV(_dg, false, true, true, false, matchEventData);
+        _insertBtn.interactable = Main_SeasonDetail.Instance.tranDauDetailClass.AllowEdit;
+        _updateBtn.interactable = Main_SeasonDetail.Instance.tranDauDetailClass.AllowEdit;
     }
 
     private void OnUpdateBtnClick()
@@ -93,9 +102,10 @@ public class EachTranDauDgObjectBase : MonoBehaviour
             {
                 selectedIds.Add(int.Parse(item.rowData.cellData[0].value));
             }
+
             MySQLManager.Instance.DeleteMultipleRows(_tableName, selectedIds);
         }
-        
+
         _dg.RemoveSelectedItem();
     }
 }

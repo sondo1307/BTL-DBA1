@@ -163,4 +163,21 @@ public static class StringUtils
     {
         return Regex.Replace(headerDG, "Text", m => "InputField");
     }
+    
+    public static (string Header, string Data) SplitCsvFromString(string csvContent)
+    {
+        if (string.IsNullOrWhiteSpace(csvContent))
+            return (string.Empty, string.Empty);
+
+        // Tách thành các dòng
+        var lines = csvContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+        if (lines.Length == 0)
+            return (string.Empty, string.Empty);
+
+        string header = lines[0];
+        string data = string.Join(Environment.NewLine, lines, 1, lines.Length - 1);
+
+        return (header, data);
+    }
 }

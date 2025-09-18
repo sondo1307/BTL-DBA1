@@ -184,20 +184,21 @@ public class Main_SeasonDetail : MonoBehaviour
     [SerializeField] private Transform _content;
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
+    public List<VongDau> VongDaus => _vongDaus;
 
     [SerializeField] private InputField _thanhTimKiem;
 
     [Header("DatePicker"), Space(10)] [SerializeField]
     private DatePicker _datePicker;
 
-    public DatePicker DatePicker => _datePicker;
+    public bool DatePickerHasValue => (_datePicker.SelectedDate.HasValue);
 
     [Header("TranDauDetail"), Space(10)] public TranDauDetailClass tranDauDetailClass;
 
     [Header("VongDauDetail"), Space(10)] public VongDauDetailClass vongDauDetailClass;
 
     public Action<string> EventUpdateTodayDate;
-
+    
     private void Awake()
     {
         if (Instance == null)
@@ -229,7 +230,7 @@ public class Main_SeasonDetail : MonoBehaviour
 
         // Parse từng row thành MatchDb
         List<PrematchDB> matches = new List<PrematchDB>();
-        for (var i = 0; i < 56; i++)
+        for (var i = 0; i < rows.Count; i++)
         {
             var row = rows[i];
             try
@@ -265,15 +266,15 @@ public class Main_SeasonDetail : MonoBehaviour
             foreach (var group in grouped)
             {
                 VongDau vongDau = Instantiate(_vongDauPrefab, _content);
-
                 foreach (var match in group)
                 {
                     vongDau.AddTranDau(match, false);
+                    yield return SonCache.WaitForEndOfFrame;
                 }
 
                 _vongDaus.Add(vongDau);
                 vongDau.SetVongDau(group.Key);
-                yield return SonCache.WaitForEndOfFrame;
+                // yield return SonCache.WaitForEndOfFrame;
             }
 
             UIManager.Instance.HideCircle();
@@ -470,7 +471,12 @@ public class Main_SeasonDetail : MonoBehaviour
         }
 
         _vongDaus.Clear();
+        MySQLManager.Instance.ClearTable(SonConst.MatchPlayerLineupTable);
+        MySQLManager.Instance.ClearTable(SonConst.MatchRefereeLineupTable);
+        MySQLManager.Instance.ClearTable(SonConst.PostMatchTable);
+        MySQLManager.Instance.ClearTable(SonConst.InMatchTable);
         MySQLManager.Instance.ClearTable(SonConst.PrematchTable);
+        _taoGiaiDauBtn.gameObject.SetActive(true);
     }
 
     #region Search
@@ -534,7 +540,6 @@ public class Main_SeasonDetail : MonoBehaviour
         var a = (_datePicker.SelectedDate.HasValue)
             ? _datePicker.SelectedDate.Date.ToString(_datePicker.Config.Format.DateFormat)
             : "";
-        print(a);
         EventUpdateTodayDate?.Invoke(a);
     }
 

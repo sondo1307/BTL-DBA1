@@ -26,7 +26,6 @@ public class TranDau : MonoBehaviour
     private Image _img;
 
     [SerializeField] [ReadOnly] private PrematchDB prematchDB;
-    [SerializeField] [ReadOnly] private PostmatchDB _postmatchDB;
     [SerializeField] [ReadOnly] private List<string> _listPlayerInMatch = new List<string>();
 
     private void Awake()
@@ -35,14 +34,30 @@ public class TranDau : MonoBehaviour
         _img = GetComponent<Image>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
         Main_SeasonDetail.Instance.EventUpdateTodayDate += UpdateDate;
+        Main_SeasonDetail.Instance.tranDauDetailClass.EventUpdateMatchID += UpdateUi;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         Main_SeasonDetail.Instance.EventUpdateTodayDate -= UpdateDate;
+        Main_SeasonDetail.Instance.tranDauDetailClass.EventUpdateMatchID -= UpdateUi;
+    }
+
+    private void UpdateUi(int matchID)
+    {
+        if (matchID != prematchDB.match_id)
+        {
+            return;
+        }
+        var homeScore =
+            MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "home_score", "match_id",
+                prematchDB.match_id);
+        var awayScore = MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "away_score", "match_id",
+            prematchDB.match_id);
+        _tiSo.text = homeScore + "\n" + awayScore;
     }
 
     public void SetCapDau(PrematchDB prematchDB, bool insertData)
@@ -84,7 +99,7 @@ public class TranDau : MonoBehaviour
         // {
         //     print(i);
         // }
-        print(StringUtils.ConvertListToCsv(homePlayers));
+        // print(StringUtils.ConvertListToCsv(homePlayers));
 
         _listPlayerInMatch.AddRange(homePlayers);
         //Home team
@@ -110,7 +125,7 @@ public class TranDau : MonoBehaviour
         // {
         //     print(i);
         // }
-        print(StringUtils.ConvertListToCsv(awayPlayers));
+        // print(StringUtils.ConvertListToCsv(awayPlayers));
 
         _listPlayerInMatch.AddRange(awayPlayers);
         for (var i = 0; i < 11; i++)
@@ -158,7 +173,7 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.Goal,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            print(b);
+            // print(b);
             MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
 
@@ -168,7 +183,7 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.YellowCard,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            print(b);
+            // print(b);
             MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
 
@@ -178,7 +193,7 @@ public class TranDau : MonoBehaviour
             var a = new InmatchDB(0, prematchDB.match_id, Random.Range(10, 90), (int)EventTypeInMatch.RedCard,
                 int.Parse(_listPlayerInMatch[Random.Range(0, _listPlayerInMatch.Count)]));
             var b = a.ConvertToCsv();
-            print(b);
+            // print(b);
             MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
     }
@@ -198,16 +213,26 @@ public class TranDau : MonoBehaviour
 
     private void OnBtnClick()
     {
-        Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id, (_img.color == Color.yellow));
+        if (!Main_SeasonDetail.Instance.DatePickerHasValue)
+        {
+            UIManager.Instance.ShowToast("Please select today date");
+            return;
+        }
+        Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id, prematchDB.tournament_round,
+            (_img.color == Color.yellow));
     }
 
     private void UpdateDate(string date)
     {
         var myDate = DateTime.ParseExact(_ngayThiDau.text, SonConst.DateFormat, CultureInfo.InvariantCulture);
         var today = DateTime.ParseExact(date, SonConst.DateFormat, CultureInfo.InvariantCulture);
-        // _img.color = myDate.Date < today.Date ? Color.red : Color.white;
+
+        var postMatch =
+            MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "match_id", "match_id",
+                prematchDB.match_id);
+
         // done
-        if (prematchDB != null)
+        if (!string.IsNullOrEmpty(postMatch))
         {
             _img.color = Color.green;
         }
