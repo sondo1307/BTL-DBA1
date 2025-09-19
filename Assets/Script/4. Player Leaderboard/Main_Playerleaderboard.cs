@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maything.UI.DataGridUI;
 using UnityEngine;
 
 
@@ -14,17 +16,50 @@ GROUP BY p.player_id, p.player_name
 ORDER BY total_goals DESC
 LIMIT 10;
 */
+
+/*
+@SELECT 
+    p.player_id,
+    p.full_name,
+    COUNT(*) AS total_goals
+FROM in_match im
+JOIN team_player tp ON im.team_player_id = tp.id
+JOIN player p ON tp.player_id = p.player_id
+WHERE im.event_type = 'goal'
+GROUP BY p.player_id, p.full_name
+ORDER BY total_goals DESC
+LIMIT 10;
+*/
 public class Main_Playerleaderboard : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private DataGridUI _dg;
 
-    // Update is called once per frame
-    void Update()
+    private string _sql =
+        @"SELECT 
+    p.player_id,
+    p.full_name,
+    COUNT(*) AS total_goals
+    FROM in_match im
+        JOIN team_player tp ON im.team_player_id = tp.id
+        JOIN player p ON tp.player_id = p.player_id
+        WHERE im.event_type = 'goal'
+    GROUP BY p.player_id, p.full_name
+        ORDER BY total_goals DESC
+        LIMIT 10;";
+    
+    private void Start()
     {
+        print("open3");
+        var a = MySQLManager.Instance.ExecuteQueryToCsv(_sql);
+        var (b, c) = StringUtils.SplitCsvFromString(a);
+        if (_dg.columnData.Count == 0)
+        {
+            var h1 = StringUtils.ConvertHeaderToDataGridHeader(b);
+            var h2 = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
+            print(h2);
+            CSVDataHelper.CSVStringToColumnData(_dg, h2);
+        }
         
+        CSVDataHelper.DataFromCSV(_dg, false, true, true, false, c);
     }
 }

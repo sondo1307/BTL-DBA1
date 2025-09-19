@@ -289,7 +289,7 @@ public class Main_SeasonDetail : MonoBehaviour
         rowsTeam.Clear();
         rowsTeam.Add(a1);
         rowsTeam.Add(b1);
-        int matchIdCount = 0;
+        int matchIdCount = 1;
 
         // Mảng làm việc: giữ arr[0] cố định, xoay các phần tử 1..n-1
         var arr = new List<Team>();

@@ -1023,7 +1023,6 @@ JOIN team_player AS tp
     }
 
 
-
     /// <summary>
     /// Convert list string thành 1 dòng CSV
     /// </summary>
@@ -1049,93 +1048,150 @@ JOIN team_player AS tp
         return string.Join(",", safeValues);
     }
 
-#region Leaderboard
-    public string GetTeamRankingAsCsv()
+
+    /// <summary>
+    /// Chạy 1 câu SQL bất kỳ và trả về kết quả dạng CSV
+    /// </summary>
+    public string ExecuteQueryToCsv(string sql)
     {
-string query = @"
-            SELECT 
-                t.team_id,
-                t.team_name,
-
-                -- Tổng số bàn thắng
-                SUM(
-                    CASE 
-                        WHEN pm.home_team_id = t.team_id THEN po.home_score
-                        WHEN pm.away_team_id = t.team_id THEN po.away_score
-                        ELSE 0
-                    END
-                ) AS total_goals,
-
-                -- Số trận thắng sân khách
-                SUM(
-                    CASE 
-                        WHEN pm.away_team_id = t.team_id AND po.away_score > po.home_score THEN 1
-                        ELSE 0
-                    END
-                ) AS away_wins,
-
-                -- Tổng số thẻ đỏ
-                SUM(
-                    CASE 
-                        WHEN im.event_type = 'red_card' AND tp.team_id = t.team_id THEN 1
-                        ELSE 0
-                    END
-                ) AS total_red_cards,
-
-                -- Tổng số thẻ vàng
-                SUM(
-                    CASE 
-                        WHEN im.event_type = 'yellow_card' AND tp.team_id = t.team_id THEN 1
-                        ELSE 0
-                    END
-                ) AS total_yellow_cards
-
-            FROM team t
-            LEFT JOIN pre_match pm 
-                ON t.team_id IN (pm.home_team_id, pm.away_team_id)
-            LEFT JOIN post_match po 
-                ON pm.match_id = po.match_id
-            LEFT JOIN in_match im
-                ON pm.match_id = im.match_id
-            LEFT JOIN team_player tp
-                ON im.team_player_id = tp.id
-
-            GROUP BY t.team_id, t.team_name
-            ORDER BY total_goals DESC, away_wins DESC, total_red_cards ASC, total_yellow_cards ASC;
-        ";
-
-        using (var conn = new MySqlConnection(connectionString))
-        using (var cmd = new MySqlCommand(query, conn))
+        try
         {
+            using var conn = new MySqlConnection(connectionString);
+            using var cmd = new MySqlCommand(sql, conn);
             conn.Open();
-            using (var reader = cmd.ExecuteReader())
-            {
-                StringBuilder csv = new StringBuilder();
 
-                // Lấy header
+            using var reader = cmd.ExecuteReader();
+            StringBuilder csv = new StringBuilder();
+
+            // Header
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                csv.Append(reader.GetName(i));
+                if (i < reader.FieldCount - 1)
+                    csv.Append(",");
+            }
+
+            csv.AppendLine();
+
+            // Data rows
+            while (reader.Read())
+            {
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    csv.Append(reader.GetName(i));
+                    string val = reader[i]?.ToString() ?? "";
+
+                    // escape line breaks để CSV gọn
+                    val = val.Replace("\r", " ").Replace("\n", " ");
+
+                    // escape dấu phẩy
+                    if (val.Contains(","))
+                        val = $"\"{val}\"";
+
+                    csv.Append(val);
+
                     if (i < reader.FieldCount - 1)
                         csv.Append(",");
                 }
+
                 csv.AppendLine();
-
-                // Lấy data
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        csv.Append(reader[i].ToString());
-                        if (i < reader.FieldCount - 1)
-                            csv.Append(",");
-                    }
-                    csv.AppendLine();
-                }
-
-                return csv.ToString();
             }
+
+            return csv.ToString();
+        }
+        catch (MySqlException ex)
+        {
+            UnityEngine.Debug.LogError("❌ SQL Error: " + ex.Message);
+            return string.Empty;
         }
     }
-#endregion
+
+// #region Leaderboard
+//     public string GetTeamRankingAsCsv()
+//     {
+// string query = @"
+//             SELECT 
+//                 t.team_id,
+//                 t.team_name,
+//
+//                 -- Tổng số bàn thắng
+//                 SUM(
+//                     CASE 
+//                         WHEN pm.home_team_id = t.team_id THEN po.home_score
+//                         WHEN pm.away_team_id = t.team_id THEN po.away_score
+//                         ELSE 0
+//                     END
+//                 ) AS total_goals,
+//
+//                 -- Số trận thắng sân khách
+//                 SUM(
+//                     CASE 
+//                         WHEN pm.away_team_id = t.team_id AND po.away_score > po.home_score THEN 1
+//                         ELSE 0
+//                     END
+//                 ) AS away_wins,
+//
+//                 -- Tổng số thẻ đỏ
+//                 SUM(
+//                     CASE 
+//                         WHEN im.event_type = 'red_card' AND tp.team_id = t.team_id THEN 1
+//                         ELSE 0
+//                     END
+//                 ) AS total_red_cards,
+//
+//                 -- Tổng số thẻ vàng
+//                 SUM(
+//                     CASE 
+//                         WHEN im.event_type = 'yellow_card' AND tp.team_id = t.team_id THEN 1
+//                         ELSE 0
+//                     END
+//                 ) AS total_yellow_cards
+//
+//             FROM team t
+//             LEFT JOIN pre_match pm 
+//                 ON t.team_id IN (pm.home_team_id, pm.away_team_id)
+//             LEFT JOIN post_match po 
+//                 ON pm.match_id = po.match_id
+//             LEFT JOIN in_match im
+//                 ON pm.match_id = im.match_id
+//             LEFT JOIN team_player tp
+//                 ON im.team_player_id = tp.id
+//
+//             GROUP BY t.team_id, t.team_name
+//             ORDER BY total_goals DESC, away_wins DESC, total_red_cards ASC, total_yellow_cards ASC;
+//         ";
+//
+//         using (var conn = new MySqlConnection(connectionString))
+//         using (var cmd = new MySqlCommand(query, conn))
+//         {
+//             conn.Open();
+//             using (var reader = cmd.ExecuteReader())
+//             {
+//                 StringBuilder csv = new StringBuilder();
+//
+//                 // Lấy header
+//                 for (int i = 0; i < reader.FieldCount; i++)
+//                 {
+//                     csv.Append(reader.GetName(i));
+//                     if (i < reader.FieldCount - 1)
+//                         csv.Append(",");
+//                 }
+//                 csv.AppendLine();
+//
+//                 // Lấy data
+//                 while (reader.Read())
+//                 {
+//                     for (int i = 0; i < reader.FieldCount; i++)
+//                     {
+//                         csv.Append(reader[i].ToString());
+//                         if (i < reader.FieldCount - 1)
+//                             csv.Append(",");
+//                     }
+//                     csv.AppendLine();
+//                 }
+//
+//                 return csv.ToString();
+//             }
+//         }
+//     }
+// #endregion
 }

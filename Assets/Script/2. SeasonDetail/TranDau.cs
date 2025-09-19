@@ -76,6 +76,10 @@ public class TranDau : MonoBehaviour
             MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), false, null);
             StartCoroutine(Delay());
         }
+        else
+        {
+            UpdateUi(this.prematchDB.match_id);
+        }
 
         return;
 
