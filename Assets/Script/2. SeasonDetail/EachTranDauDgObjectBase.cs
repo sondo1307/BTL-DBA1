@@ -45,8 +45,7 @@ public class EachTranDauDgObjectBase : MonoBehaviour
         print("open1");
         if (_dg.columnData.Count == 0)
         {
-            CSVDataHelper.GetTableHeaderAndConvertToInputFieldAndSetToDGColumnData(_dg, UpdateOrInsert.Update,
-                _tableName);
+            CSVDataHelper.GetTableHeaderAndSetToDG(_dg, _tableName);
         }
 
         var data = MySQLManager.Instance.GetRowsByColumnValueAsCsv(_tableName, "match_id", matchID.ToString());

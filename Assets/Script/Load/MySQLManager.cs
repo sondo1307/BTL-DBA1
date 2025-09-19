@@ -86,7 +86,58 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
-    public string GetCellDataByRowId(string table, string targetColumn, string idColumn, object idValue)
+    /// <summary>
+    /// Lấy tất cả giá trị của targetColumn trong bảng khi idColumn = idValue
+    /// </summary>
+    /// <param name="table">Tên bảng</param>
+    /// <param name="targetColumn">Cột muốn lấy dữ liệu</param>
+    /// <param name="idColumn">Cột điều kiện</param>
+    /// <param name="idValue">Giá trị điều kiện</param>
+    /// <returns>List<string> chứa tất cả kết quả</returns>
+    public List<string> GetCellsDataListByRowId(string table, string targetColumn, string idColumn, string idValue)
+    {
+        var results = new List<string>();
+
+        try
+        {
+            string query = $"SELECT `{targetColumn}` FROM `{table}` WHERE `{idColumn}` = @id;";
+
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@id", idValue);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                object result = reader[targetColumn];
+
+                if (result == null || result == DBNull.Value)
+                {
+                    results.Add(string.Empty);
+                }
+                else if (result is DateTime dt)
+                {
+                    results.Add(dt.ToString(SonConst.DateFormat));
+                }
+                else if (result is bool b)
+                {
+                    results.Add(b ? "1" : "0");
+                }
+                else
+                {
+                    results.Add(result.ToString());
+                }
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ MySQL Error: {ex.Message}");
+        }
+
+        return results;
+    }
+
+
+    public string GetCellDataByRowId(string table, string targetColumn, string idColumn, string idValue)
     {
         try
         {
@@ -122,7 +173,7 @@ public class MySQLManager : MonoBehaviour
     /// <param name="column">Tên cột so sánh</param>
     /// <param name="value">Giá trị cần so sánh</param>
     /// <returns>CSV string (nhiều dòng)</returns>
-    public string GetRowsByColumnValueAsCsv(string table, string column, object value)
+    public string GetRowsByColumnValueAsCsv(string table, string column, string value)
     {
         var csvLines = new List<string>();
 
@@ -166,6 +217,82 @@ public class MySQLManager : MonoBehaviour
         return string.Join(Environment.NewLine, csvLines);
     }
 
+    /// <summary>
+    /// Lấy tất cả row trong bảng theo điều kiện column = value (nhiều giá trị),
+    /// trả về CSV (mỗi row = 1 dòng, các cột cách nhau bằng dấu phẩy).
+    /// </summary>
+    /// <param name="table">Tên bảng</param>
+    /// <param name="column">Tên cột điều kiện</param>
+    /// <param name="values">Danh sách giá trị để lọc (IN)</param>
+    /// <returns>CSV string</returns>
+    public string GetRowsByColumnValuesAsCsv(string table, string column, List<string> values)
+    {
+        if (values == null || values.Count == 0)
+            return string.Empty;
+
+        var csvLines = new List<string>();
+
+        try
+        {
+            // Tạo danh sách parameter cho IN (...)
+            var paramNames = new List<string>();
+            for (int i = 0; i < values.Count; i++)
+            {
+                paramNames.Add($"@val{i}");
+            }
+
+            string query = $"SELECT * FROM `{table}` WHERE `{column}` IN ({string.Join(",", paramNames)});";
+
+            using var cmd = new MySqlCommand(query, Conn);
+
+            // Gán giá trị parameter
+            for (int i = 0; i < values.Count; i++)
+            {
+                cmd.Parameters.AddWithValue($"@val{i}", values[i]);
+            }
+
+            using var reader = cmd.ExecuteReader();
+
+            // Header
+            // var headerCols = new List<string>();
+            // for (int i = 0; i < reader.FieldCount; i++)
+            // headerCols.Add(reader.GetName(i));
+            // csvLines.Add(string.Join(",", headerCols));
+
+            // Data
+            while (reader.Read())
+            {
+                var row = new List<string>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object rawValue = reader.GetValue(i);
+                    string val;
+
+                    if (rawValue is DateTime dt)
+                        val = dt.ToString(SonConst.DateFormat);
+                    else if (rawValue is bool b)
+                        val = b ? "1" : "0";
+                    else
+                        val = rawValue?.ToString() ?? "";
+
+                    // Escape dấu phẩy để không phá CSV
+                    val = val.Replace(",", "&");
+
+                    row.Add(val);
+                }
+
+                csvLines.Add(string.Join(",", row));
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+            return string.Empty;
+        }
+
+        return string.Join(Environment.NewLine, csvLines);
+    }
+
 
     /// <summary>
     /// Choose value in 1 column in 1 table to get row data
@@ -174,7 +301,7 @@ public class MySQLManager : MonoBehaviour
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns>string = csv</returns>
-    public string GetRowByColumnValueAsCsv(string table, string column, object value)
+    public string GetRowByColumnValueAsCsv(string table, string column, string value)
     {
         try
         {
@@ -226,7 +353,7 @@ public class MySQLManager : MonoBehaviour
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns>List of row values (as strings)</returns>
-    public List<string> GetRowByColumnValueAsList(string table, string column, object value)
+    public List<string> GetRowByColumnValueAsList(string table, string column, string value)
     {
         try
         {
@@ -280,7 +407,7 @@ public class MySQLManager : MonoBehaviour
         string tableName,
         string columnFind,
         string columnSoSanh,
-        object giaTriSoSanh)
+        string giaTriSoSanh)
     {
         var values = new List<string>();
 
@@ -313,6 +440,123 @@ public class MySQLManager : MonoBehaviour
 
         return values;
     }
+
+    /// <summary>
+    /// Lấy danh sách giá trị của 1 cột khi thỏa mãn 2 điều kiện so sánh
+    /// </summary>
+    /// <param name="tableName">Tên bảng</param>
+    /// <param name="columnFind">Cột cần lấy giá trị</param>
+    /// <param name="columnSoSanh1">Cột điều kiện 1</param>
+    /// <param name="giaTriSoSanh1">Giá trị so sánh 1</param>
+    /// <param name="columnSoSanh2">Cột điều kiện 2</param>
+    /// <param name="giaTriSoSanh2">Giá trị so sánh 2</param>
+    /// <returns>List<string> chứa các giá trị của columnFind</returns>
+    public List<string> GetValuesByTwoConditions(
+        string tableName,
+        string columnFind,
+        string columnSoSanh1,
+        object giaTriSoSanh1,
+        string columnSoSanh2,
+        object giaTriSoSanh2)
+    {
+        var values = new List<string>();
+
+        try
+        {
+            string query = $@"
+            SELECT `{columnFind}`
+            FROM `{tableName}`
+            WHERE `{columnSoSanh1}` = @val1
+              AND `{columnSoSanh2}` = @val2;";
+
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@val1", giaTriSoSanh1);
+            cmd.Parameters.AddWithValue("@val2", giaTriSoSanh2);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                object rawValue = reader[columnFind];
+                string val;
+
+                if (rawValue is DateTime dt)
+                    val = dt.ToString(SonConst.DateFormat); // format ngày
+                else if (rawValue is bool b)
+                    val = b ? "1" : "0"; // boolean thành 1/0
+                else
+                    val = rawValue?.ToString() ?? "";
+
+                values.Add(val);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return values;
+    }
+
+
+    /// <summary>
+    /// Lấy danh sách giá trị của 1 cột khi thỏa mãn nhiều điều kiện
+    /// </summary>
+    /// <param name="tableName">Tên bảng</param>
+    /// <param name="columnFind">Cột cần lấy giá trị</param>
+    /// <param name="conditions">Dictionary chứa cột và giá trị cần so sánh (có thể nhiều cặp)</param>
+    /// <returns>List<string> chứa các giá trị của columnFind</returns>
+    public List<string> GetValuesByMultiCondition(
+        string tableName,
+        string columnFind,
+        Dictionary<string, string> conditions)
+    {
+        var values = new List<string>();
+
+        try
+        {
+            // Build WHERE động: col1=@col1 AND col2=@col2 ...
+            var whereParts = new List<string>();
+            foreach (var kv in conditions)
+            {
+                whereParts.Add($"`{kv.Key}` = @{kv.Key}");
+            }
+
+            string whereClause = string.Join(" AND ", whereParts);
+
+            string query = $"SELECT `{columnFind}` FROM `{tableName}` WHERE {whereClause};";
+
+            using var cmd = new MySqlCommand(query, Conn);
+
+            // Add param
+            foreach (var kv in conditions)
+            {
+                cmd.Parameters.AddWithValue("@" + kv.Key, kv.Value);
+            }
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                object rawValue = reader[columnFind];
+                string val;
+
+                if (rawValue is DateTime dt)
+                    val = dt.ToString(SonConst.DateFormat);
+                else if (rawValue is bool b)
+                    val = b ? "1" : "0";
+                else
+                    val = rawValue?.ToString() ?? "";
+
+                values.Add(val);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return values;
+    }
+
 
     public List<List<string>> GetAllRowsAsList(string table)
     {
@@ -659,7 +903,7 @@ public class MySQLManager : MonoBehaviour
 
             string sql =
                 $"INSERT INTO {tableName} ({string.Join(", ", colNames)}) VALUES ({string.Join(", ", paramNames)})";
-
+            // print(sql);
             using var cmd = new MySqlCommand(sql, Conn);
 
             // Gán param động
@@ -748,13 +992,14 @@ public class MySQLManager : MonoBehaviour
 
             var csv = new StringBuilder();
 
-            // // Header
+            // Header
             // for (int i = 0; i < reader.FieldCount; i++)
             // {
-            //     csv.Append(reader.GetName(i));
-            //     if (i < reader.FieldCount - 1) csv.Append(",");
+            // csv.Append(reader.GetName(i));
+            // if (i < reader.FieldCount - 1) csv.Append(",");
             // }
-            // csv.AppendLine();
+
+            csv.AppendLine();
 
             // Data
             while (reader.Read())
@@ -879,42 +1124,6 @@ public class MySQLManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Trả về header CSV của join match_player_lineup với team_player.team_id
-    /// </summary>
-    public string GetMatchPlayerLineupHeaderCsv()
-    {
-        string query = @"
-        SELECT mpl.*, tp.team_id
-        FROM match_player_lineup AS mpl
-        JOIN team_player AS tp
-          ON mpl.team_player_id = tp.id
-        WHERE 1=0;"; // trả metadata, không lấy row
-
-        try
-        {
-            using var cmd = new MySqlCommand(query, Conn);
-            using var reader = cmd.ExecuteReader();
-
-            var headerCols = new List<string>();
-            for (int i = 0; i < reader.FieldCount; i++)
-                headerCols.Add(reader.GetName(i));
-
-            return ConvertListToCsv(headerCols);
-        }
-        catch (MySqlException ex)
-        {
-            Debug.LogError("❌ MySQL Error (header): " + ex.Message);
-            return string.Empty;
-        }
-    }
-
-/*
-SELECT mpl.*, tp.team_id
-FROM match_player_lineup AS mpl
-JOIN team_player AS tp
-  ON mpl.team_player_id = tp.id;
-*/
-    /// <summary>
     /// Trả về các dòng data CSV (không gồm header)
     /// </summary>
     public string GetMatchPlayerLineupDataCsv()
@@ -961,67 +1170,6 @@ JOIN team_player AS tp
 
         return string.Join(Environment.NewLine, csvLines);
     }
-
-    /// <summary>
-    /// Lấy tất cả các row của join match_player_lineup <> team_player
-    /// và trả về 1 CSV string (dòng header + các dòng dữ liệu)
-    /// </summary>
-    public string GetMatchPlayerLineupWithTeamIdAsCsv()
-    {
-        var csvLines = new List<string>();
-        string query = @"
-        SELECT mpl.*, tp.team_id
-        FROM match_player_lineup AS mpl
-        JOIN team_player AS tp
-          ON mpl.team_player_id = tp.id;";
-
-        try
-        {
-            using var cmd = new MySqlCommand(query, Conn);
-            using var reader = cmd.ExecuteReader();
-
-            // --- Header ---
-            var headerCols = Enumerable.Range(0, reader.FieldCount)
-                .Select(i => reader.GetName(i))
-                .ToList();
-            csvLines.Add(ConvertListToCsv(headerCols));
-
-            // --- Data rows ---
-            while (reader.Read())
-            {
-                var row = new List<string>();
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    object rawValue = reader.GetValue(i);
-                    string val;
-
-                    if (rawValue is DateTime dt)
-                        val = dt.ToString(SonConst.DateFormat);
-                    else if (rawValue is bool b)
-                        val = b ? "1" : "0";
-                    else
-                        val = rawValue?.ToString() ?? "";
-
-                    // giữ CSV sạch sẽ
-                    val = val.Replace(",", "&")
-                        .Replace("\r", " ")
-                        .Replace("\n", " ");
-
-                    row.Add(val);
-                }
-
-                csvLines.Add(ConvertListToCsv(row));
-            }
-        }
-        catch (MySqlException ex)
-        {
-            Debug.LogError("❌ MySQL Error: " + ex.Message);
-            return string.Empty;
-        }
-
-        return string.Join(Environment.NewLine, csvLines);
-    }
-
 
     /// <summary>
     /// Convert list string thành 1 dòng CSV
@@ -1105,93 +1253,37 @@ JOIN team_player AS tp
         }
     }
 
-// #region Leaderboard
-//     public string GetTeamRankingAsCsv()
-//     {
-// string query = @"
-//             SELECT 
-//                 t.team_id,
-//                 t.team_name,
-//
-//                 -- Tổng số bàn thắng
-//                 SUM(
-//                     CASE 
-//                         WHEN pm.home_team_id = t.team_id THEN po.home_score
-//                         WHEN pm.away_team_id = t.team_id THEN po.away_score
-//                         ELSE 0
-//                     END
-//                 ) AS total_goals,
-//
-//                 -- Số trận thắng sân khách
-//                 SUM(
-//                     CASE 
-//                         WHEN pm.away_team_id = t.team_id AND po.away_score > po.home_score THEN 1
-//                         ELSE 0
-//                     END
-//                 ) AS away_wins,
-//
-//                 -- Tổng số thẻ đỏ
-//                 SUM(
-//                     CASE 
-//                         WHEN im.event_type = 'red_card' AND tp.team_id = t.team_id THEN 1
-//                         ELSE 0
-//                     END
-//                 ) AS total_red_cards,
-//
-//                 -- Tổng số thẻ vàng
-//                 SUM(
-//                     CASE 
-//                         WHEN im.event_type = 'yellow_card' AND tp.team_id = t.team_id THEN 1
-//                         ELSE 0
-//                     END
-//                 ) AS total_yellow_cards
-//
-//             FROM team t
-//             LEFT JOIN pre_match pm 
-//                 ON t.team_id IN (pm.home_team_id, pm.away_team_id)
-//             LEFT JOIN post_match po 
-//                 ON pm.match_id = po.match_id
-//             LEFT JOIN in_match im
-//                 ON pm.match_id = im.match_id
-//             LEFT JOIN team_player tp
-//                 ON im.team_player_id = tp.id
-//
-//             GROUP BY t.team_id, t.team_name
-//             ORDER BY total_goals DESC, away_wins DESC, total_red_cards ASC, total_yellow_cards ASC;
-//         ";
-//
-//         using (var conn = new MySqlConnection(connectionString))
-//         using (var cmd = new MySqlCommand(query, conn))
-//         {
-//             conn.Open();
-//             using (var reader = cmd.ExecuteReader())
-//             {
-//                 StringBuilder csv = new StringBuilder();
-//
-//                 // Lấy header
-//                 for (int i = 0; i < reader.FieldCount; i++)
-//                 {
-//                     csv.Append(reader.GetName(i));
-//                     if (i < reader.FieldCount - 1)
-//                         csv.Append(",");
-//                 }
-//                 csv.AppendLine();
-//
-//                 // Lấy data
-//                 while (reader.Read())
-//                 {
-//                     for (int i = 0; i < reader.FieldCount; i++)
-//                     {
-//                         csv.Append(reader[i].ToString());
-//                         if (i < reader.FieldCount - 1)
-//                             csv.Append(",");
-//                     }
-//                     csv.AppendLine();
-//                 }
-//
-//                 return csv.ToString();
-//             }
-//         }
-//     }
-// #endregion
+    public List<string> GetTeamPlayerIds(int teamId, string position)
+    {
+        var values = new List<string>();
+
+        string query = @"
+        SELECT tp.team_player_id AS team_player_id
+        FROM team_player tp
+        JOIN player p ON tp.player_id = p.player_id
+        WHERE tp.team_id = @teamId
+          AND p.position = @position;";
+
+        try
+        {
+            using var cmd = new MySqlCommand(query, Conn);
+            cmd.Parameters.AddWithValue("@teamId", teamId);
+            cmd.Parameters.AddWithValue("@position", position);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                object rawValue = reader["team_player_id"];
+                string val = rawValue?.ToString() ?? "";
+                values.Add(val);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError("❌ MySQL Error: " + ex.Message);
+        }
+
+        return values;
+    }
+
 }

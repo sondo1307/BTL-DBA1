@@ -27,6 +27,14 @@ public class TranDau : MonoBehaviour
 
     [SerializeField] [ReadOnly] private PrematchDB prematchDB;
     [SerializeField] [ReadOnly] private List<string> _listPlayerInMatch = new List<string>();
+    [SerializeField] private List<string> thuMonHomePlayers;
+    [SerializeField] private List<string> hauVeHomePlayers;
+    [SerializeField] private List<string> tienVeHomePlayers;
+    [SerializeField] private List<string> tienDaoHomePlayers;
+    [SerializeField] private List<string> thuMonAwayPlayers;
+    [SerializeField] private List<string> hauVeAwayPlayers;
+    [SerializeField] private List<string> tienVeAwayPlayers;
+    [SerializeField] private List<string> tienDaoAwayPlayers;
 
     private void Awake()
     {
@@ -52,15 +60,16 @@ public class TranDau : MonoBehaviour
         {
             return;
         }
+
         var homeScore =
             MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "home_score", "match_id",
-                prematchDB.match_id);
+                prematchDB.match_id.ToString());
         var awayScore = MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "away_score", "match_id",
-            prematchDB.match_id);
+            prematchDB.match_id.ToString());
         _tiSo.text = homeScore + "\n" + awayScore;
     }
 
-    public void SetCapDau(PrematchDB prematchDB, bool insertData)
+    public void SetCapDau(PrematchDB prematchDB, bool insertData, bool isInsertInMatch)
     {
         this.prematchDB = prematchDB;
         Team1 = GetTeamName(this.prematchDB.home_team_id);
@@ -86,85 +95,215 @@ public class TranDau : MonoBehaviour
         IEnumerator Delay()
         {
             RandomPlayerLineup();
-            yield return SonCache.WaitSeconds;
-            RandomInMatch();
-            yield return SonCache.WaitSeconds;
-            RandomPostMatch();
+            yield return SonCache.WaitForEndOfFrame;
+            if (isInsertInMatch)
+            {
+                // RandomInMatch();
+            }
         }
     }
 
 
+    // TODO: CHeck random 18
+    // TODO: random 1 Thu mon 4 hau ve 3 tien ve 3 tien dao + 1 thu mon 2 hau ve 2 tien ve 2 tien dao -> nho Nam chay SQL
     private void RandomPlayerLineup()
     {
         var homePlayers =
-            MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "player_id",
-                "team_id", prematchDB.home_team_id);
-        // foreach (var i in homePlayers)
-        // {
-        //     print(i);
-        // }
-        // print(StringUtils.ConvertListToCsv(homePlayers));
+            MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "team_player_id",
+                "team_id", prematchDB.home_team_id.ToString());
 
-        _listPlayerInMatch.AddRange(homePlayers);
-        //Home team
-        for (var i = 0; i < 11; i++)
+        thuMonHomePlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.home_team_id, "Thủ môn");
+        hauVeHomePlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.home_team_id, "Hậu vệ");
+        tienVeHomePlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.home_team_id, "Tiền vệ");
+        tienDaoHomePlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.home_team_id, "Tiền đạo");
+
+        print("thu mon" + StringUtils.ConvertListToCsv(thuMonHomePlayers));
+        print("hau ve" + StringUtils.ConvertListToCsv(hauVeHomePlayers));
+        print("tien ve" + StringUtils.ConvertListToCsv(tienVeHomePlayers));
+        print("tien dao" + StringUtils.ConvertListToCsv(tienDaoHomePlayers));
+        _listPlayerInMatch.AddRange(thuMonHomePlayers);
+        _listPlayerInMatch.AddRange(hauVeHomePlayers);
+        _listPlayerInMatch.AddRange(tienVeHomePlayers);
+        _listPlayerInMatch.AddRange(tienDaoHomePlayers);
+
+        // _listPlayerInMatch.AddRange(homePlayers);
+        for (int i = 0; i < 1; i++)
         {
-            var a = new MatchPlayerLineupDB(prematchDB.match_id, GetOneHomePlayer(), true);
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(thuMonHomePlayers), true);
             var b = a.ConvertToCsv();
             MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
         }
 
         for (int i = 0; i < 4; i++)
         {
-            var a = new MatchPlayerLineupDB(prematchDB.match_id, GetOneHomePlayer(), false);
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(hauVeHomePlayers), false);
             var b = a.ConvertToCsv();
             MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
         }
 
-        //Away team
+        for (int i = 0; i < 3; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(tienVeHomePlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(tienDaoHomePlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        // DU BI
+        for (int i = 0; i < 1; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(thuMonHomePlayers), true);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(hauVeHomePlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(tienVeHomePlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomHomePlayer(tienDaoHomePlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+        
         var awayPlayers =
-            MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "player_id",
-                "team_id", prematchDB.away_team_id);
-        // foreach (var i in awayPlayers)
-        // {
-        //     print(i);
-        // }
-        // print(StringUtils.ConvertListToCsv(awayPlayers));
+            MySQLManager.Instance.GetValuesByCondition(SonConst.TeamPlayerTable, "team_player_id",
+                "team_id", prematchDB.away_team_id.ToString());
+        
+         thuMonAwayPlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.away_team_id, "Thủ môn");
+         hauVeAwayPlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.away_team_id, "Hậu vệ");
+         tienVeAwayPlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.away_team_id, "Tiền vệ");
+         tienDaoAwayPlayers =
+            MySQLManager.Instance.GetTeamPlayerIds(prematchDB.away_team_id, "Tiền đạo");
+        
+        
+        print("thu mon" + StringUtils.ConvertListToCsv(thuMonAwayPlayers));
+        print("hau ve" + StringUtils.ConvertListToCsv(hauVeAwayPlayers));
+        print("tien ve" + StringUtils.ConvertListToCsv(tienVeAwayPlayers));
+        print("tien dao" + StringUtils.ConvertListToCsv(tienDaoAwayPlayers));
+        _listPlayerInMatch.AddRange(thuMonAwayPlayers);
+        _listPlayerInMatch.AddRange(hauVeAwayPlayers);
+        _listPlayerInMatch.AddRange(tienVeAwayPlayers);
+        _listPlayerInMatch.AddRange(tienDaoAwayPlayers);
 
-        _listPlayerInMatch.AddRange(awayPlayers);
-        for (var i = 0; i < 11; i++)
+        // _listPlayerInMatch.AddRange(awayPlayers);
+        for (int i = 0; i < 1; i++)
         {
-            var a = new MatchPlayerLineupDB(prematchDB.match_id, GetOneAwayPlayer(), true);
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(thuMonAwayPlayers), true);
             var b = a.ConvertToCsv();
             MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
         }
 
         for (int i = 0; i < 4; i++)
         {
-            var a = new MatchPlayerLineupDB(prematchDB.match_id, GetOneAwayPlayer(), false);
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(hauVeAwayPlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(tienVeAwayPlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(tienDaoAwayPlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+        
+        // DU BI
+        for (int i = 0; i < 1; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(thuMonAwayPlayers), true);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(hauVeAwayPlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(tienVeAwayPlayers), false);
+            var b = a.ConvertToCsv();
+            MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            var a = new MatchPlayerLineupDB(prematchDB.match_id, RandomAwayPlayer(tienDaoAwayPlayers), false);
             var b = a.ConvertToCsv();
             MySQLManager.Instance.InsertOneRow(SonConst.MatchPlayerLineupTable, b, false, null);
         }
 
         return;
 
-        int GetOneHomePlayer()
+        // int GetOneHomePlayer()
+        // {
+        //     // var index = UnityEngine.Random.Range(homePlayers.Select(int.Parse).Min(),
+        //     //     homePlayers.Select(int.Parse).Max() + 1);
+        //     var index = UnityEngine.Random.Range(0, homePlayers.Count);
+        //     var playerID = int.Parse(homePlayers[index]);
+        //     homePlayers.RemoveAt(index);
+        //     return playerID;
+        // }
+        //
+        // int GetOneAwayPlayer()
+        // {
+        //     // var index = UnityEngine.Random.Range(awayPlayers.Select(int.Parse).Min(),
+        //     //     awayPlayers.Select(int.Parse).Max() + 1);
+        //     var index = UnityEngine.Random.Range(0, awayPlayers.Count);
+        //     var playerID = int.Parse(awayPlayers[index]);
+        //     awayPlayers.RemoveAt(index);
+        //     return playerID;
+        // }
+
+        int RandomHomePlayer(List<string> list)
         {
-            // var index = UnityEngine.Random.Range(homePlayers.Select(int.Parse).Min(),
-            //     homePlayers.Select(int.Parse).Max() + 1);
-            var index = UnityEngine.Random.Range(0, homePlayers.Count);
-            var playerID = int.Parse(homePlayers[index]);
-            homePlayers.RemoveAt(index);
+            var index = UnityEngine.Random.Range(0, list.Count);
+            var playerID = int.Parse(list[index]);
+            list.RemoveAt(index);
             return playerID;
         }
 
-        int GetOneAwayPlayer()
+        int RandomAwayPlayer(List<string> list)
         {
-            // var index = UnityEngine.Random.Range(awayPlayers.Select(int.Parse).Min(),
-            //     awayPlayers.Select(int.Parse).Max() + 1);
-            var index = UnityEngine.Random.Range(0, awayPlayers.Count);
-            var playerID = int.Parse(awayPlayers[index]);
-            awayPlayers.RemoveAt(index);
+            var index = UnityEngine.Random.Range(0, list.Count);
+            var playerID = int.Parse(list[index]);
+            list.RemoveAt(index);
             return playerID;
         }
     }
@@ -200,6 +339,15 @@ public class TranDau : MonoBehaviour
             // print(b);
             MySQLManager.Instance.InsertOneRow(SonConst.InMatchTable, b, true, null);
         }
+
+        StartCoroutine(Delay());
+        return;
+
+        IEnumerator Delay()
+        {
+            yield return SonCache.WaitForEndOfFrame;
+            RandomPostMatch();
+        }
     }
 
     private void RandomPostMatch()
@@ -212,7 +360,7 @@ public class TranDau : MonoBehaviour
 
     private string GetTeamName(int teamID)
     {
-        return MySQLManager.Instance.GetCellDataByRowId(SonConst.TeamTable, "team_name", "team_id", teamID);
+        return MySQLManager.Instance.GetCellDataByRowId(SonConst.TeamTable, "team_name", "team_id", teamID.ToString());
     }
 
     private void OnBtnClick()
@@ -222,8 +370,13 @@ public class TranDau : MonoBehaviour
             UIManager.Instance.ShowToast("Please select today date");
             return;
         }
+
+        var matchActiveS = MySQLManager.Instance.GetCellDataByRowId(SonConst.PrematchTable, "is_actived", "match_id",
+            prematchDB.match_id.ToString());
+        var matchActive = int.Parse(matchActiveS);
+
         Main_SeasonDetail.Instance.tranDauDetailClass.Open(prematchDB.match_id, prematchDB.tournament_round,
-            (_img.color == Color.yellow));
+            _img.color == Color.yellow || matchActive == 1);
     }
 
     private void UpdateDate(string date)
@@ -233,8 +386,9 @@ public class TranDau : MonoBehaviour
 
         var postMatch =
             MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "match_id", "match_id",
-                prematchDB.match_id);
+                prematchDB.match_id.ToString());
 
+        // TODO: Check date + color
         // done
         if (!string.IsNullOrEmpty(postMatch))
         {

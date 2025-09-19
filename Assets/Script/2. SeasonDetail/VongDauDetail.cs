@@ -1,32 +1,43 @@
 using Maything.UI.DataGridUI;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class VongDauDetailClass : MonoBehaviour
 {
-    public GameObject VongDauDetail;
-    public DataGridUI DataGridUI;
-    public Button CancelButton;
+    [SerializeField] private EachVongDauDgBase[] _dgs;
+    public EachVongDauDgBase[] Dgs => _dgs;
+    [SerializeField] private Toggle[] _toggles;
+    [SerializeField] private Button _closeBtn;
 
-    public void Open(string header)
+    [Header("Update")] [SerializeField] [ReadOnly]
+    private int _currentOpenTournamentRound;
+
+
+    private void Start()
     {
-        VongDauDetail.gameObject.SetActive(true);
-        CancelButton.onClick.AddListener(OnCancelBtnClick);
-        if (DataGridUI.columnData.Count == 0)
+        _closeBtn.onClick.AddListener(Close);
+
+        for (var i = 0; i < _toggles.Length; i++)
         {
-            var a = CSVDataHelper.CSVStringToColumnData(DataGridUI, header);
+            var i1 = i;
+            var toggle = _toggles[i1];
+            toggle.onValueChanged.AddListener((isOn) =>
+            {
+                _dgs[i1].Open(_currentOpenTournamentRound);
+                _dgs[i1].gameObject.SetActive(isOn);
+            });
         }
     }
 
-    private void OnCancelBtnClick()
+    public void Open(int tournamentRound)
     {
-        Close();
+        _currentOpenTournamentRound = tournamentRound;
+        gameObject.SetActive(true);
     }
 
-    public void Close()
+    private void Close()
     {
-        VongDauDetail.gameObject.SetActive(false);
-        DataGridUI.RowClear();
-        CancelButton.onClick.RemoveAllListeners();
+        gameObject.SetActive(false);
     }
 }

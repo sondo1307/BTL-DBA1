@@ -92,7 +92,7 @@ public class PostmatchDB
         match_id = matchID;
         home_score = homeScore;
         away_score = awayScore;
-        attendance = attendance;
+        this.attendance = attendance;
         total_time = totalTime;
     }
 
@@ -185,6 +185,7 @@ public class Main_SeasonDetail : MonoBehaviour
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
     public List<VongDau> VongDaus => _vongDaus;
+    [SerializeField] private TMP_InputField _soLuongMatchRenderInMatch;
 
     [SerializeField] private InputField _thanhTimKiem;
 
@@ -198,7 +199,7 @@ public class Main_SeasonDetail : MonoBehaviour
     [Header("VongDauDetail"), Space(10)] public VongDauDetailClass vongDauDetailClass;
 
     public Action<string> EventUpdateTodayDate;
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -268,7 +269,7 @@ public class Main_SeasonDetail : MonoBehaviour
                 VongDau vongDau = Instantiate(_vongDauPrefab, _content);
                 foreach (var match in group)
                 {
-                    vongDau.AddTranDau(match, false);
+                    vongDau.AddTranDau(match, false, false);
                     yield return SonCache.WaitForEndOfFrame;
                 }
 
@@ -284,6 +285,7 @@ public class Main_SeasonDetail : MonoBehaviour
     List<List<PrematchDB>> GenerateRoundsAndMatches()
     {
         var rowsTeam = MySQLManager.Instance.GetAllRowsAsList("team");
+        // TODO: xoa de quay ve render 8 doi
         var a1 = rowsTeam[0];
         var b1 = rowsTeam[1];
         rowsTeam.Clear();
@@ -376,9 +378,15 @@ public class Main_SeasonDetail : MonoBehaviour
     [Button]
     public void OnTaoGiaiDauClick()
     {
-        if (!MySQLManager.Instance.ValidateTeamInSession1())
+        // if (!MySQLManager.Instance.ValidateTeamInSession1())
+        // {
+            // UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
+            // return;
+        // }
+
+        if (string.IsNullOrEmpty(_soLuongMatchRenderInMatch.text))
         {
-            UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
+            UIManager.Instance.ShowToast("Hãy nhập số lượng match sẽ có inmatch data");
             return;
         }
 
@@ -391,7 +399,7 @@ public class Main_SeasonDetail : MonoBehaviour
             UIManager.Instance.ShowPermantCircle();
             List<List<PrematchDB>> rounds = GenerateRoundsAndMatches();
 
-            var testCount = 0;
+            var countInMatchRender = 0;
 
             // In lịch thi đấu
             int round = 1;
@@ -403,19 +411,16 @@ public class Main_SeasonDetail : MonoBehaviour
 
                 foreach (var match in lMatchesDB)
                 {
-                    vongDau.AddTranDau(match, true);
-                    {
-                        // MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, match.ConvertToCsv(), false, null);
+                    vongDau.AddTranDau(match, true, countInMatchRender <= int.Parse(_soLuongMatchRenderInMatch.text));
+                    // vongDau.AddTranDau(match, true, true);
 
-                        var listFourRef = GetFourRef();
-                        var a = new MatchRefereeLineupDB(match.match_id, listFourRef[0], listFourRef[1], listFourRef[2],
-                            listFourRef[3]);
-                        var b = a.ConvertToCsv();
-                        print(b);
-                        MySQLManager.Instance.InsertOneRow(SonConst.MatchRefereeLineupTable, b, false, null);
-                    }
-
-                    testCount++;
+                    var listFourRef = GetFourRef();
+                    var a = new MatchRefereeLineupDB(match.match_id, listFourRef[0], listFourRef[1], listFourRef[2],
+                        listFourRef[3]);
+                    var b = a.ConvertToCsv();
+                    // print(b);
+                    MySQLManager.Instance.InsertOneRow(SonConst.MatchRefereeLineupTable, b, false, null);
+                    countInMatchRender++;
                 }
 
                 _vongDaus.Add(vongDau);
@@ -487,7 +492,6 @@ public class Main_SeasonDetail : MonoBehaviour
         string format = SonConst.DateFormat;
         var input = _thanhTimKiem.text;
 
-        // TODO: Sửa code dùng event để invoke 
         if (DateTime.TryParseExact(input, format, null, System.Globalization.DateTimeStyles.None, out DateTime date))
         {
             foreach (var tranDau in _vongDaus.SelectMany(vongDau => vongDau.TranDaus))

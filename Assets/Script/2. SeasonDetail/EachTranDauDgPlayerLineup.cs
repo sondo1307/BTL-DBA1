@@ -5,15 +5,14 @@ using UnityEngine;
     {
         public override void Open(int matchID)
         {
-            var a = MySQLManager.Instance.GetMatchPlayerLineupWithTeamIdAsCsv();
-            print(a);
+            base.Open(matchID);
+            
+            // var a = MySQLManager.Instance.GetMatchPlayerLineupWithTeamIdAsCsv();
+            // print(a);
 
             // if (_dg.columnData.Count == 0)
             // {
-            //     var h = MySQLManager.Instance.GetMatchPlayerLineupHeaderCsv();
-            //     var h1 = StringUtils.ConvertHeaderToDataGridHeader(h);
-            //     var a = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
-            //     CSVDataHelper.CSVStringToColumnData(_dg, a);
+            //   CSVDataHelper.GetTableHeaderAndSetToDG(_dg, _tableName);
             // }
             //
             // var data = MySQLManager.Instance.GetMatchPlayerLineupDataCsv();
