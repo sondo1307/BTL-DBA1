@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using Sirenix.OdinInspector;
 
+
 public class MySQLManager : MonoBehaviour
 {
     public static MySQLManager Instance;
@@ -182,7 +183,17 @@ public class MySQLManager : MonoBehaviour
             string query = $"SELECT * FROM `{table}` WHERE `{column}` = @value;";
             using var cmd = new MySqlCommand(query, Conn);
             cmd.Parameters.AddWithValue("@value", value);
+            // 🔹 Debug: in ra câu SQL sau khi gán param
+            string debugSql = query;
+            foreach (MySqlParameter param in cmd.Parameters)
+            {
+                string safeValue = param.Value == null
+                    ? "NULL"
+                    : $"'{param.Value.ToString().Replace("'", "''")}'"; // escape dấu '
+                debugSql = debugSql.Replace(param.ParameterName, safeValue);
+            }
 
+            Debug.Log(debugSql);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -695,14 +706,53 @@ public class MySQLManager : MonoBehaviour
         }
     }
 
+/*
+public List<string> GetTableHeaderAsList(string table)
+{
+    var headers = new List<string>();
+
+    try
+    {
+        // Escape tên bảng bằng backtick để tránh xung đột từ khóa
+        string query = $"SELECT * FROM `{table}` LIMIT 1;";
+
+        if (Conn.State != System.Data.ConnectionState.Open)
+        {
+            Conn.Open();
+        }
+
+        using var cmd = new MySqlCommand(query, Conn);
+        using var reader = cmd.ExecuteReader();
+
+        for (int i = 0; i < reader.FieldCount; i++)
+        {
+            headers.Add(reader.GetName(i));
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.LogError($"❌ Lỗi khi lấy header cho bảng {table}: {ex.Message}");
+    }
+
+    return headers;
+}
+*/
     public List<string> GetTableHeaderAsList(string table)
     {
         var headers = new List<string>();
         try
         {
-            string query = $"SELECT * FROM {table} LIMIT 1;"; // chỉ cần 1 row là đủ lấy schema
+            // Ép charset cho session hiện tại để tránh lỗi utf8mb3
+            using (var cmdSetNames = new MySqlCommand("SET NAMES utf8mb4;", Conn))
+            {
+                cmdSetNames.ExecuteNonQuery();
+            }
+
+            string query = $"SELECT * FROM `{table}` LIMIT 1;";
             using var cmd = new MySqlCommand(query, Conn);
-            using var reader = cmd.ExecuteReader();
+
+            // Lấy schema thôi, không fetch data → tránh charset/data lỗi
+            using var reader = cmd.ExecuteReader(System.Data.CommandBehavior.SchemaOnly);
 
             for (int i = 0; i < reader.FieldCount; i++)
             {
@@ -716,6 +766,7 @@ public class MySQLManager : MonoBehaviour
 
         return headers;
     }
+
 
     public List<List<string>> GetTableAsListString(string table)
     {
@@ -852,7 +903,6 @@ public class MySQLManager : MonoBehaviour
             }
 
             string sql = $"UPDATE {tableName} SET {string.Join(", ", setClauses)} WHERE {columns[0]}=@id";
-            print(sql);
 
             using var cmd = new MySqlCommand(sql, Conn);
             cmd.Parameters.AddWithValue("@id", id);
@@ -863,8 +913,16 @@ public class MySQLManager : MonoBehaviour
                 cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
             }
 
+            // 🔹 Debug: build SQL string có giá trị thật
+            string debugSql = sql;
+            foreach (MySqlParameter param in cmd.Parameters)
+            {
+                string safeValue = param.Value == null ? "NULL" : $"'{param.Value.ToString().Replace("'", "''")}'";
+                debugSql = debugSql.Replace(param.ParameterName, safeValue);
+            }
+
+            Debug.Log(debugSql);
             int rows = cmd.ExecuteNonQuery();
-            Debug.Log($"✅ Update row id={id}, affected {rows} rows");
 
             callback?.Invoke();
         }
@@ -903,7 +961,6 @@ public class MySQLManager : MonoBehaviour
 
             string sql =
                 $"INSERT INTO {tableName} ({string.Join(", ", colNames)}) VALUES ({string.Join(", ", paramNames)})";
-            // print(sql);
             using var cmd = new MySqlCommand(sql, Conn);
 
             // Gán param động
@@ -912,11 +969,15 @@ public class MySQLManager : MonoBehaviour
                 cmd.Parameters.AddWithValue("@" + columns[i], values[i]);
             }
 
-            // foreach (MySqlParameter param in cmd.Parameters)
-            // {
-            // print($"{param.ParameterName} = {param.Value}");
-            // }
+            // 🔹 Debug: build SQL string có giá trị thật
+            string debugSql = sql;
+            foreach (MySqlParameter param in cmd.Parameters)
+            {
+                string safeValue = param.Value == null ? "NULL" : $"'{param.Value.ToString().Replace("'", "''")}'";
+                debugSql = debugSql.Replace(param.ParameterName, safeValue);
+            }
 
+            Debug.Log(debugSql);
             int rows = cmd.ExecuteNonQuery();
 
             callback?.Invoke();
@@ -935,12 +996,18 @@ public class MySQLManager : MonoBehaviour
 
         // Cột đầu tiên là khóa chính ID
         string sql = $"DELETE FROM {tableName} WHERE {columns[0]}=@id";
-
         using var cmd = new MySqlCommand(sql, Conn);
         cmd.Parameters.AddWithValue("@id", idValue);
+        // 🔹 Debug: build SQL string có giá trị thật
+        string debugSql = sql;
+        foreach (MySqlParameter param in cmd.Parameters)
+        {
+            string safeValue = param.Value == null ? "NULL" : $"'{param.Value.ToString().Replace("'", "''")}'";
+            debugSql = debugSql.Replace(param.ParameterName, safeValue);
+        }
 
+        Debug.Log(debugSql);
         int rows = cmd.ExecuteNonQuery();
-        Debug.Log($"🗑️ Delete row id={idValue}, affected {rows} rows");
     }
 
     public void DeleteMultipleRows(string tableName, List<int> ids)
@@ -971,8 +1038,17 @@ public class MySQLManager : MonoBehaviour
             cmd.Parameters.AddWithValue($"@id{i}", ids[i]);
         }
 
+        // 🔹 Debug: build SQL string có giá trị thật
+        string debugSql = sql;
+        foreach (MySqlParameter param in cmd.Parameters)
+        {
+            string safeValue = param.Value == null ? "NULL" : $"'{param.Value.ToString().Replace("'", "''")}'";
+            debugSql = debugSql.Replace(param.ParameterName, safeValue);
+        }
+
+        Debug.Log(debugSql);
+
         int rows = cmd.ExecuteNonQuery();
-        Debug.Log($"🗑️ Delete multiple rows, affected {rows} rows");
     }
 
     public string SearchTableAsCsv(string tableName, string keyword)
@@ -1103,7 +1179,7 @@ public class MySQLManager : MonoBehaviour
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
             // Tham số IN
-            cmd.Parameters.AddWithValue("@match_id", matchId);
+            cmd.Parameters.AddWithValue("@p_match_id", matchId);
 
             // Tham số OUT
             var resultParam = new MySqlParameter("@p_result", MySqlDbType.Int32);
@@ -1285,5 +1361,4 @@ public class MySQLManager : MonoBehaviour
 
         return values;
     }
-
 }

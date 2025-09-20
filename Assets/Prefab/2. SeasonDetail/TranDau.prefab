@@ -139,6 +139,26 @@ MonoBehaviour:
   _tenCapDau: {fileID: 8352944440438652286}
   _ngayThiDau: {fileID: 5171297537905837529}
   _tiSo: {fileID: 5124452992010504167}
+  prematchDB:
+    match_id: 0
+    home_team_id: 0
+    away_team_id: 0
+    stadium_id: 0
+    match_date: 
+    ticket_price: 0
+    tournament_round: 0
+    is_actived: 0
+  _listHomePlayersInMatch: []
+  _listAwayPlayersInMatch: []
+  _listPlayerInMatch: []
+  thuMonHomePlayers: []
+  hauVeHomePlayers: []
+  tienVeHomePlayers: []
+  tienDaoHomePlayers: []
+  thuMonAwayPlayers: []
+  hauVeAwayPlayers: []
+  tienVeAwayPlayers: []
+  tienDaoAwayPlayers: []
 --- !u!1001 &4915016441565120148
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -479,7 +499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4025720949375171562, guid: 6212cade961a47f6daad255c7f9da8cf, type: 3}
       propertyPath: m_text
-      value: 1-0
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4025720949375171562, guid: 6212cade961a47f6daad255c7f9da8cf, type: 3}
       propertyPath: m_fontColor32.rgba

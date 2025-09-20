@@ -15,11 +15,13 @@ public class MainCrudObjectBase : MonoBehaviour
     public DataGridUI DataGridUI;
     public string TableName;
 
-    [Header("Search")] [SerializeField]
-    private TMP_InputField _searchInput;
+    [Header("Search")] [SerializeField] private TMP_InputField _searchInput;
+    [SerializeField] private TMP_InputField _columnInput;
+    [SerializeField] private TMP_InputField _keyInput;
     [SerializeField] private Button _searhBtn;
-    
-    
+    [SerializeField] private Button _searhBtn2;
+
+
     protected virtual void OnValidate()
     {
         DataGridUI = GetComponentInChildren<DataGridUI>();
@@ -31,6 +33,7 @@ public class MainCrudObjectBase : MonoBehaviour
     private void Start()
     {
         _searhBtn.onClick.AddListener(OnSearchBtnClick);
+        _searhBtn2.onClick.AddListener(OnSearchBtnClick2);
     }
 
     private void OnEnable()
@@ -99,9 +102,10 @@ public class MainCrudObjectBase : MonoBehaviour
             {
                 selectedIds.Add(int.Parse(item.rowData.cellData[0].value));
             }
+
             MySQLManager.Instance.DeleteMultipleRows(TableName, selectedIds);
         }
-        
+
         dataGridUI.RemoveSelectedItem();
     }
 
@@ -120,6 +124,20 @@ public class MainCrudObjectBase : MonoBehaviour
             Setup(a);
         }
         else
+        {
+            var b = MySQLManager.Instance.GetTableDataAsCsv(TableName);
+            Setup(b);
+        }
+    }
+
+    private void OnSearchBtnClick2()
+    {
+        if (!string.IsNullOrEmpty(_columnInput.text) && !string.IsNullOrEmpty(_keyInput.text))
+        {
+            var a = MySQLManager.Instance.GetRowsByColumnValueAsCsv(TableName, _columnInput.text, _keyInput.text);
+            Setup(a);
+        }
+        else if (string.IsNullOrEmpty(_columnInput.text) && string.IsNullOrEmpty(_keyInput.text))
         {
             var b = MySQLManager.Instance.GetTableDataAsCsv(TableName);
             Setup(b);

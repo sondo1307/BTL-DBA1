@@ -185,12 +185,14 @@ public class Main_SeasonDetail : MonoBehaviour
     [SerializeField] private VongDau _vongDauPrefab;
     [SerializeField] private List<VongDau> _vongDaus = new List<VongDau>();
     public List<VongDau> VongDaus => _vongDaus;
-    [SerializeField] private TMP_InputField _soLuongMatchRenderInMatch;
+    // [SerializeField] private TMP_InputField _soLuongMatchRenderInMatch;
 
     [SerializeField] private InputField _thanhTimKiem;
 
     [Header("DatePicker"), Space(10)] [SerializeField]
     private DatePicker _datePicker;
+
+    public DatePicker DatePicker => _datePicker;
 
     public bool DatePickerHasValue => (_datePicker.SelectedDate.HasValue);
 
@@ -288,9 +290,13 @@ public class Main_SeasonDetail : MonoBehaviour
         // TODO: xoa de quay ve render 8 doi
         var a1 = rowsTeam[0];
         var b1 = rowsTeam[1];
+        var b2 = rowsTeam[2];
+        var b4 = rowsTeam[3];
         rowsTeam.Clear();
         rowsTeam.Add(a1);
         rowsTeam.Add(b1);
+        rowsTeam.Add(b2);
+        rowsTeam.Add(b4);
         int matchIdCount = 1;
 
         // Mảng làm việc: giữ arr[0] cố định, xoay các phần tử 1..n-1
@@ -378,16 +384,23 @@ public class Main_SeasonDetail : MonoBehaviour
     [Button]
     public void OnTaoGiaiDauClick()
     {
-        // if (!MySQLManager.Instance.ValidateTeamInSession1())
+        // TODO: Mo comment
+        if (!MySQLManager.Instance.ValidateTeamInSession1())
+        {
+            UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
+            return;
+        }
+
+        // if (!_datePicker.SelectedDate.HasValue)
         // {
-            // UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
-            // return;
+        //     UIManager.Instance.ShowToast("Hãy nhập ngày hiện tại của giải đấu");
+        //     return;
         // }
 
-        if (string.IsNullOrEmpty(_soLuongMatchRenderInMatch.text))
+        DateTime today = DateTime.Now.AddDays(-20);
+        if (_datePicker.SelectedDate.HasValue)
         {
-            UIManager.Instance.ShowToast("Hãy nhập số lượng match sẽ có inmatch data");
-            return;
+             today = _datePicker.SelectedDate.Date;
         }
 
         _taoGiaiDauBtn.gameObject.SetActive(false);
@@ -411,7 +424,8 @@ public class Main_SeasonDetail : MonoBehaviour
 
                 foreach (var match in lMatchesDB)
                 {
-                    vongDau.AddTranDau(match, true, countInMatchRender <= int.Parse(_soLuongMatchRenderInMatch.text));
+                    vongDau.AddTranDau(match, true,
+                        (!_datePicker.SelectedDate.HasValue || DateTime.Parse(match.match_date) <= today));
                     // vongDau.AddTranDau(match, true, true);
 
                     var listFourRef = GetFourRef();
