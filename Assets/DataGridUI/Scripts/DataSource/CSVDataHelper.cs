@@ -466,22 +466,50 @@ namespace Maything.UI.DataGridUI
             if (string.IsNullOrWhiteSpace(csv))
                 throw new ArgumentException("CSV cannot be empty");
 
-            var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-            if (lines.Count < 2)
-                throw new ArgumentException("CSV must have at least one header and one row");
+            // Normalize newlines to \n, then split
+            var normalized = csv.Replace("\r\n", "\n").Replace("\r", "\n");
+            var lines = normalized.Split('\n').ToList();
 
-            if (data == null || data.Count != lines.Count - 1)
-                throw new ArgumentException("Data count must match number of rows");
+            // Remove trailing empty lines that come from a final newline
+            while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[lines.Count - 1]))
+                lines.RemoveAt(lines.Count - 1);
 
-            // thêm header mới vào dòng đầu
-            lines[0] += "," + newColumnName;
+            if (lines.Count < 1)
+                throw new ArgumentException("CSV must have at least a header row");
 
-            // thêm data vào từng dòng dữ liệu
-            for (int i = 1; i < lines.Count; i++)
+            // If caller passed null, treat as empty list
+            data = data ?? new List<string>();
+
+            int headerCount = 1;
+            int dataRowCount = lines.Count - headerCount;
+
+            if (data.Count != dataRowCount)
+                throw new ArgumentException(
+                    $"Data count must match number of rows. Expected {dataRowCount}, got {data.Count}.");
+
+            // Escape helper according to CSV rules
+            string EscapeCsvValue(string v)
             {
-                lines[i] += "," + data[i - 1];
+                if (v == null) return "";
+                // double the quotes
+                string escaped = v.Replace("\"", "\"\"");
+                // wrap in quotes if contains comma, quote, or newline
+                if (escaped.Contains(",") || escaped.Contains("\"") || escaped.Contains("\n") || escaped.Contains("\r"))
+                    escaped = $"\"{escaped}\"";
+                return escaped;
             }
 
+            // Add new header column (escape name too)
+            lines[0] = lines[0] + "," + EscapeCsvValue(newColumnName);
+
+            // Append each data value to corresponding row
+            for (int i = 1; i < lines.Count; i++)
+            {
+                string addVal = EscapeCsvValue(data[i - 1]);
+                lines[i] = lines[i] + "," + addVal;
+            }
+
+            // Rejoin using environment newline
             return string.Join(Environment.NewLine, lines);
         }
     }

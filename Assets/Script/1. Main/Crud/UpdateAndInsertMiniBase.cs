@@ -17,7 +17,7 @@ public class UpdateAndInsertMiniBase : MonoBehaviour
     [SerializeField] protected DataGridUI _dataGridUI;
     [SerializeField] private UnityEvent _closeEvent;
     [SerializeField] private UnityEvent _openEvent;
-    
+    [SerializeField] protected string _tableName;
     
     protected virtual void Start()
     {
@@ -26,6 +26,7 @@ public class UpdateAndInsertMiniBase : MonoBehaviour
 
     public virtual void Show(string tableName, DataGridRowData rowData)
     {
+        _tableName = tableName;
         _openEvent?.Invoke();
     }
 

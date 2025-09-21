@@ -152,6 +152,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DataGridUI (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4552762405899496689, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552762405899496691, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
+      propertyPath: theme
+      value: 
+      objectReference: {fileID: 11400000, guid: fa816f2283537af418d53ba77f6b682b, type: 2}
     - target: {fileID: 4552762406273864610, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -450,6 +458,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DataGridUI
       objectReference: {fileID: 0}
+    - target: {fileID: 4552762405899496689, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552762405899496691, guid: 036a5252fde0cbb46a314e380e2438c8, type: 3}
+      propertyPath: theme
+      value: 
+      objectReference: {fileID: 11400000, guid: fa816f2283537af418d53ba77f6b682b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

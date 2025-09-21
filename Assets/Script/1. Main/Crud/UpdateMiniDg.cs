@@ -27,7 +27,7 @@ public class UpdateMiniDg : UpdateAndInsertMiniBase
         InitDg();
     }
 
-    private void UpdateRow()
+    protected virtual void UpdateRow()
     {
         MySQLManager.Instance.UpdateOneRow(MainCrud.Instance.CurrentMainCrud.TableName,
             CSVDataHelper.ExportRowsToCSV(_dataGridUI), Hide);

@@ -37,15 +37,18 @@ public class Main_Playerleaderboard : MonoBehaviour
     private string _sql =
         @"SELECT 
     p.player_id,
-    p.full_name,
-    COUNT(*) AS total_goals
-    FROM in_match im
-        JOIN team_player tp ON im.team_player_id = tp.id
-        JOIN player p ON tp.player_id = p.player_id
-        WHERE im.event_type = 'goal'
-    GROUP BY p.player_id, p.full_name
-        ORDER BY total_goals DESC
-        LIMIT 10;";
+    p.full_name AS player_name,
+    COUNT(im.event_id) AS total_goals
+FROM in_match im
+JOIN team_player tp 
+    ON im.team_player_id = tp.team_player_id
+JOIN player p 
+    ON tp.player_id = p.player_id
+WHERE im.event_type = 0
+GROUP BY p.player_id, p.full_name
+ORDER BY total_goals DESC
+LIMIT 10;
+";
     
     private void Start()
     {
@@ -57,7 +60,7 @@ public class Main_Playerleaderboard : MonoBehaviour
             var h1 = StringUtils.ConvertHeaderToDataGridHeader(b);
             var h2 = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
             print(h2);
-            CSVDataHelper.CSVStringToColumnData(_dg, h2);
+            CSVDataHelper.CSVStringToColumnData(_dg, h1);
         }
         
         CSVDataHelper.DataFromCSV(_dg, false, true, true, false, c);

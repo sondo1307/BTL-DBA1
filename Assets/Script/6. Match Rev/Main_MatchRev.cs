@@ -25,26 +25,33 @@ public class Main_MatchRev : MonoBehaviour
     
     
     private string _sql1 =
-        @"SELECT 
-    p.match_id,
-    p.stadium_id,
-    pm.attendance,
-    p.ticket_price,
-    (pm.attendance * p.ticket_price) AS match_revenue
-FROM pre_match p
-JOIN post_match pm 
-    ON p.match_id = pm.match_id;
+        @"
+SELECT 
+    pm.match_id,
+    pm.stadium_id,
+    s.stadium_name,
+    pm.ticket_price,
+    po.attendance,
+    (pm.ticket_price * po.attendance) AS total_rev
+FROM pre_match pm
+JOIN post_match po 
+    ON pm.match_id = po.match_id
+JOIN stadium s 
+    ON pm.stadium_id = s.stadium_id;
 ";
 
     private string _sql2 =
-        @"SELECT 
-    p.stadium_id,
-    SUM(pm.attendance * p.ticket_price) AS total_revenue
-FROM pre_match p
-JOIN post_match pm 
-    ON p.match_id = pm.match_id
-GROUP BY p.stadium_id
-ORDER BY total_revenue DESC;
+        @"
+SELECT 
+    pm.stadium_id,
+    s.stadium_name,
+    SUM(pm.ticket_price * po.attendance) AS total_rev
+FROM pre_match pm
+JOIN post_match po 
+    ON pm.match_id = po.match_id
+JOIN stadium s 
+    ON pm.stadium_id = s.stadium_id
+GROUP BY pm.stadium_id, s.stadium_name;
 ";
 
     private void Awake()
@@ -87,5 +94,7 @@ ORDER BY total_revenue DESC;
             print(h2);
             CSVDataHelper.CSVStringToColumnData(_dg2, h1);
         }
+        
+        CSVDataHelper.DataFromCSV(_dg2, false, true, true, false, c2);
     }
 }

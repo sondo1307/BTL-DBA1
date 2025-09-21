@@ -86,6 +86,101 @@ public class MySQLManager : MonoBehaviour
             return true; // assume empty on error
         }
     }
+    
+    /// <summary>
+    /// Lấy tất cả giá trị của 1 cột trong CSV
+    /// </summary>
+    /// <param name="csv">Chuỗi CSV (có header ở dòng đầu tiên)</param>
+    /// <param name="columnName">Tên cột cần lấy dữ liệu</param>
+    /// <returns>List<string> chứa tất cả giá trị trong cột</returns>
+    public List<string> GetColumnValuesFromCsv(string csv, string columnName)
+    {
+        var results = new List<string>();
+
+        try
+        {
+            var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length < 2) return results; // Không có dữ liệu
+
+            // Header
+            var headers = lines[0].Split(',');
+            int colIndex = Array.IndexOf(headers, columnName);
+
+            if (colIndex == -1)
+            {
+                Debug.LogError($"❌ Không tìm thấy cột {columnName} trong CSV");
+                return results;
+            }
+
+            // Duyệt dữ liệu
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var cols = lines[i].Split(',');
+                if (cols.Length != headers.Length)
+                    continue; // Bỏ qua dòng lỗi
+
+                results.Add(cols[colIndex]);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ CSV Parse Error: {ex.Message}");
+        }
+
+        return results;
+    }
+
+    
+    /// <summary>
+    /// Lấy tất cả giá trị của targetColumn trong CSV khi idColumn = idValue
+    /// </summary>
+    /// <param name="csv">Chuỗi CSV (có header ở dòng đầu tiên)</param>
+    /// <param name="targetColumn">Cột muốn lấy dữ liệu</param>
+    /// <param name="idColumn">Cột điều kiện</param>
+    /// <param name="idValue">Giá trị điều kiện</param>
+    /// <returns>List<string> chứa tất cả kết quả</returns>
+    public List<string> GetCellsDataListFromCsv(string csv, string targetColumn, string idColumn, string idValue)
+    {
+        var results = new List<string>();
+
+        try
+        {
+            var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length < 2) return results; // Không có dữ liệu
+
+            // Dòng đầu là header
+            var headers = lines[0].Split(',');
+
+            int targetIndex = Array.IndexOf(headers, targetColumn);
+            int idIndex = Array.IndexOf(headers, idColumn);
+
+            if (targetIndex == -1 || idIndex == -1)
+            {
+                Debug.LogError("❌ Không tìm thấy cột trong CSV");
+                return results;
+            }
+
+            // Duyệt từng dòng dữ liệu
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var cols = lines[i].Split(',');
+
+                if (cols.Length != headers.Length)
+                    continue; // Bỏ qua dòng không hợp lệ
+
+                if (cols[idIndex] == idValue)
+                {
+                    results.Add(cols[targetIndex]);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"❌ CSV Parse Error: {ex.Message}");
+        }
+
+        return results;
+    }
 
     /// <summary>
     /// Lấy tất cả giá trị của targetColumn trong bảng khi idColumn = idValue

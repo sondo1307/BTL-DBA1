@@ -36,7 +36,7 @@ public class InsertMiniDg : UpdateAndInsertMiniBase
         InitDg();
     }
 
-    private void AddRow()
+    protected virtual void AddRow()
     {
         MySQLManager.Instance.InsertOneRow(MainCrud.Instance.CurrentMainCrud.TableName,
             CSVDataHelper.ExportRowsToCSV(_dataGridUI), true, Hide);

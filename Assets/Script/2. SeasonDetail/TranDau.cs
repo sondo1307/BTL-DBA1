@@ -87,7 +87,8 @@ public class TranDau : MonoBehaviour
         _tenCapDau.text = Team1ID + "." + Team1 + "\n" +
                           Team2ID + "." + Team2;
         // _tiSo.text = "0" + "\n" + "0";
-        _ngayThiDau.text = this.prematchDB.match_date;
+        NgayDau = this.prematchDB.match_date;
+        _ngayThiDau.text = NgayDau;
         if (insertData)
         {
             MySQLManager.Instance.InsertOneRow(SonConst.PrematchTable, prematchDB.ConvertToCsv(), false, null);
@@ -420,7 +421,6 @@ public class TranDau : MonoBehaviour
             MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "match_id", "match_id",
                 prematchDB.match_id.ToString());
 
-        // TODO: Check date + color
         // done
         if (!string.IsNullOrEmpty(postMatch))
         {

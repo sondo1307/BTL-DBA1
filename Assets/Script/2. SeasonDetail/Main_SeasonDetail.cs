@@ -384,7 +384,6 @@ public class Main_SeasonDetail : MonoBehaviour
     [Button]
     public void OnTaoGiaiDauClick()
     {
-        // TODO: Mo comment
         if (!MySQLManager.Instance.ValidateTeamInSession1())
         {
             UIManager.Instance.ShowToast("Chưa đủ điểu kiện để tạo giải đấu");
@@ -400,7 +399,7 @@ public class Main_SeasonDetail : MonoBehaviour
         DateTime today = DateTime.Now.AddDays(-20);
         if (_datePicker.SelectedDate.HasValue)
         {
-             today = _datePicker.SelectedDate.Date;
+            today = _datePicker.SelectedDate.Date;
         }
 
         _taoGiaiDauBtn.gameObject.SetActive(false);
@@ -503,14 +502,16 @@ public class Main_SeasonDetail : MonoBehaviour
     public async void OnSearchClick()
     {
         UIManager.Instance.ShowPermantCircle();
-        string format = SonConst.DateFormat;
         var input = _thanhTimKiem.text;
 
-        if (DateTime.TryParseExact(input, format, null, System.Globalization.DateTimeStyles.None, out DateTime date))
+        if (DateTime.TryParseExact(input, SonConst.DateFormat, null, System.Globalization.DateTimeStyles.None,
+                out DateTime date))
         {
+            print(date.ToString(SonConst.DateFormat));
             foreach (var tranDau in _vongDaus.SelectMany(vongDau => vongDau.TranDaus))
             {
-                tranDau.gameObject.SetActive(tranDau.NgayDau == date.ToString(format));
+                print(tranDau.NgayDau);
+                tranDau.gameObject.SetActive(tranDau.NgayDau == date.ToString(SonConst.DateFormat));
                 await Task.Delay(1);
             }
         }
@@ -521,7 +522,6 @@ public class Main_SeasonDetail : MonoBehaviour
                 // Nhập tên team/ id team/ ngày thi đấu
                 if (StringUtils.ContainsNormalized(input, tranDau.Team1) ||
                     StringUtils.ContainsNormalized(input, tranDau.Team2) ||
-                    StringUtils.ContainsNormalized(input, tranDau.NgayDau) ||
                     StringUtils.ContainsNormalized(input, tranDau.Team1ID.ToString()) ||
                     StringUtils.ContainsNormalized(input, tranDau.Team2ID.ToString()))
                 {

@@ -10,4 +10,10 @@ public class UpdateMiniDg2 : UpdateMiniDg
         base.Show(tableName, rowData);
         _updateBtn.interactable = _tranDauDetail.AllowEdit;
     }
+
+    protected override void UpdateRow()
+    {
+        MySQLManager.Instance.UpdateOneRow(_tableName,
+            CSVDataHelper.ExportRowsToCSV(_dataGridUI), Hide);
+    }
 }

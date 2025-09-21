@@ -3776,7 +3776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8742245607258580217
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17874,7 +17874,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Nh\u1EADp t\xEAn team/ id team/ ng\xE0y thi \u0111\u1EA5u"
+  m_Text: "Nh\u1EADp t\xEAn \u0111\u1EA7y \u0111\u1EE7 c\u1EE7a team/ id team/ ng\xE0y
+    thi \u0111\u1EA5u"
 --- !u!1 &5185366672409341195
 GameObject:
   m_ObjectHideFlags: 0
@@ -45456,7 +45457,6 @@ MonoBehaviour:
   _content: {fileID: 5397837514307348849}
   _vongDauPrefab: {fileID: 735544425613533549, guid: e023e3d0759baa2dead858097d0d4c7f, type: 3}
   _vongDaus: []
-  _soLuongMatchRenderInMatch: {fileID: 4874100152982172963}
   _thanhTimKiem: {fileID: 5976928477019844644}
   _datePicker: {fileID: 3435186810718384040}
   tranDauDetailClass: {fileID: 5749231038691227852}
