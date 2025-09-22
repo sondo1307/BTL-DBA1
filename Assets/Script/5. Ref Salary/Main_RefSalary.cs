@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Maything.UI.DataGridUI;
 using UI.Dates;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.WSA;
 
@@ -16,9 +17,13 @@ public class Main_RefSalary : MonoBehaviour
     [SerializeField] private InputField _lineRefInput;
     [SerializeField] private InputField _tableRefInput;
     [SerializeField] private DataGridUI _dg;
+    [SerializeField] private DataGridUI _dg2;
     [SerializeField] private DatePicker _startDate;
     [SerializeField] private DatePicker _endDate;
-    [SerializeField] private InputField _tenTrongTaiInputField;
+
+    [FormerlySerializedAs("_tenTrongTaiInputField")] [SerializeField]
+    private InputField _idTrongTaiInputField;
+
     [SerializeField] private Button _searchBtn;
     [SerializeField] private Button _clearBtn;
 
@@ -43,8 +48,6 @@ LEFT JOIN match_referee_lineup mrl
 GROUP BY r.referee_id, r.full_name;
 ";
 
-    private string _sql2;
-
     private void Start()
     {
         _searchBtn.onClick.AddListener(OnSearchBtnClick);
@@ -60,6 +63,8 @@ GROUP BY r.referee_id, r.full_name;
 
     private void Load()
     {
+        _dg.gameObject.SetActive(true);
+        _dg2.gameObject.SetActive(false);
         var a = MySQLManager.Instance.ExecuteQueryToCsv(_sql);
 
         var totalMain = MySQLManager.Instance.GetColumnValuesFromCsv(a, "so_tran_tt_chinh");
@@ -94,48 +99,36 @@ GROUP BY r.referee_id, r.full_name;
     private void OnSearchBtnClick()
     {
         if (_startDate.SelectedDate.HasValue == false || _endDate.SelectedDate.HasValue == false ||
-            string.IsNullOrEmpty(_tenTrongTaiInputField.text) == false)
+            string.IsNullOrEmpty(_idTrongTaiInputField.text))
         {
             UIManager.Instance.ShowToast("Please fill all fields");
             return;
         }
 
-        //TODO: tinh luong trong tai trong 1 thang
-        var a = MySQLManager.Instance.ExecuteQueryToCsv(_sql2);
+        _dg.gameObject.SetActive(false);
+        _dg2.gameObject.SetActive(true);
+        var a = MySQLManager.Instance.CalcRefereeSalary(int.Parse(_idTrongTaiInputField.text),
+            _startDate.SelectedDate.Date, _endDate.SelectedDate.Date);
 
-        var totalMain = MySQLManager.Instance.GetColumnValuesFromCsv(a, "so_tran_tt_chinh");
-        var totalAssist1 = MySQLManager.Instance.GetColumnValuesFromCsv(a, "so_tran_tt1");
-        var totalAssist2 = MySQLManager.Instance.GetColumnValuesFromCsv(a, "so_tran_tt2");
-        var totalVar = MySQLManager.Instance.GetColumnValuesFromCsv(a, "so_tran_tt_var");
-
-        List<object> salary = new List<object>();
-        for (int i = 0; i < totalMain.Count; i++)
+        var header = "ref_id,ref_name,salary";
+        if (_dg2.columnData.Count == 0)
         {
-            salary.Add(int.Parse(totalMain[i]) * _mainRefSalary +
-                       int.Parse(totalAssist1[i]) * _lineRefSalary +
-                       int.Parse(totalAssist2[i]) * _lineRefSalary +
-                       int.Parse(totalVar[i]) * _tableRefSalary
-            );
+            var h1 = StringUtils.ConvertHeaderToDataGridHeader(header);
+            CSVDataHelper.CSVStringToColumnData(_dg2, h1);
         }
 
-        List<string> salary2 = salary.ConvertAll(x => x.ToString());
 
-        var newA = CSVDataHelper.AddNewColumnToCsv(a, "salary", salary2);
-        var (b, c) = StringUtils.SplitCsvFromString(newA);
-        if (_dg.columnData.Count == 0)
+        if (a != null)
         {
-            var h1 = StringUtils.ConvertHeaderToDataGridHeader(b);
-            var h2 = StringUtils.ConvertDGHeaderStringToDGHeaderInputFieldForUpdate(h1);
-            CSVDataHelper.CSVStringToColumnData(_dg, h1);
+            var data = $"{a.Value.refereeId},{a.Value.fullName},{a.Value.salary}";
+            CSVDataHelper.DataFromCSV(_dg2, false, true, true, false, data);
         }
-
-        CSVDataHelper.DataFromCSV(_dg, false, true, true, false, c);
     }
 
     private void OnClearBtnClick()
     {
         // clear
-        _tenTrongTaiInputField.text = "";
+        _idTrongTaiInputField.text = "";
         Load();
     }
 }

@@ -288,7 +288,7 @@ public class MySQLManager : MonoBehaviour
                 debugSql = debugSql.Replace(param.ParameterName, safeValue);
             }
 
-            Debug.Log(debugSql);
+            // Debug.Log(debugSql);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -800,38 +800,7 @@ public class MySQLManager : MonoBehaviour
             return string.Empty;
         }
     }
-
-/*
-public List<string> GetTableHeaderAsList(string table)
-{
-    var headers = new List<string>();
-
-    try
-    {
-        // Escape tên bảng bằng backtick để tránh xung đột từ khóa
-        string query = $"SELECT * FROM `{table}` LIMIT 1;";
-
-        if (Conn.State != System.Data.ConnectionState.Open)
-        {
-            Conn.Open();
-        }
-
-        using var cmd = new MySqlCommand(query, Conn);
-        using var reader = cmd.ExecuteReader();
-
-        for (int i = 0; i < reader.FieldCount; i++)
-        {
-            headers.Add(reader.GetName(i));
-        }
-    }
-    catch (Exception ex)
-    {
-        Debug.LogError($"❌ Lỗi khi lấy header cho bảng {table}: {ex.Message}");
-    }
-
-    return headers;
-}
-*/
+    
     public List<string> GetTableHeaderAsList(string table)
     {
         var headers = new List<string>();
@@ -861,8 +830,7 @@ public List<string> GetTableHeaderAsList(string table)
 
         return headers;
     }
-
-
+    
     public List<List<string>> GetTableAsListString(string table)
     {
         var allRows = new List<List<string>>();
@@ -1072,7 +1040,7 @@ public List<string> GetTableHeaderAsList(string table)
                 debugSql = debugSql.Replace(param.ParameterName, safeValue);
             }
 
-            Debug.Log(debugSql);
+            // Debug.Log(debugSql);
             int rows = cmd.ExecuteNonQuery();
 
             callback?.Invoke();
@@ -1456,4 +1424,96 @@ public List<string> GetTableHeaderAsList(string table)
 
         return values;
     }
+
+    /// <summary>
+    /// Gọi procedure CheckPlayerAvailableInRound để kiểm tra cầu thủ có được phép ra sân trong vòng hay không
+    /// </summary>
+    /// <param name="playerId">ID cầu thủ</param>
+    /// <param name="round">Số vòng đấu</param>
+    /// <returns>true nếu được phép thi đấu, false nếu không</returns>
+    public bool CheckPlayerAvailableInRound(int playerId, int round)
+    {
+        try
+        {
+            using var cmd = new MySqlCommand("CheckPlayerAvailableInRound", Conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            // Tham số IN
+            cmd.Parameters.AddWithValue("@p_player_id", playerId);
+            cmd.Parameters.AddWithValue("@p_round", round);
+
+            // Tham số OUT
+            var outParam = new MySqlParameter("@is_available", MySqlDbType.Bit);
+            outParam.Direction = System.Data.ParameterDirection.Output;
+            cmd.Parameters.Add(outParam);
+
+            // Thực thi
+            cmd.ExecuteNonQuery();
+
+            // Lấy giá trị OUT
+            object result = cmd.Parameters["@is_available"].Value;
+
+            if (result == null || result == DBNull.Value)
+                return false;
+
+            // MySQL BIT trả về kiểu byte[]
+            if (result is bool b)
+                return b;
+
+            if (result is byte bt)
+                return bt == 1;
+
+            if (result is byte[] arr && arr.Length > 0)
+                return arr[0] == 1;
+
+            return false;
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ MySQL Error: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Gọi procedure CalcRefereeSalary để tính lương trọng tài trong khoảng ngày
+    /// </summary>
+    /// <param name="refId">ID trọng tài</param>
+    /// <param name="startDate">Ngày bắt đầu</param>
+    /// <param name="endDate">Ngày kết thúc</param>
+    /// <returns>Tuple(referee_id, full_name, salary) hoặc null nếu không có</returns>
+    public (int refereeId, string fullName, long salary)? CalcRefereeSalary(int refId, DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            using (var cmdSetNames = new MySqlCommand("SET NAMES utf8mb4;", Conn))
+            {
+                cmdSetNames.ExecuteNonQuery();
+            }
+            
+            using var cmd = new MySqlCommand("CalcRefereeSalary", Conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            // Tham số IN
+            cmd.Parameters.AddWithValue("@p_ref_id", refId);
+            cmd.Parameters.AddWithValue("@p_start", startDate);
+            cmd.Parameters.AddWithValue("@p_end", endDate);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                int refereeId = reader.GetInt32("referee_id");
+                string fullName = reader.GetString("full_name");
+                long salary = reader.GetInt64("salary");
+
+                return (refereeId, fullName, salary);
+            }
+        }
+        catch (MySqlException ex)
+        {
+            Debug.LogError($"❌ MySQL Error: {ex.Message}");
+        }
+        return null;
+    }
+
 }

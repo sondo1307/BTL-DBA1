@@ -69,11 +69,12 @@ public class TranDau : MonoBehaviour
         var awayScore = MySQLManager.Instance.GetCellDataByRowId(SonConst.PostMatchTable, "away_score", "match_id",
             prematchDB.match_id.ToString());
         _tiSo.text = homeScore + "\n" + awayScore;
-        
+
         if (string.IsNullOrEmpty(homeScore) || string.IsNullOrEmpty(awayScore))
         {
             return;
         }
+
         _tiSo.text = homeScore + "\n" + awayScore;
     }
 
@@ -126,11 +127,11 @@ public class TranDau : MonoBehaviour
         tienDaoHomePlayers =
             MySQLManager.Instance.GetTeamPlayerIds(prematchDB.home_team_id, "Tiền đạo");
 
-        print("thu mon" + " home " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(thuMonHomePlayers));
-        print("hau ve" + " home " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(hauVeHomePlayers));
-        print("tien ve" + " home " + prematchDB.home_team_id + "/ " + StringUtils.ConvertListToCsv(tienVeHomePlayers));
-        print("tien dao" + " home " + prematchDB.home_team_id + " /" +
-              StringUtils.ConvertListToCsv(tienDaoHomePlayers));
+        // print("thu mon" + " home " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(thuMonHomePlayers));
+        // print("hau ve" + " home " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(hauVeHomePlayers));
+        // print("tien ve" + " home " + prematchDB.home_team_id + "/ " + StringUtils.ConvertListToCsv(tienVeHomePlayers));
+        // print("tien dao" + " home " + prematchDB.home_team_id + " /" +
+              // StringUtils.ConvertListToCsv(tienDaoHomePlayers));
         _listHomePlayersInMatch.AddRange(thuMonHomePlayers);
         _listHomePlayersInMatch.AddRange(hauVeHomePlayers);
         _listHomePlayersInMatch.AddRange(tienVeHomePlayers);
@@ -139,6 +140,13 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(thuMonHomePlayers);
+
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(thuMonHomePlayers);
+                print("try 1");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -148,6 +156,13 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(hauVeHomePlayers);
+
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(hauVeHomePlayers);
+                print("try 2");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -157,6 +172,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(tienVeHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienVeHomePlayers);
+                print("try 3");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -166,6 +187,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(tienDaoHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienDaoHomePlayers);
+                print("try 4");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -176,6 +203,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(thuMonHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(thuMonHomePlayers);
+                print("try 5");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -185,6 +218,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(hauVeHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(hauVeHomePlayers);
+                print("try 6");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -194,6 +233,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(tienVeHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienVeHomePlayers);
+                print("try 7");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -203,6 +248,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomHomePlayer(tienDaoHomePlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienDaoHomePlayers);
+                print("try 8");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -219,11 +270,11 @@ public class TranDau : MonoBehaviour
             MySQLManager.Instance.GetTeamPlayerIds(prematchDB.away_team_id, "Tiền đạo");
 
 
-        print("thu mon" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(thuMonAwayPlayers));
-        print("hau ve" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(hauVeAwayPlayers));
-        print("tien ve" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(tienVeAwayPlayers));
-        print("tien dao" + " away " + prematchDB.home_team_id + "/ " +
-              StringUtils.ConvertListToCsv(tienDaoAwayPlayers));
+        // print("thu mon" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(thuMonAwayPlayers));
+        // print("hau ve" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(hauVeAwayPlayers));
+        // print("tien ve" + " away " + prematchDB.home_team_id + " /" + StringUtils.ConvertListToCsv(tienVeAwayPlayers));
+        // print("tien dao" + " away " + prematchDB.home_team_id + "/ " +
+              // StringUtils.ConvertListToCsv(tienDaoAwayPlayers));
         _listAwayPlayersInMatch.AddRange(thuMonAwayPlayers);
         _listAwayPlayersInMatch.AddRange(hauVeAwayPlayers);
         _listAwayPlayersInMatch.AddRange(tienVeAwayPlayers);
@@ -232,6 +283,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(thuMonAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(thuMonAwayPlayers);
+                print("try 9");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -241,6 +298,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(hauVeAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(hauVeAwayPlayers);
+                print("try 10");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -250,6 +313,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(tienVeAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienVeAwayPlayers);
+                print("try 11");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -259,6 +328,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(tienDaoAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienDaoAwayPlayers);
+                print("try 12");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, true);
             var b = a.ConvertToCsv();
@@ -269,6 +344,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(thuMonAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(thuMonAwayPlayers);
+                print("try 13");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -278,6 +359,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(hauVeAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(hauVeAwayPlayers);
+                print("try 14");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -287,6 +374,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(tienVeAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienVeAwayPlayers);
+                print("try 15");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
@@ -296,6 +389,12 @@ public class TranDau : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             var randTeamPlayerId = RandomAwayPlayer(tienDaoAwayPlayers);
+            while (MySQLManager.Instance.CheckPlayerAvailableInRound(randTeamPlayerId, prematchDB.match_id))
+            {
+                randTeamPlayerId = RandomHomePlayer(tienDaoAwayPlayers);
+                print("try 16");
+            }
+
             _listPlayerInMatch.Add(randTeamPlayerId.ToString());
             var a = new MatchPlayerLineupDB(prematchDB.match_id, randTeamPlayerId, false);
             var b = a.ConvertToCsv();
