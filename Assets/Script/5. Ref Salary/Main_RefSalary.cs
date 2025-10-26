@@ -6,7 +6,6 @@ using UI.Dates;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 
 public class Main_RefSalary : MonoBehaviour
 {

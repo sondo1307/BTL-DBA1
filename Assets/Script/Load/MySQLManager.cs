@@ -16,10 +16,17 @@ public class MySQLManager : MonoBehaviour
     // Connection string Railway hoặc MySQL Workbench
     // 👉 Railway: thay Server, Port, User, Password, Database theo config của Railway
     // 👉 Workbench local: thường là Server=localhost;Port=3306;User=root;Password=;Database=test;
-    private string connectionString = "Server=metro.proxy.rlwy.net;Port=18250;" +
-                                      "Database=railway;" +
-                                      "User=root;" +
-                                      "Password=MxzpoKnKIutJSeZaEdjKSjcsQGsvtdmB;" +
+    // private string connectionString = "Server=metro.proxy.rlwy.net;Port=18250;" +
+    //                                   "Database=railway;" +
+    //                                   "User=root;" +
+    //                                   "Password=MxzpoKnKIutJSeZaEdjKSjcsQGsvtdmB;" +
+    //                                   "SslMode=None;" +
+    //                                   "AllowPublicKeyRetrieval=True;CharSet=utf8mb4;";    
+    
+    private string connectionString = "Server=127.0.0.1;Port=3306;" +
+                                      "Database=my_database;" +
+                                      "User=my_user;" +
+                                      "Password=my_password;" +
                                       "SslMode=None;" +
                                       "AllowPublicKeyRetrieval=True;CharSet=utf8mb4;";
 
@@ -33,10 +40,20 @@ public class MySQLManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+        // enabled = false;
     }
 
-    void Start()
+    private void Start()
     {
+        // string filePath = Application.persistentDataPath + $"/{SonConst.LoginFileName}.json";
+        // string jsonString = File.ReadAllText(filePath);
+        // LoginData loginData = JsonUtility.FromJson<LoginData>(jsonString);
+        // connectionString =
+        //     string.Format(
+        //         "Server={0};Port={1};Database=railway;User=root;Password={2};SslMode=None;AllowPublicKeyRetrieval=True;CharSet=utf8mb4;",
+        //         loginData.server, loginData.port, loginData.password);
+        print(connectionString);
+        
         // Khởi tạo và mở kết nối một lần
         try
         {

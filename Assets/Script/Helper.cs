@@ -20,6 +20,8 @@ public static class SonConst
     public const string PostMatchTable = "post_match";
     public const string MatchPlayerLineupTable = "match_player_lineup";
     public const string MatchRefereeLineupTable = "match_referee_lineup";
+
+    public const string LoginFileName = "LoginFileName";
 }
 
 public static class SonCache
